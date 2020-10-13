@@ -22,7 +22,7 @@ Unity Version:
 
 ## Contributors
 
-Bryan Dedeurwaerder - https://github.com/BryanDedeur
+Bryan Dedeurwaerder - https://github.com/BryanDedeur  
 Johnathan Peters - https://github.com/Jonathan-B-Peters
 
 ## Advisor/s
