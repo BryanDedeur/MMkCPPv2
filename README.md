@@ -1,10 +1,4 @@
-## Resources
-### Benchmark Datasets
-#### Traveling Sales Person Problems (TSP)
-[Library of sample instances for the TSP in multiple formats.](http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/)
 
-#### Capacitated Arc Routing Problems (CARP) and Vehicle Routing Problems
-[Capacitated Arc Routing Problems (CARP)](https://logistik.bwl.uni-mainz.de/forschung/benchmarks/)
 
 ## Getting Started
 
@@ -14,5 +8,23 @@ g++ -o ga *.cpp -I. -lm
 ./ga
 ``` 
 
-## Environment
-Code works well in Ubuntu
+## Relevant papers
+
+
+### Benchmark Datasets
+[Library of sample instances for the TSP in multiple formats.](http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/)
+[Capacitated Arc Routing Problems (CARP) and Vehicle Routing Problems](https://logistik.bwl.uni-mainz.de/forschung/benchmarks/)
+
+## Meta
+Working Environments: Windows 10, Ubuntu 20
+IDEs: Clion
+Unity Version: 
+
+## Contributors
+
+Bryan Dedeurwaerder - https://github.com/BryanDedeur
+Johnathan Peters - https://github.com/Jonathan-B-Peters
+
+## Advisor/s
+
+Sushil Louis - https://github.com/sushillouis
