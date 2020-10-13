@@ -12,11 +12,13 @@ g++ -o ga *.cpp -I. -lm
 
 
 ### Benchmark Datasets
-[Library of sample instances for the TSP in multiple formats.](http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/)
+[Library of sample instances for the TSP in multiple formats.](http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/)  
 [Capacitated Arc Routing Problems (CARP) and Vehicle Routing Problems](https://logistik.bwl.uni-mainz.de/forschung/benchmarks/)
 
 ## Meta
-Working Environments: Windows 10, Ubuntu 20
+Working Environments: 
+  - Windows 10 - for Unity development  
+  - Ubuntu 20 - for CPP code use and genetic algorithms
 IDEs: Clion
 Unity Version: 
 
