@@ -15,6 +15,12 @@ g++ -o ga *.cpp -I. -lm
 [Library of sample instances for the TSP in multiple formats.](http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/)  
 [Capacitated Arc Routing Problems (CARP) and Vehicle Routing Problems](https://logistik.bwl.uni-mainz.de/forschung/benchmarks/)
 
+## Documentation
+
+### File input/output
+
+![File IO](/img/file-io.png)
+
 ## Meta
 Working Environments: 
   - Windows 10 - for Unity development  
@@ -25,7 +31,7 @@ Unity Version:
 ## Contributors
 
 Bryan Dedeurwaerder - https://github.com/BryanDedeur  
-Johnathan Peters - https://github.com/Jonathan-B-Peters
+Johnathan Peters - https://github.com/Jonathan-B-Peters  
 Sushil Louis - https://github.com/sushillouis
 
 ## Advisor/s
