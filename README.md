@@ -25,6 +25,7 @@ g++ -o ga *.cpp -I. -lm
 Working Environments: 
   - Windows 10 - for Unity development  
   - Ubuntu 20 - for CPP code use and genetic algorithms  
+ 
 IDEs: Clion  
 Unity Version: 
 
