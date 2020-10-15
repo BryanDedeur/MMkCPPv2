@@ -1,4 +1,4 @@
-
+# Min Max k-Chinese Postman Problem
 
 ## Getting Started
 
@@ -26,6 +26,7 @@ Unity Version:
 
 Bryan Dedeurwaerder - https://github.com/BryanDedeur  
 Johnathan Peters - https://github.com/Jonathan-B-Peters
+Sushil Louis - https://github.com/sushillouis
 
 ## Advisor/s
 
