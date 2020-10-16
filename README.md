@@ -2,11 +2,17 @@
 
 ## Getting Started
 
+### Using GCC
+
 ```
 cd src
 g++ -o ga *.cpp -I. -lm  
 ./ga
 ``` 
+
+### Using CMake
+
+
 
 ## Relevant papers
 
