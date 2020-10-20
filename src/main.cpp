@@ -8,16 +8,16 @@
 
 #include <iostream>
 #include <fstream>
-#include <GA.h>
+#include "GA.h"
 using namespace std;
 
 int main(int argc, char *argv[]) {
-	cout << "Simple genetic algorithm" << endl; // prints Simple genetic algorithm
+    cout << "Simple genetic algorithm" << endl; // prints Simple genetic algorithm
 
-	GA ga = GA(argc, argv);
+    GA ga = GA(argc, argv);
 
-	ga.Init();
-	ga.Run();
+    ga.Init();
+    ga.Run();
 
-	return 0;
+    return 0;
 }

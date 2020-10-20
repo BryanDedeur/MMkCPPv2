@@ -8,7 +8,7 @@
 #ifndef INDIVIDUAL_H_
 #define INDIVIDUAL_H_
 
-#include <Const.h>
+#include "Const.h"
 
 class Individual {
 public:

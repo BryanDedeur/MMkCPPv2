@@ -8,9 +8,9 @@
 #ifndef POPULATION_H_
 #define POPULATION_H_
 
-#include<Const.h>
-#include<Options.h>
-#include<Individual.h>
+#include "Const.h"
+#include "Options.h"
+#include "Individual.h"
 
 class Population {
 public:

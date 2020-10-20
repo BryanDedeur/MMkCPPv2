@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/bryan/Documents/Github/MMkCPPv2/src/Graph.cpp
+Graph.h
+/home/bryan/Documents/Github/MMkCPPv2/src/Graph.h
+
+/home/bryan/Documents/Github/MMkCPPv2/src/Graph.h
+

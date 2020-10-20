@@ -7,8 +7,8 @@
 
 #include "Population.h"
 #include <assert.h>
-#include <Evaluate.h>
-#include <Utils.h>
+#include "Evaluate.h"
+#include "Utils.h"
 #include <iostream>
 
 Population::Population(Options opts) {

@@ -5,8 +5,8 @@
  *      Author: sushil
  */
 
-#include <Individual.h>
-#include <Utils.h>
+#include "Individual.h"
+#include "Utils.h"
 
 Individual::Individual(int len) {
 	// TODO Auto-generated constructor stub
