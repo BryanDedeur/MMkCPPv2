@@ -11,8 +11,7 @@
 
 GA::GA(int argc, char *argv[]) {
 	SetupOptions(argc, argv);
-	srandom(options.randomSeed);
-
+	srand(options.randomSeed);
 }
 
 GA::~GA() {

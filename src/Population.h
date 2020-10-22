@@ -11,6 +11,7 @@
 #include "Const.h"
 #include "Options.h"
 #include "Individual.h"
+#include <algorithm> // for min and max
 
 class Population {
 public:
