@@ -12,7 +12,7 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-    cout << "Simple genetic algorithm" << endl; // prints Simple genetic algorithm
+    cout << "Start MMkCPP genetic algorithm" << endl; // prints Simple genetic algorithm
 
     GA ga = GA(argc, argv);
 
