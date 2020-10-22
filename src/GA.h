@@ -10,6 +10,7 @@
 
 #include "Population.h"
 #include "Options.h"
+#include "Graph.h"
 
 class GA {
 
@@ -22,6 +23,7 @@ public:
 	virtual ~GA();
 
 	//--------------------------------
+	Graph *graph;
 	Population *parent;
 	Population *child;
 	Options options;
