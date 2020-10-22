@@ -5,6 +5,11 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+struct Path {
+    int* path; // list of vertices
+    int cost; // total cost to travel path
+};
+
 class Graph {
     public:
         Graph(int **adjacencyMatrix, int numVertices);
@@ -12,17 +17,15 @@ class Graph {
 
         void Init();
 
-        struct Path {
-            int* path; // list of vertices
-            int cost; // total cost to travel path
-        };
+        int* getVertices(int edgeA);
 
-    int* getShortestPathBetweenVertices(int vertexA, int vertexB);
-        int* getShortestPathBetweenEdges(int edgeA, int edgeB);
+        Path* getShortestPathBetweenVertices(int vertexA, int vertexB);
+        Path* getShortestPathBetweenEdges(int edgeA, int edgeB);
 
     private:
-
+        const int NUM_VERTICES_PER_EDGE = 2;
         int numVertices;
+        int numEdges;
         int** adjacencyMatrix; // for storing weighted graph
 
         Path*** cachedShortestPaths; // for storing the path results from dijkstra's algorithm

@@ -28,24 +28,36 @@ void Graph::Init() {
     //cacheShortestPaths();
 }
 
-int *Graph::getShortestPathBetweenVertices(int startVertexA, int endVertexB) {
+int* Graph::getVertices(int edgeA) {
+    int vertices[2];
+    return vertices;
+}
+
+
+Path* Graph::getShortestPathBetweenVertices(int startVertexA, int endVertexB) {
     // if path from a to b is cached
         // get cache
     // if not cached
         // compute dijkstra's
-
-    return nullptr;
+    Path* path = new Path();
+    return path;
 }
 
-int *Graph::getShortestPathBetweenEdges(int edgeA, int edgeB) {
-    // for each vertex in edge A
-    for (int vertA : getVertices(edgeA)) {
-        // find a path to each vertex in edge B
-        for (int vertB : getVertices(edgeB)) {
-            getShortestPathBetweenVertices(vertA, vertB)
+Path* Graph::getShortestPathBetweenEdges(int edgeA, int edgeB) {
+    int* verticesOnEdgeA = getVertices(edgeA);
+    int* verticesOnEdgeB = getVertices(edgeB);
+
+    Path* bestPath = nullptr;
+
+    for (int i = 0; i < NUM_VERTICES_PER_EDGE; i++) {
+        for (int j = 0; j < NUM_VERTICES_PER_EDGE; j++) {
+            Path* tempPath = getShortestPathBetweenVertices(verticesOnEdgeA[i], verticesOnEdgeB[j]);
+            if (bestPath == nullptr || bestPath->cost > tempPath->cost) {
+                bestPath = tempPath;
+            }
         }
     }
-    return nullptr;
+    return bestPath;
 }
 
 void Graph::dijkstras(int startVertex) {
