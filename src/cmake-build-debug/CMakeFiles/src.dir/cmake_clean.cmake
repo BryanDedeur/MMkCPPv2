@@ -1,12 +1,14 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/src.dir/Evaluate.cpp.o"
-  "CMakeFiles/src.dir/GA.cpp.o"
-  "CMakeFiles/src.dir/Graph.cpp.o"
-  "CMakeFiles/src.dir/Individual.cpp.o"
-  "CMakeFiles/src.dir/Population.cpp.o"
-  "CMakeFiles/src.dir/Utils.cpp.o"
-  "CMakeFiles/src.dir/main.cpp.o"
-  "src"
+  "CMakeFiles/src.dir/Evaluate.cpp.obj"
+  "CMakeFiles/src.dir/GA.cpp.obj"
+  "CMakeFiles/src.dir/Graph.cpp.obj"
+  "CMakeFiles/src.dir/Individual.cpp.obj"
+  "CMakeFiles/src.dir/Population.cpp.obj"
+  "CMakeFiles/src.dir/Utils.cpp.obj"
+  "CMakeFiles/src.dir/main.cpp.obj"
+  "src.exe"
+  "src.exe.manifest"
+  "src.lib"
   "src.pdb"
 )
 
