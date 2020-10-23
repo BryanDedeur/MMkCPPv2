@@ -49,25 +49,11 @@ Graph::Graph(int **adjMatrix, int numVerti) {
 
 
 Graph::~Graph() {
-
-}
-
-// For debugging
-void Graph::print() {
-    std::cout << "Graph Adjacency Matrix:" << std::endl;
-    for (int i = 0; i < numVertices; i++) {
-        std::cout << "";
-        for (int j = 0; j < numVertices; j++) {
-            std::cout << adjacencyMatrix[i][j] << ", ";
-        }
-        std::cout << std::endl;
-    }
-
+    //TODO auto generated destructor tab
 }
 
 // SetMatrix is utilized by initializer and constructor functions to set the class graph data
 void Graph::setAdjacencyMatrix(int **otherMatrix, int numVerti) {
-
     numVertices = numVerti;
 
     adjacencyMatrix = new int*[numVerti];
@@ -93,7 +79,7 @@ void Graph::calculateNumberOfEdges() {
 
 void Graph::Init() {
     //cacheShortestPaths();
-    // TODO implement, not sure what would be best for this though
+    // TODO implement, this would be a good place to cache things ahead of time
 }
 
 const int Graph::getNumVertices() {

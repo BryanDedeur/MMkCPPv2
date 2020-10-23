@@ -32,8 +32,6 @@ class Graph {
         Path* getShortestPathBetweenVertices(int vertexA, int vertexB);
         Path* getShortestPathBetweenEdges(int edgeA, int edgeB);
 
-        void print();
-
     private:
         int numVertices;
         int numEdges;
