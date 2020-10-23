@@ -1,5 +1,6 @@
 # Exclude everything that cmakelists has been generating
-src\cmake-build-debug\
+src\cmake-build-debug\*
+src/cmake-build-debug/*
 
 .idea/*
 
