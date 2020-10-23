@@ -14,6 +14,8 @@ typedef struct {
 	std::string infile;
 	std::string outfile;
 
+	std::string datafile;
+
 	long int randomSeed;
 	int popSize;
 	int chromLength;

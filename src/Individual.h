@@ -8,16 +8,18 @@
 #ifndef INDIVIDUAL_H_
 #define INDIVIDUAL_H_
 
-#include <Const.h>
+#include "Const.h"
+#include "Graph.h"
 
 class Individual {
 public:
-	Individual(int chromLen);
-	virtual ~Individual();
+    Individual(int chromLen, Graph *graph);
+    virtual ~Individual();
 
 	int chromLength;
 	int chromosome[MAX_CHROMLENGTH];
 	double fitness;
+    Graph* graph;
 
 	void Init();
 	void Mutate(double pm);

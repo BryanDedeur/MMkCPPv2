@@ -11,8 +11,7 @@
 
 GA::GA(int argc, char *argv[]) {
 	SetupOptions(argc, argv);
-	srandom(options.randomSeed);
-
+	srand(options.randomSeed);
 }
 
 GA::~GA() {
@@ -29,19 +28,19 @@ void GA::SetupOptions(int argc, char *argv[]){
 	options.pm = 0.001f;
 	options.infile = std::string ("infile");
 	options.outfile = std::string("outfile");
+	options.datafile = std::string("../benchmarks/stacs-graphs/graph.json"); // TODO this may break in some cases, ie: the project runs from a different directory (cmake-build-debug)
 }
 
 void GA::Init(){
-	parent = new Population(options);
-	child  = new Population(options);
+    graph = new Graph(options);
+	parent = new Population(options, graph);
+	child  = new Population(options, graph);
 	parent->Init(); // evaluates, stats, and reports on initial population
 	parent->Statistics();
 	parent->Report(0);
-
 }
 
 void GA::Run(){
-
 	for(unsigned long int i = 1; i < options.maxgens; i++){
 		parent->Generation(child);
 		child->Evaluate();

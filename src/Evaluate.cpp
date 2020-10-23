@@ -6,7 +6,7 @@
  */
 
 
-#include <Evaluate.h>
+#include "Evaluate.h"
 #include <math.h>
 
 double Eval(Individual *individual){

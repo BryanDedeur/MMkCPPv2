@@ -8,8 +8,9 @@
 #ifndef GA_H_
 #define GA_H_
 
-#include <Population.h>
-#include <Options.h>
+#include "Population.h"
+#include "Options.h"
+#include "Graph.h"
 
 class GA {
 
@@ -22,6 +23,7 @@ public:
 	virtual ~GA();
 
 	//--------------------------------
+	Graph *graph;
 	Population *parent;
 	Population *child;
 	Options options;

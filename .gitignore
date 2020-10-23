@@ -1,0 +1,15 @@
+# Exclude everything that cmakelists has been generating
+src\cmake-build-debug\*
+src/cmake-build-debug/*
+
+.idea/*
+
+*.xml
+*.iml
+
+*.includecache
+*.internal
+*.make
+*.obj
+
+

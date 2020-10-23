@@ -8,7 +8,7 @@
 #ifndef EVALUATE_H_
 #define EVALUATE_H_
 
-#include <Individual.h>
+#include "Individual.h"
 
 double Eval(Individual *individual);
 
