@@ -8,10 +8,10 @@
 #include "Individual.h"
 #include "Utils.h"
 
-Individual::Individual(int len) {
-	// TODO Auto-generated constructor stub
-	chromLength = len;
-	fitness = -1;
+Individual::Individual(int len, Graph *gph) {
+    chromLength = len;
+    fitness = -1;
+    graph = gph;
 }
 
 Individual::~Individual() {

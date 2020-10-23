@@ -11,18 +11,19 @@
 #include "Const.h"
 #include "Options.h"
 #include "Individual.h"
+#include "Graph.h"
 #include <algorithm> // for min and max
 
 class Population {
 public:
-	Population(Options options);
+	Population(Options options, Graph *graph);
 	virtual ~Population();
 	//------------------------
 
 	Options options;
 	Individual *members[MAXPOP];
 	double avg, min, max, sumFitness;
-
+    Graph* graph;
 
 	void Init();
 	void Evaluate();
@@ -30,8 +31,14 @@ public:
 	void Report(unsigned long int gen);
 	void Statistics();
 
+    void XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
+
+    // Selectors
 	int ProportionalSelector();
-	void XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
+
+	// Crossovers
+
+	// Mutators
 	void TwoPoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
 	void OnePoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
 

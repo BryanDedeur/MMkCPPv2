@@ -11,14 +11,15 @@
 #include "Utils.h"
 #include <iostream>
 
-Population::Population(Options opts) {
-	options = opts;
-	avg = min = max = sumFitness = -1;
-	assert(options.popSize <= MAXPOP);
-	for (int i = 0; i < options.popSize; i++){
-		members[i] = new Individual(options.chromLength);
-		members[i]->Init();
-	}
+Population::Population(Options opts, Graph *gph) {
+    options = opts;
+    avg = min = max = sumFitness = -1;
+    assert(options.popSize <= MAXPOP);
+    for (int i = 0; i < options.popSize; i++){
+        members[i] = new Individual(options.chromLength, gph);
+        members[i]->Init();
+    }
+    graph = gph;
 }
 
 Population::~Population() {
@@ -73,7 +74,19 @@ void Population::Generation(Population *child){
 	}
 }
 
+void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2){
 
+    for(int i = 0; i < options.chromLength; i++){ //First copy
+        c1->chromosome[i] = p1->chromosome[i];
+        c2->chromosome[i] = p2->chromosome[i];
+    }
+    if(Flip(options.px)){ // if prob, then cross/exchange bits
+        OnePoint(p1, p2, c1, c2);
+    }
+
+    c1->Mutate(options.pm);
+    c2->Mutate(options.pm);
+}
 
 int Population::ProportionalSelector(){
 	int i = -1;
@@ -85,20 +98,6 @@ int Population::ProportionalSelector(){
 	} while (sum < limit && i < options.popSize-1 );
 
 	return i;
-}
-
-void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2){
-
-	for(int i = 0; i < options.chromLength; i++){ //First copy
-		c1->chromosome[i] = p1->chromosome[i];
-		c2->chromosome[i] = p2->chromosome[i];
-	}
-	if(Flip(options.px)){ // if prob, then cross/exchange bits
-		OnePoint(p1, p2, c1, c2);
-	}
-
-	c1->Mutate(options.pm);
-	c2->Mutate(options.pm);
 }
 
 void Population::OnePoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2){ //not debugged
