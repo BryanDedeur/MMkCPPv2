@@ -5,8 +5,9 @@
 
 #include "Graph.h"
 
+
 // Graph Constructor
-Graph::Graph(Options options) {
+Graph::Graph(Options options) : cachedShortestPaths() {
     // TODO load graph from file options.datafile
 
     // Below is just a test
@@ -37,15 +38,31 @@ Graph::Graph(Options options) {
 
     setAdjacencyMatrix(testGraph, numVerti);
     calculateNumberOfEdges();
+
+//    for (int i = 0; i < numVerti; i++) {
+//        for (int j = 0; j < numVerti; j++) {
+//            cachedShortestPaths[i][j] = Path();
+//        }
+//    }
+
+    // TODO Delete later
+    getShortestPathBetweenVertices(0, 2);
+
 }
 
 // Graph Constructor
 // @param adjMatrix is an existing multi dim array
 // @param numVerti is the number of vertices on the graph
-Graph::Graph(int **adjMatrix, int numVerti) {
+Graph::Graph(int **adjMatrix, int numVerti) : cachedShortestPaths() {
     setAdjacencyMatrix(adjMatrix, numVerti);
     calculateNumberOfEdges();
+
 }
+
+//Graph::Graph(int adjMatrix[], int numVerti) {
+//    setAdjacencyMatrix(adjMatrix[], numVerti);
+//    calculateNumberOfEdges();
+//}
 
 
 Graph::~Graph() {
@@ -91,18 +108,20 @@ const int Graph::getNumEdges() {
 }
 
 int* Graph::getVerticesOnEdge(int edgeA) {
-    int vertices[NUM_VERTICES_PER_EDGE];
+    int *vertices = (int *) malloc(2 * sizeof(int));
     return vertices;
 }
 
 
-Path* Graph::getShortestPathBetweenVertices(int startVertexA, int endVertexB) {
-    // if path from a to b is cached
-        // get cache
-    // if not cached
-        // compute dijkstra's
-    Path* path = new Path();
-    return path;
+void Graph::getShortestPathBetweenVertices(int startVertex, int endVertex) {
+    //Path pth = nullptr;
+    // check cache before running dijkstras
+    const auto it = cachedShortestPaths.find(startVertex);
+    if (it == cachedShortestPaths.end()) { // start vertex has no existing path calculations
+        dijkstras(startVertex);
+    }
+
+    //return &cachedShortestPaths[startVertex][endVertex];
 }
 
 Path* Graph::getShortestPathBetweenEdges(int edgeA, int edgeB) {
@@ -110,19 +129,80 @@ Path* Graph::getShortestPathBetweenEdges(int edgeA, int edgeB) {
     int* verticesOnEdgeB = getVerticesOnEdge(edgeB);
 
     Path* bestPath = nullptr;
+    // TODO check if best path has been cached
 
     for (int i = 0; i < NUM_VERTICES_PER_EDGE; i++) {
         for (int j = 0; j < NUM_VERTICES_PER_EDGE; j++) {
-            Path* tempPath = getShortestPathBetweenVertices(verticesOnEdgeA[i], verticesOnEdgeB[j]);
-            if (bestPath == nullptr || bestPath->cost > tempPath->cost) {
-                bestPath = tempPath;
-            }
+            //Path* tempPath = getShortestPathBetweenVertices(verticesOnEdgeA[i], verticesOnEdgeB[j]);
+//            if (bestPath == nullptr || bestPath->cost > tempPath->cost) {
+//                bestPath = tempPath;
+//            }
         }
     }
     return bestPath;
 }
 
+// utility function
+int Graph::minDistance(int dist[], bool visited[])
+{
+    // Initialize min value
+    int min = INT_MAX, min_index;
+
+    for (int v = 0; v < numVertices; v++)
+        if (visited[v] == false && dist[v] <= min)
+            min = dist[v], min_index = v;
+
+    return min_index;
+}
+
+void printSolution(int dist[]) {
+    printf("Vertex \t\t Distance from Source\n");
+    for (int i = 0; i < 10; i++)
+        printf("%d \t\t %d\n", i, dist[i]);
+}
+
+// dijkstras does not return anything because it will add the paths it finds to the cache
 void Graph::dijkstras(int startVertex) {
+    int* dist = new int[numVertices];
+    bool* visited = new bool[numVertices];
+
+    vector<int> *path = new vector<int>[numVertices];
+
+    for (int i = 0; i < numVertices; i++) {
+        dist[i] = INT_MAX;
+        visited[i] = false;
+        path[i].push_back(startVertex);
+    }
+
+    dist[startVertex] = 0;
+
+
+    // TODO this could be a little faster if every path from previous calcuations was considered
+
+    for (int count = 0; count < numVertices - 1; count++) {
+        int nearestUnvisitedVertex = minDistance(dist, visited);
+
+        visited[nearestUnvisitedVertex] = true;
+
+        for (int v = 0; v < numVertices; v++) {
+            if (!visited[v]     // not visited
+                && adjacencyMatrix[nearestUnvisitedVertex][v] != -1 // edge exists
+                && dist[nearestUnvisitedVertex] != INT_MAX          // explored
+                && dist[nearestUnvisitedVertex] + adjacencyMatrix[nearestUnvisitedVertex][v] < dist[v]) {
+
+                dist[v] = dist[nearestUnvisitedVertex] + adjacencyMatrix[nearestUnvisitedVertex][v];
+
+                path[v] = path[nearestUnvisitedVertex];
+                path[v].push_back(v);
+
+                cachedShortestPaths[startVertex][v] = Path(path[v], dist[v]);
+            }
+        }
+
+    }
+
+    // TODO cache these results
+    printSolution(dist);
 
 }
 
