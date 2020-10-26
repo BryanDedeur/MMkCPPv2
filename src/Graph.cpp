@@ -142,7 +142,7 @@ Path* Graph::getShortestPathBetweenEdges(int edgeA, int edgeB) {
     return bestPath;
 }
 
-// utility function
+// utility function for dijkstras
 int Graph::minDistance(int dist[], bool visited[])
 {
     // Initialize min value
@@ -153,12 +153,6 @@ int Graph::minDistance(int dist[], bool visited[])
             min = dist[v], min_index = v;
 
     return min_index;
-}
-
-void printSolution(int dist[]) {
-    printf("Vertex \t\t Distance from Source\n");
-    for (int i = 0; i < 10; i++)
-        printf("%d \t\t %d\n", i, dist[i]);
 }
 
 // dijkstras does not return anything because it will add the paths it finds to the cache
@@ -200,10 +194,6 @@ void Graph::dijkstras(int startVertex) {
         }
 
     }
-
-    // TODO cache these results
-    printSolution(dist);
-
 }
 
 
