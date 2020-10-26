@@ -35,7 +35,7 @@ class Graph {
 
         int* getVerticesOnEdge(int edgeA); // always returns two vertices
 
-        void getShortestPathBetweenVertices(int startVertex, int endVertex);
+        Path* getShortestPathBetweenVertices(int startVertex, int endVertex);
         Path* getShortestPathBetweenEdges(int edgeA, int edgeB);
 
     private:
@@ -47,6 +47,7 @@ class Graph {
         void calculateNumberOfEdges();
         map<int, map<int, Path>> cachedShortestPaths; // for storing the path results from dijkstra's algorithm
         map<int, map<int, Path>> cachedShortestPathBetweenEdges; // for storing the shortest paths between two edges
+        map<int, int*> cachedVerticesOnEdge; // for storing the association between edges and vertices
 
         int minDistance(int dist[], bool sptSet[]);
         void dijkstras(int startVertex);
