@@ -12,3 +12,8 @@ add_executable(src main.cpp
         Options.h
         Const.h
         Graph.cpp Graph.h)
+
+# from the matplotlib-cpp documentation
+#find_package(Python2 COMPONENTS Development NumPy)
+#target_include_directories(src PRIVATE ${Python2_INCLUDE_DIRS} ${Python2_NumPy_INCLUDE_DIRS})
+#target_link_libraries(src Python2::Python Python2::NumPy)
