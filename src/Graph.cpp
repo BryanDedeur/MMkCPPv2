@@ -4,45 +4,51 @@
 //
 
 #include "Graph.h"
+#include <iostream>
+#include <fstream>
+#include <jsoncpp/json/json.h>
+using namespace std;
 
 // Graph Constructor
 Graph::Graph(Options options) {
-    // TODO load graph from file options.datafile
 
-    // Below is just a test
-    const int numVerti = 10;
-    // created with https://graphonline.ru/en/
-    int** testGraph = (int **) malloc(numVerti * sizeof(int*));
-    for (int i = 0; i < numVerti; i++) {
-        testGraph[i] = (int *) malloc(numVerti * sizeof(int));
-    }
+	//Create ifstream to read from option.dataFile
+	ifstream graph_file(options.datafile, ifstream::binary);
+	if(graph_file.fail())
+	{
+		cerr << "ERROR: JSON file not found" << endl;
+		return;
+	}
+	
+	//jsonGraph will hold the object in the json file
+	Json::Value jsonGraph;
+	graph_file >> jsonGraph;
+	
+	//Create float** to hold data read from json file
+	int numVerti = jsonGraph["graph"].size();
+	float** graph = (float **) malloc(numVerti * sizeof(float*));
+	for(int i = 0; i < numVerti; i++)
+	{
+		graph[i] = (float *) malloc(numVerti * sizeof(float));
+	}
 
-    int exampleGraph[numVerti][numVerti] =
-            {{0, 5, 7, -1, -1, -1, -1, -1, -1, -1},
-             {5, 0, -1, 7, -1, -1, -1, 11, -1, -1},
-             {7, -1, 0, 3, -1, -1, -1, -1, 11, -1},
-             {-1, 7, 3, 0, 5, 5, -1, -1, -1, 1},
-             {-1, -1, -1, 5, 0, -1, 11, 3, -1, -1},
-             {-1, -1, -1, 5, -1, 0, 3, -1, 1, -1},
-             {-1, -1, -1, -1, 11, 3, 0, -1, -1, -1},
-             {-1, 11, -1, -1, 3, -1, -1, 0, -1, -1},
-             {-1, -1, 11, -1, -1, 1, -1, -1, 0, -1},
-             {-1, -1, -1, 1, -1, -1, -1, -1, -1, 0}};
+	//Read data from json to float**
+	for(int i = 0; i < numVerti; i++)
+	{
+		for(int j = 0; j < numVerti; j++)
+		{
+			graph[i][j] = jsonGraph["graph"][i]["list"][j].asFloat();
+		}
+	}
 
-    for (int i = 0; i < numVerti; i++) {
-        for (int j = 0; j < numVerti; j++) {
-            testGraph[i][j] = exampleGraph[i][j];
-        }
-    }
-
-    setAdjacencyMatrix(testGraph, numVerti);
+    setAdjacencyMatrix(graph, numVerti);
     calculateNumberOfEdges();
 }
 
 // Graph Constructor
 // @param adjMatrix is an existing multi dim array
 // @param numVerti is the number of vertices on the graph
-Graph::Graph(int **adjMatrix, int numVerti) {
+Graph::Graph(float **adjMatrix, int numVerti) {
     setAdjacencyMatrix(adjMatrix, numVerti);
     calculateNumberOfEdges();
 }
@@ -53,12 +59,12 @@ Graph::~Graph() {
 }
 
 // SetMatrix is utilized by initializer and constructor functions to set the class graph data
-void Graph::setAdjacencyMatrix(int **otherMatrix, int numVerti) {
+void Graph::setAdjacencyMatrix(float **otherMatrix, int numVerti) {
     numVertices = numVerti;
 
-    adjacencyMatrix = new int*[numVerti];
+    adjacencyMatrix = new float*[numVerti];
     for (int i = 0; i < numVerti; i++) {
-        adjacencyMatrix[i] = new int[numVerti];
+        adjacencyMatrix[i] = new float[numVerti];
         for (int j = 0; j < numVerti; j++) {
             adjacencyMatrix[i][j] = otherMatrix[i][j];
         }
