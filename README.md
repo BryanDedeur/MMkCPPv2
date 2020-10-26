@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-###Installing jsoncpp Library for Ubuntu
+### Installing jsoncpp Library for Ubuntu
 
 ```
 sudo apt-get install libjsoncpp-dev
