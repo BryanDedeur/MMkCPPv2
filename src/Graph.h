@@ -7,11 +7,17 @@
 
 #include "Options.h"
 #include <iostream>
+#include <map>
+#include <vector>
 
+using namespace std;
 
 struct Path {
-    int* path; // list of vertices
+    vector<int> path; // vector because we don't know the size of the array
     int cost; // total cost to travel path
+
+    Path() : path(), cost(INT_MAX) {} // default constructor
+    Path(vector<int> pth, int &cst) : path(pth) , cost(cst) {} // path struct constructor
 };
 
 const int NUM_VERTICES_PER_EDGE = 2;
@@ -27,26 +33,24 @@ class Graph {
         const int getNumVertices();
         const int getNumEdges();
 
-        int* getVerticesOnEdge(int edgeA);
+        pair<int, int>* getVerticesOnEdge(int edgeA); // always returns two vertices
 
-        Path* getShortestPathBetweenVertices(int vertexA, int vertexB);
+        Path* getShortestPathBetweenVertices(int startVertex, int endVertex);
         Path* getShortestPathBetweenEdges(int edgeA, int edgeB);
 
     private:
         int numVertices;
         int numEdges;
-        int** adjacencyMatrix; // for storing weighted graph
+        map<int, map<int, int>> adjacencyMatrix; // for storing weighted graph
 
-        void setAdjacencyMatrix(int** otherMatrix, int numVerti);
         void calculateNumberOfEdges();
-        Path*** cachedShortestPaths; // for storing the path results from dijkstra's algorithm
-        // dim 1 index: starting vertex
-        // dim 2 index: ending vertex
-        // dim 3 index: path struct containing path and cost
+        map<int, map<int, Path>> cachedShortestPaths; // for storing the path results from dijkstra's algorithm
+        map<int, map<int, Path>> cachedShortestPathBetweenEdges; // for storing the shortest paths between two edges
+        map<int, pair<int, int>> cachedVerticesOnEdge; // for storing the association between edges and vertices
 
+        int minDistance(int dist[], bool sptSet[]);
         void dijkstras(int startVertex);
 
-        //void cacheShortestPaths(); // dijkstra's only cache as we encounter the need for calcuating
 };
 
 
