@@ -25,7 +25,7 @@ const int NUM_VERTICES_PER_EDGE = 2;
 class Graph {
     public:
         Graph(Options options);
-        Graph(int **adjacencyMatrix, int numVertices);
+        Graph(float **adjacencyMatrix, int numVertices);
         virtual ~Graph();
 
         void Init();
@@ -39,7 +39,7 @@ class Graph {
         int numEdges;
     private:
 
-        map<int, map<int, int>> adjacencyMatrix; // for storing weighted graph
+        map<float, map<float, float>> adjacencyMatrix; // for storing weighted graph
 
         void calculateNumberOfEdges();
         map<int, map<int, Path>> cachedShortestPaths; // for storing the path results from dijkstra's algorithm
