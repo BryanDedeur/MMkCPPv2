@@ -86,10 +86,9 @@ IDEs: Clion
 Unity Version: 
 
 ## Contributors
-
+Sushil Louis - https://github.com/sushillouis  
 Bryan Dedeurwaerder - https://github.com/BryanDedeur  
 Jonathan Peters - https://github.com/Jonathan-B-Peters  
-Sushil Louis - https://github.com/sushillouis
 
 ## Advisor/s
 
