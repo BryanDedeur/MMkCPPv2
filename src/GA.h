@@ -1,8 +1,8 @@
 /*
- * GA.h
- *
- *  Created on: Sep 20, 2020
- *      Author: sushil
+ * @Project: MMkCPP v2
+ * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
+ * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Date: 10/18/20
  */
 
 #ifndef GA_H_

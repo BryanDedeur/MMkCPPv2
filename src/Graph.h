@@ -30,17 +30,15 @@ class Graph {
 
         void Init();
 
-        const int getNumVertices();
-        const int getNumEdges();
-
         pair<int, int>* getVerticesOnEdge(int edgeA); // always returns two vertices
 
         Path* getShortestPathBetweenVertices(int startVertex, int endVertex);
         Path* getShortestPathBetweenEdges(int edgeA, int edgeB);
 
-    private:
         int numVertices;
         int numEdges;
+    private:
+
         map<float, map<float, float>> adjacencyMatrix; // for storing weighted graph
 
         void calculateNumberOfEdges();

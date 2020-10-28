@@ -1,17 +1,17 @@
 /*
- * Individual.cpp
- *
- *  Created on: Sep 20, 2020
- *      Author: sushil
+ * @Project: MMkCPP
+ * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
+ * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Date: 10/18/20
  */
 
 #include "Individual.h"
 #include "Utils.h"
 
-Individual::Individual(int len, Graph *gph) {
-    chromLength = len;
+Individual::Individual(Options &opts, Graph *gph) : chromLength(gph->numEdges + opts.numRobots) {
     fitness = -1;
     graph = gph;
+    options = &opts;
 }
 
 Individual::~Individual() {
@@ -19,15 +19,32 @@ Individual::~Individual() {
 }
 
 void Individual::Init(){
-	for(int i = 0; i < chromLength; i++){
-		chromosome[i] = Flip(0.5f);
+    // Initialize the chromosome with every possible edge and every possible robot
+	for(int i = 0; i < chromLength; i++) {
+        if (i >= graph->numEdges) {
+            chromosome[i].value = i - graph->numEdges;
+            chromosome[i].isRobot = true;
+        } else {
+            chromosome[i].value = i;
+        }
 	}
+	// TODO randomize chromosome
 }
 
 void Individual::Mutate(double pm){
 	for(int i = 0; i < chromLength; i++){
-		if(Flip(pm))
-			chromosome[i] = 1 - chromosome[i];
+		if(Flip(pm)) {
+
+		}
 	}
+}
+
+void Individual::Evaluate() {
+    // calculate the total travel distance
+    for (int i = 0; i < chromLength; i++) {
+        //sum += individual->calculateFitness();
+    }
+
+    // calculate the distribution of travel among all robots
 
 }
