@@ -1,20 +1,65 @@
 # Min Max k-Chinese Postman Problem
 
-## Getting Started
+## Getting Started for Development
 
-### Installing jsoncpp Library for Ubuntu
+### Dependencies
 
+A list of dependencies that must be installed prior to code execution
+- Jsoncpp: https://github.com/open-source-parsers/jsoncpp
+- MatPlotLib-cpp: https://github.com/lava/matplotlib-cpp
+
+#### Windows
+
+1. Download vcpkg
+- In powershell we must use vcpkg and the integrate to get the necessary packages installed properly
+
+- Download vcpkg using the GitHub repository interface https://github.com/Microsoft/vcpkg
+```
+git clone https://github.com/Microsoft/vcpkg.git
+```
+- At this point you should unzip and rename the containing folder to simply "vcpkg"
+
+2. Create a "src" directory under C: drive or windows install location and move vcpkg to the newly created directory
+3. Install vcpkg
+```
+cd /src/vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg integrate install
+```
+4. Install the necessary packages
+```
+./vcpkg install jsoncpp
+./vcpkg install matplotlib-cpp
+```
+#### Linux
+
+In terimal enter the following commands
 ```
 sudo apt-get install libjsoncpp-dev
 ```
 
-### Using GCC
+### Compilation and Execution
+
+#### Using CMake from IDE
+
+##### Clion
+
+1. Open the project
+2. Right click src/CMakeLists.txt and select "Reload CMake Project"
+   - To create the cmake-build-debug that clion recognizes
+3. Use the build hammer to "build" or press the play "button to build" and run.
+
+#### Using Command Line Interface
 
 ```
 cd src
 g++ -o ga *.cpp -I. -lm -ljsoncpp
 ./ga
 ``` 
+
+### Using GCC
+
+
 
 ### Using CMake
 
