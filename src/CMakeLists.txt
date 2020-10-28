@@ -6,12 +6,11 @@ set(CMAKE_CXX_STANDARD 14)
 
 if (WIN32)
     include_directories(/src/vcpkg/packages/jsoncpp_x86-windows/include/json)
+    SET(GCC_COVERAGE_COMPILE_FLAGS "-I.")
+    SET(GCC_COVERAGE_LINK_FLAGS    "-lm -ljsoncpp")
 endif (WIN32)
 
 find_package(jsoncpp CONFIG REQUIRED)
-
-SET(GCC_COVERAGE_COMPILE_FLAGS "-I.")
-SET(GCC_COVERAGE_LINK_FLAGS    "-lm -ljsoncpp")
 
 add_executable(main main.cpp
         GA.cpp GA.h
