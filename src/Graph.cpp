@@ -52,6 +52,8 @@ Graph::Graph(Options options) : cachedShortestPaths() {
     calculateNumberOfEdges();
 
     Path* path = getShortestPathBetweenEdges(1, 10);
+
+
 }
 
 // Graph Constructor

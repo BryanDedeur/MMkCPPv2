@@ -10,6 +10,9 @@ endif (WIN32)
 
 find_package(jsoncpp CONFIG REQUIRED)
 
+SET(GCC_COVERAGE_COMPILE_FLAGS "-I.")
+SET(GCC_COVERAGE_LINK_FLAGS    "-lm -ljsoncpp")
+
 add_executable(main main.cpp
         GA.cpp GA.h
         Population.cpp Population.h
@@ -20,7 +23,8 @@ add_executable(main main.cpp
         Const.h
         Graph.cpp Graph.h)
 
-target_link_libraries(main PRIVATE jsoncpp_lib)
+
+target_link_libraries(main PRIVATE jsoncpp_lib jsoncpp_object)
 
 # from the matplotlib-cpp documentation
 #find_package(Python2 COMPONENTS Development NumPy)
