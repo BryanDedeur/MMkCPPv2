@@ -32,9 +32,10 @@ cd /src/vcpkg
 ```
 #### Linux
 
-In terminal enter the following commands
+In terminal, install the following packages
 ```
 sudo apt-get install libjsoncpp-dev
+sudo apt-get install python-matplotlib python-numpy python2.7-dev
 ```
 
 ### Compilation and Execution
@@ -79,10 +80,11 @@ g++ -o ga *.cpp -I. -lm -ljsoncpp
 
 ## Meta
 Working Environments: 
-  - Windows 10 - for Unity development  
-  - Ubuntu 20 - for CPP code use and genetic algorithms  
+  - Windows 10 x32 x64
+  - Ubuntu 18, 20
  
-IDEs: Clion  
+IDEs: [Jetbrains - Clion 2020](https://www.jetbrains.com/clion/)
+
 Unity Version: 
 
 ## Contributors
