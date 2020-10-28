@@ -33,9 +33,6 @@ else(WIN32) # LINUX OR DIFFERENT OS
     pkg_check_modules(JSONCPP jsoncpp)
     link_libraries(${JSONCPP_LIBRARIES})
 
-    SET(GCC_COVERAGE_COMPILE_FLAGS "-I.")
-    SET(GCC_COVERAGE_LINK_FLAGS    "-lm -ljsoncpp")
-
     add_executable(main main.cpp
             GA.cpp GA.h
             Population.cpp Population.h
