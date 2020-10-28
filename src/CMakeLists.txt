@@ -1,9 +1,16 @@
 cmake_minimum_required(VERSION 3.17)
-project(src)
+
+project(main)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(src main.cpp
+if (WIN32)
+    include_directories(/src/vcpkg/packages/jsoncpp_x86-windows/include/json)
+endif (WIN32)
+
+find_package(jsoncpp CONFIG REQUIRED)
+
+add_executable(main main.cpp
         GA.cpp GA.h
         Population.cpp Population.h
         Individual.cpp Individual.h
@@ -12,6 +19,8 @@ add_executable(src main.cpp
         Options.h
         Const.h
         Graph.cpp Graph.h)
+
+target_link_libraries(main PRIVATE jsoncpp_lib)
 
 # from the matplotlib-cpp documentation
 #find_package(Python2 COMPONENTS Development NumPy)

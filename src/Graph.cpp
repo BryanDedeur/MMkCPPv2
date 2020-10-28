@@ -8,9 +8,14 @@
 #include "Graph.h"
 #include <iostream>
 #include <fstream>
-#include <jsoncpp/json/json.h>
-using namespace std;
 
+#ifdef _WIN32
+    #include <json.h>
+#else
+    #include <jsoncpp/json/json.h>
+#endif
+
+using namespace std;
 
 // Graph Constructor
 Graph::Graph(Options options) : cachedShortestPaths() {
@@ -44,8 +49,6 @@ Graph::Graph(Options options) : cachedShortestPaths() {
 		}
 	}
 
-    setAdjacencyMatrix(graph, numVerti);
-
     calculateNumberOfEdges();
 
     Path* path = getShortestPathBetweenEdges(1, 10);
@@ -55,7 +58,6 @@ Graph::Graph(Options options) : cachedShortestPaths() {
 // @param adjMatrix is an existing multi dim array
 // @param numVerti is the number of vertices on the graph
 Graph::Graph(float **adjMatrix, int numVerti) : cachedShortestPaths(){
-    setAdjacencyMatrix(adjMatrix, numVerti);
     calculateNumberOfEdges();
 }
 
@@ -67,19 +69,6 @@ Graph::Graph(float **adjMatrix, int numVerti) : cachedShortestPaths(){
 
 Graph::~Graph() {
     //TODO auto generated destructor tab
-}
-
-// SetMatrix is utilized by initializer and constructor functions to set the class graph data
-void Graph::setAdjacencyMatrix(float **otherMatrix, int numVerti) {
-    numVertices = numVerti;
-
-    adjacencyMatrix = new float*[numVerti];
-    for (int i = 0; i < numVerti; i++) {
-        adjacencyMatrix[i] = new float[numVerti];
-        for (int j = 0; j < numVerti; j++) {
-            adjacencyMatrix[i][j] = otherMatrix[i][j];
-        }
-    }
 }
 
 void Graph::calculateNumberOfEdges() {
