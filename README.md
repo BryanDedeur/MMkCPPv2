@@ -80,10 +80,11 @@ g++ -o ga *.cpp -I. -lm -ljsoncpp
 
 ## Meta
 Working Environments: 
-  - Windows 10 - for Unity development  
-  - Ubuntu 20 - for CPP code use and genetic algorithms  
+  - Windows 10 x32 x64
+  - Ubuntu 18, 20
  
-IDEs: Clion  
+IDEs: Clion 2020
+
 Unity Version: 
 
 ## Contributors
