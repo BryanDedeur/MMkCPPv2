@@ -1,4 +1,4 @@
-# Min Max k-Chinese Postman Problem
+# Min Max k-Chinese Postman Problem (MMkCPP)
 
 ## Getting Started for Development
 
