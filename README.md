@@ -83,7 +83,7 @@ Working Environments:
   - Windows 10 x32 x64
   - Ubuntu 18, 20
  
-IDEs: Clion 2020
+IDEs: [Jetbrains - Clion 2020](https://www.jetbrains.com/clion/)
 
 Unity Version: 
 
