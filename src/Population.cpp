@@ -1,8 +1,8 @@
 /*
- * Population.cpp
- *
- *  Created on: Sep 20, 2020
- *      Author: sushil
+ * @Project: MMkCPP v2
+ * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
+ * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Date: 10/18/20
  */
 
 #include "Population.h"
@@ -16,7 +16,7 @@ Population::Population(Options opts, Graph *gph) {
     avg = min = max = sumFitness = -1;
     assert(options.popSize <= MAXPOP);
     for (int i = 0; i < options.popSize; i++){
-        members[i] = new Individual(options.chromLength, gph);
+        members[i] = new Individual(options, gph);
         members[i]->Init();
     }
     graph = gph;

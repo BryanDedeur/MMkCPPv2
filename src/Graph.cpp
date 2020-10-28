@@ -1,7 +1,9 @@
-//
-// By Bryan D.
-// Created: 10/15/2020
-//
+/*
+ * @Project: MMkCPP v2
+ * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
+ * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Date: 10/18/20
+ */
 
 #include "Graph.h"
 
@@ -71,14 +73,6 @@ void Graph::calculateNumberOfEdges() {
 void Graph::Init() {
     //cacheShortestPaths();
     // TODO implement, this would be a good place to cache things ahead of time
-}
-
-const int Graph::getNumVertices() {
-    return numVertices;
-}
-
-const int Graph::getNumEdges() {
-    return numEdges;
 }
 
 pair<int, int>* Graph::getVerticesOnEdge(int edge) {

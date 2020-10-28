@@ -1,8 +1,8 @@
 /*
- * GA.cpp
- *
- *  Created on: Sep 20, 2020
- *      Author: sushil
+ * @Project: MMkCPP v2
+ * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
+ * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Date: 10/18/20
  */
 
 #include "GA.h"
@@ -26,8 +26,11 @@ void GA::SetupOptions(int argc, char *argv[]){
 	options.maxgens = 60;
 	options.px = 0.7f;
 	options.pm = 0.001f;
-	options.infile = std::string ("infile");
-	options.outfile = std::string("outfile");
+    options.infile = std::string ("infile");
+    options.outfile = std::string("outfile");
+
+	// new stuff for mmkcpp
+	options.numRobots = 2;
 	options.datafile = std::string("../benchmarks/stacs-graphs/graph.json"); // TODO this may break in some cases, ie: the project runs from a different directory (cmake-build-debug)
 }
 
