@@ -32,9 +32,10 @@ cd /src/vcpkg
 ```
 #### Linux
 
-In terminal enter the following commands
+In terminal, install the following packages
 ```
 sudo apt-get install libjsoncpp-dev
+sudo apt-get install python-matplotlib python-numpy python2.7-dev
 ```
 
 ### Compilation and Execution
