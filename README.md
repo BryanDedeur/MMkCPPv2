@@ -2,11 +2,17 @@
 
 ## Getting Started
 
+### Installing jsoncpp Library for Ubuntu
+
+```
+sudo apt-get install libjsoncpp-dev
+```
+
 ### Using GCC
 
 ```
 cd src
-g++ -o ga *.cpp -I. -lm  
+g++ -o ga *.cpp -I. -lm -ljsoncpp
 ./ga
 ``` 
 
@@ -38,7 +44,7 @@ Unity Version:
 ## Contributors
 
 Bryan Dedeurwaerder - https://github.com/BryanDedeur  
-Johnathan Peters - https://github.com/Jonathan-B-Peters  
+Jonathan Peters - https://github.com/Jonathan-B-Peters  
 Sushil Louis - https://github.com/sushillouis
 
 ## Advisor/s
