@@ -23,10 +23,17 @@ add_executable(main main.cpp
         Const.h
         Graph.cpp Graph.h)
 
-
+if (WIN32)
 target_link_libraries(main PRIVATE jsoncpp_lib jsoncpp_object)
+endif(WIN32)
 
-# from the matplotlib-cpp documentation
+if (LINUX)
+target_link_libraries(main PRIVATE jsoncpp_lib)
+endif (LINUX)
+
+
+
+    # from the matplotlib-cpp documentation
 #find_package(Python2 COMPONENTS Development NumPy)
 #target_include_directories(src PRIVATE ${Python2_INCLUDE_DIRS} ${Python2_NumPy_INCLUDE_DIRS})
 #target_link_libraries(src Python2::Python Python2::NumPy)
