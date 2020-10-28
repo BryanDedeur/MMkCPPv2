@@ -11,9 +11,8 @@ A list of dependencies that must be installed prior to code execution
 #### Windows
 
 1. Download vcpkg
-- In powershell we must use vcpkg and the integrate to get the necessary packages installed properly
-
-- Download vcpkg using the GitHub repository interface https://github.com/Microsoft/vcpkg
+- In powershell we must use *vcpkg* and *integrate* to get the necessary packages installed properly
+- Download *vcpkg* using the GitHub repository interface https://github.com/Microsoft/vcpkg
 ```
 git clone https://github.com/Microsoft/vcpkg.git
 ```
@@ -33,7 +32,7 @@ cd /src/vcpkg
 ```
 #### Linux
 
-In terimal enter the following commands
+In terminal enter the following commands
 ```
 sudo apt-get install libjsoncpp-dev
 ```
