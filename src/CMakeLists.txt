@@ -6,11 +6,14 @@ set(CMAKE_CXX_STANDARD 14)
 
 if (WIN32)
     include_directories(/src/vcpkg/packages/jsoncpp_x86-windows/include/json)
-    SET(GCC_COVERAGE_COMPILE_FLAGS "-I.")
-    SET(GCC_COVERAGE_LINK_FLAGS    "-lm -ljsoncpp")
+else ()
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(JSONCPP jsoncpp)
+    link_libraries(${JSONCPP_LIBRARIES})
 endif (WIN32)
 
-find_package(jsoncpp CONFIG REQUIRED)
+SET(GCC_COVERAGE_COMPILE_FLAGS "-I.")
+SET(GCC_COVERAGE_LINK_FLAGS    "-lm -ljsoncpp")
 
 add_executable(main main.cpp
         GA.cpp GA.h
@@ -23,16 +26,9 @@ add_executable(main main.cpp
         Graph.cpp Graph.h)
 
 if (WIN32)
-target_link_libraries(main PRIVATE jsoncpp_lib jsoncpp_object)
+    target_link_libraries(main PRIVATE jsoncpp_lib jsoncpp_object)
 endif(WIN32)
 
 if (LINUX)
-target_link_libraries(main PRIVATE jsoncpp_lib)
+    target_link_libraries(main ${JSONCPP_LIBRARIES})
 endif (LINUX)
-
-
-
-    # from the matplotlib-cpp documentation
-#find_package(Python2 COMPONENTS Development NumPy)
-#target_include_directories(src PRIVATE ${Python2_INCLUDE_DIRS} ${Python2_NumPy_INCLUDE_DIRS})
-#target_link_libraries(src Python2::Python Python2::NumPy)
