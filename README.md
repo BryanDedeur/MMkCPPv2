@@ -30,6 +30,14 @@ cd /src/vcpkg
 ./vcpkg install jsoncpp
 ./vcpkg install matplotlib-cpp
 ```
+
+5. If you are using Clion you must add vcpkg tool chain to the cmake "File->Settings->Build, Execution, Deployment->CMake->CMake options:"
+```
+-DCMAKE_TOOLCHAIN_FILE=/src/vcpkg/scripts/buildsystems/vcpkg.cmake
+```
+- At this point its good to do the same for a debug and release profile
+- Click Apply to fininalize your settings.
+
 #### Linux
 
 In terminal, install the following packages
@@ -49,17 +57,13 @@ sudo apt-get install python-matplotlib python-numpy python2.7-dev
    - To create the cmake-build-debug that clion recognizes
 3. Use the build hammer to "build" or press the play "button to build" and run.
 
-#### Using Command Line Interface
+#### Using GCC and Command Line Interface
 
 ```
 cd src
 g++ -o ga *.cpp -I. -lm -ljsoncpp
 ./ga
 ``` 
-
-### Using GCC
-
-
 
 ### Using CMake
 
