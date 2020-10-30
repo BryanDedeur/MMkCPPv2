@@ -43,8 +43,10 @@ https://www.python.org/downloads/release/python-2718/
 
 7. Install Numpy for Python 2.7 by:
 - Making sure you have the proper environment variables
-    - Add Path "C:\Python27\Scripts\"
-- In Powershell or Command Prompt type
+```
+setx PATH “%PATH%;C:\Python27\Scripts”
+```
+- Then install numpy with pip
 ```
 pip-2 install numpy
 ```
