@@ -38,6 +38,17 @@ cd /src/vcpkg
 - At this point its good to do the same for a debug and release profile
 - Click Apply to fininalize your settings.
 
+6. Install Python 2.X because MatPlotLib needs Python2 libraries. 
+https://www.python.org/downloads/release/python-2718/
+
+7. Install Numpy for Python 2.7 by:
+- Making sure you have the proper environment variables
+    - Add Path "C:\Python27\Scripts\"
+- In Powershell or Command Prompt type
+```
+pip-2 install numpy
+```
+
 #### Linux
 
 In terminal, install the following packages
