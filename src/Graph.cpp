@@ -8,6 +8,9 @@
 #include "Graph.h"
 #include <iostream>
 #include <fstream>
+#include "matplotlibcpp.h"
+namespace plt = matplotlibcpp;
+
 
 #ifdef _WIN32
     #include <json.h>
@@ -19,6 +22,8 @@ using namespace std;
 
 // Graph Constructor
 Graph::Graph(Options options) : cachedShortestPaths() {
+    plt::plot({1,3,2,4});
+    plt::show();
 
 	//Create ifstream to read from option.dataFile
 	ifstream graph_file(options.datafile, ifstream::binary);

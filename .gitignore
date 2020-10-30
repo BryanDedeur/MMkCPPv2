@@ -1,6 +1,8 @@
 # Exclude everything that cmakelists has been generating
 src\cmake-build-debug\*
 src/cmake-build-debug/*
+src\cmake-build-release\*
+src/cmake-build-release/*
 
 .idea/*
 
@@ -13,3 +15,4 @@ src/cmake-build-debug/*
 *.obj
 
 
+src/cmake-build-release/CMakeFiles/progress.marks
