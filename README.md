@@ -4,6 +4,8 @@
 
 ### Dependencies
 
+NOTE: These instructions are experimental and may not work
+
 A list of dependencies that must be installed prior to code execution
 - Jsoncpp: https://github.com/open-source-parsers/jsoncpp
 - MatPlotLib-cpp: https://github.com/lava/matplotlib-cpp
