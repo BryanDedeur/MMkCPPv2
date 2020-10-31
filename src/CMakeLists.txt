@@ -5,11 +5,14 @@ project(main)
 set(CMAKE_CXX_STANDARD 17)
 
 SET(GCC_COVERAGE_COMPILE_FLAGS "-I.")
-SET(GCC_COVERAGE_LINK_FLAGS    "-lm -ljsoncpp -lpython3.8")
+SET(GCC_COVERAGE_LINK_FLAGS    "-lm -ljsoncpp -lpython3.6")
+
+include_directories(../benchmarks)
+
 
 if(WIN32)
 
-    SET(GCC_COVERAGE_COMPILE_FLAGS "-I/Users/Bryan/AppData/Local/Programs/Python/Python38-32/")
+    SET(GCC_COVERAGE_COMPILE_FLAGS "-I/Users/Bryan/AppData/Local/Programs/Python/Python36-32/")
 
     find_package(jsoncpp CONFIG REQUIRED)
     find_package(Python3 COMPONENTS Development NumPy)

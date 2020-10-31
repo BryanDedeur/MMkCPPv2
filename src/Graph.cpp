@@ -8,9 +8,6 @@
 #include "Graph.h"
 #include <iostream>
 #include <fstream>
-#include "matplotlibcpp.h"
-namespace plt = matplotlibcpp;
-
 
 #ifdef _WIN32
     #include <json.h>
@@ -22,8 +19,6 @@ using namespace std;
 
 // Graph Constructor
 Graph::Graph(Options options) : cachedShortestPaths() {
-    plt::plot({1,3,2,4});
-    plt::show();
 
 	//Create ifstream to read from option.dataFile
 	ifstream graph_file(options.datafile, ifstream::binary);
@@ -39,18 +34,13 @@ Graph::Graph(Options options) : cachedShortestPaths() {
 	
 	//Create float** to hold data read from json file
 	int numVerti = jsonGraph["graph"].size();
-	float** graph = (float **) malloc(numVerti * sizeof(float*));
-	for(int i = 0; i < numVerti; i++)
-	{
-		graph[i] = (float *) malloc(numVerti * sizeof(float));
-	}
 
 	//Read data from json to float**
 	for(int i = 0; i < numVerti; i++)
 	{
 		for(int j = 0; j < numVerti; j++)
 		{
-			graph[i][j] = jsonGraph["graph"][i]["list"][j].asFloat();
+			adjacencyMatrix.at(i).at(j) = jsonGraph["graph"][i]["list"][j].asFloat();
 		}
 	}
 
