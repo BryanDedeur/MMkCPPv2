@@ -56,7 +56,8 @@ pip-2 install numpy
 In terminal, install the following packages
 ```
 sudo apt-get install libjsoncpp-dev
-sudo apt-get install python-matplotlib python-numpy python2.7-dev
+sudo apt-get install python3-matplotlib python-numpy python3-dev
+
 ```
 
 ### Compilation and Execution
