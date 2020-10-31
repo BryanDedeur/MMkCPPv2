@@ -9,44 +9,38 @@
 #include <iostream>
 #include <fstream>
 
-#ifdef _WIN32
-    #include <json.h>
-#else
-    #include <jsoncpp/json/json.h>
-#endif
-
 using namespace std;
 
 // Graph Constructor
 Graph::Graph(Options options) : cachedShortestPaths() {
 
-	//Create ifstream to read from option.dataFile
-	ifstream graph_file(options.datafile, ifstream::binary);
-	if(graph_file.fail())
-	{
-		cerr << "ERROR: JSON file not found" << endl;
-		return;
-	}
+//	//Create ifstream to read from option.dataFile
+//	ifstream graph_file(options.datafile, ifstream::binary);
+//	if(graph_file.fail())
+//	{
+//		cerr << "ERROR: JSON file not found" << endl;
+//		return;
+//	}
+//
+//	//jsonGraph will hold the object in the json file
+//	Json::Value jsonGraph;
+//	graph_file >> jsonGraph;
 	
-	//jsonGraph will hold the object in the json file
-	Json::Value jsonGraph;
-	graph_file >> jsonGraph;
-	
-	//Create float** to hold data read from json file
-	int numVerti = jsonGraph["graph"].size();
+//	//Create float** to hold data read from json file
+//	int numVerti = jsonGraph["graph"].size();
+//
+//	//Read data from json to float**
+//	for(int i = 0; i < numVerti; i++)
+//	{
+//		for(int j = 0; j < numVerti; j++)
+//		{
+//			adjacencyMatrix.at(i).at(j) = jsonGraph["graph"][i]["list"][j].asFloat();
+//		}
+//	}
 
-	//Read data from json to float**
-	for(int i = 0; i < numVerti; i++)
-	{
-		for(int j = 0; j < numVerti; j++)
-		{
-			adjacencyMatrix.at(i).at(j) = jsonGraph["graph"][i]["list"][j].asFloat();
-		}
-	}
+//calculateNumberOfEdges();
 
-    calculateNumberOfEdges();
-
-    Path* path = getShortestPathBetweenEdges(1, 10);
+    //Path* path = getShortestPathBetweenEdges(1, 10);
 
 
 }
