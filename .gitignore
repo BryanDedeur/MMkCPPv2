@@ -1,8 +1,8 @@
 # Exclude everything that cmakelists has been generating
-src\cmake-build-debug\*
-src/cmake-build-debug/*
-src\cmake-build-release\*
-src/cmake-build-release/*
+cmake-build-debug\*
+cmake-build-debug/*
+cmake-build-release\*
+cmake-build-release/*
 
 .idea/*
 

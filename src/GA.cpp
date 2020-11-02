@@ -31,7 +31,7 @@ void GA::SetupOptions(int argc, char *argv[]){
 
 	// new stuff for mmkcpp
 	options.numRobots = 2;
-	options.datafile = std::string("../benchmarks/stacs-graphs/graph.json"); // TODO this may break in some cases, ie: the project runs from a different directory (cmake-build-debug)
+	options.datafile = std::string("../benchmarks/mmkcpp/graph-gdb1.csv"); // TODO this may break in some cases, ie: the project runs from a different directory (cmake-build-debug)
 }
 
 void GA::Init(){

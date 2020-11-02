@@ -6,10 +6,14 @@
 #define GRAPH_H
 
 #include "Options.h"
+#include "Utils.h"
 #include <iostream>
 #include <map>
 #include <vector>
 #include <climits>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -22,6 +26,7 @@ struct Path {
 };
 
 const int NUM_VERTICES_PER_EDGE = 2;
+const int MAX_NUM_VERTICES = 100;
 
 class Graph {
     public:
@@ -31,24 +36,25 @@ class Graph {
 
         void Init();
 
-        pair<int, int>* getVerticesOnEdge(int edgeA); // always returns two vertices
+        pair<int, int>* GetVerticesOnEdge(int edgeA); // always returns two vertices
 
-        Path* getShortestPathBetweenVertices(int startVertex, int endVertex);
-        Path* getShortestPathBetweenEdges(int edgeA, int edgeB);
+        Path* GetShortestPathBetweenVertices(int startVertex, int endVertex);
+        Path* GetShortestPathBetweenEdges(int edgeA, int edgeB);
 
         int numVertices;
         int numEdges;
     private:
+        void SetGraphFromFile(string file);
 
-        map<float, map<float, float>> adjacencyMatrix; // for storing weighted graph
+        int** adjacencyMatrix; // for storing weighted graph
 
-        void calculateNumberOfEdges();
+        void CalculateNumberOfEdges();
         map<int, map<int, Path>> cachedShortestPaths; // for storing the path results from dijkstra's algorithm
         map<int, map<int, Path>> cachedShortestPathBetweenEdges; // for storing the shortest paths between two edges
         map<int, pair<int, int>> cachedVerticesOnEdge; // for storing the association between edges and vertices
 
-        int minDistance(int dist[], bool sptSet[]);
-        void dijkstras(int startVertex);
+        int MinDistance(int dist[], bool sptSet[]);
+        void Dijkstras(int startVertex);
 
 };
 

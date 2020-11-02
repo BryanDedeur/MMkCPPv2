@@ -15,7 +15,6 @@ int main(int argc, char *argv[]) {
     cout << "Start MMkCPP genetic algorithm" << endl; // prints Simple genetic algorithm
 
     GA ga = GA(argc, argv);
-
     ga.Init();
     ga.Run();
 
