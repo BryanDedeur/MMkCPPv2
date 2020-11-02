@@ -22,7 +22,6 @@ GA::~GA() {
 void GA::SetupOptions(int argc, char *argv[]){
 	options.randomSeed = 121;
 	options.popSize = 30;
-	options.chromLength = 10;
 	options.maxgens = 60;
 	options.px = 0.7f;
 	options.pm = 0.001f;
@@ -30,7 +29,7 @@ void GA::SetupOptions(int argc, char *argv[]){
     options.outfile = std::string("outfile");
 
 	// new stuff for mmkcpp
-	options.numRobots = 2;
+	options.numRobots = 4;
 	options.datafile = std::string("../benchmarks/mmkcpp/graph-gdb1.csv"); // TODO this may break in some cases, ie: the project runs from a different directory (cmake-build-debug)
 }
 
@@ -38,7 +37,11 @@ void GA::Init(){
     graph = new Graph(options);
 	parent = new Population(options, graph);
 	child  = new Population(options, graph);
-	parent->Init(); // evaluates, stats, and reports on initial population
+
+	// Define the chromosome length based on graph info
+    options.chromLength = graph->numEdges + options.numRobots;
+
+    parent->Init(); // evaluates, stats, and reports on initial population
 	parent->Statistics();
 	parent->Report(0);
 }
@@ -46,7 +49,7 @@ void GA::Init(){
 void GA::Run(){
 	for(unsigned long int i = 1; i < options.maxgens; i++){
 		parent->Generation(child);
-		child->Evaluate();
+		child->EvaluateMembers();
 		child->Statistics();
 		child->Report(i);
 

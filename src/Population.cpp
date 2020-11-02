@@ -18,6 +18,8 @@ Population::Population(Options opts, Graph *gph) {
     for (int i = 0; i < options.popSize; i++){
         members[i] = new Individual(options, gph);
         members[i]->Init();
+        members[i]->Decode();
+        cout << *members[i] << endl;
     }
     graph = gph;
 }
@@ -27,12 +29,12 @@ Population::~Population() {
 }
 
 void Population::Init(){
-	Evaluate();
+	EvaluateMembers();
 }
 
-void Population::Evaluate(){
-	for (int i = 0; i < options.popSize; i++){
-		members[i]->fitness = Eval(members[i]);
+void Population::EvaluateMembers(){
+	for (int i = 0; i < options.popSize; i++) {
+	    members[i]->Evaluate();
 	}
 }
 

@@ -28,10 +28,9 @@ int IntInRange(int low, int high){
 	return low + rand()%(high - low);
 }
 
-
-
 /* greater than equal to 0 and less than 1 */
 float RandomFraction(){
 	return ((float)(rand()%1000))/(float)1000.0;
 }
+
 

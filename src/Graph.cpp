@@ -20,6 +20,7 @@ Graph::Graph(Options options) : cachedShortestPaths(), adjacencyMatrix(), numEdg
         }
     }
 
+
     SetGraphFromFile(options.datafile);
 
     CalculateNumberOfEdges();
@@ -116,40 +117,71 @@ pair<int, int>* Graph::GetVerticesOnEdge(int edge) {
 }
 
 
-Path* Graph::GetShortestPathBetweenVertices(int startVertex, int endVertex) {
+Path& Graph::GetShortestPathBetweenVertices(int startVertex, int endVertex) {
     // check cache before running dijkstras
     if (cachedShortestPaths.find(startVertex) == cachedShortestPaths.end()) { // start vertex has no existing path calculations
         Dijkstras(startVertex);
     }
 
-    return &cachedShortestPaths[startVertex][endVertex];
+    return cachedShortestPaths[startVertex][endVertex];
 }
 
-Path* Graph::GetShortestPathBetweenEdges(int edgeA, int edgeB) {
+Path& Graph::GetShortestPathBetweenEdges(int edgeA, int edgeB) {
     // check if best path has been cached
     if (cachedShortestPathBetweenEdges.find(edgeA) != cachedShortestPathBetweenEdges.end()) {
         if (cachedShortestPathBetweenEdges[edgeA].find(edgeB) != cachedShortestPathBetweenEdges[edgeA].end()) {
-            return &cachedShortestPathBetweenEdges[edgeA][edgeB];
+            return cachedShortestPathBetweenEdges[edgeA][edgeB];
         }
     }
 
     pair<int, int>* verticesOnEdgeA = GetVerticesOnEdge(edgeA);
     pair<int, int>* verticesOnEdgeB = GetVerticesOnEdge(edgeB);
 
-    Path* bestPath = GetShortestPathBetweenVertices(verticesOnEdgeA->first, verticesOnEdgeB->first);
-    Path* tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->first, verticesOnEdgeB->second);
-    if (bestPath->cost > tempPath->cost)
+    Path& bestPath = GetShortestPathBetweenVertices(verticesOnEdgeA->first, verticesOnEdgeB->first);
+    Path& tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->first, verticesOnEdgeB->second);
+    if (bestPath.cost > tempPath.cost)
         bestPath = tempPath;
     tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->second, verticesOnEdgeB->first);
-    if (bestPath->cost > tempPath->cost)
+    if (bestPath.cost > tempPath.cost)
         bestPath = tempPath;
     tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->second, verticesOnEdgeB->second);
-    if (bestPath->cost > tempPath->cost)
+    if (bestPath.cost > tempPath.cost)
         bestPath = tempPath;
 
-    cachedShortestPathBetweenEdges[edgeA][edgeB] = *bestPath;
-
+    cachedShortestPathBetweenEdges[edgeA][edgeB] = bestPath;
     return bestPath;
+}
+
+Path& Graph::GetShortestPathBetweenVertexAndEdge(int vertex, int edge) {
+    pair<int, int>* verticesOnEdge = GetVerticesOnEdge(edge);
+    // check cache before running dijkstras
+    if (cachedShortestPaths.find(vertex) == cachedShortestPaths.end()) { // start vertex has no existing path calculations
+        Dijkstras(vertex);
+    }
+
+    if (cachedShortestPaths[vertex][verticesOnEdge->first].cost < cachedShortestPaths[vertex][verticesOnEdge->second].cost) {
+        return cachedShortestPaths[vertex][verticesOnEdge->first];
+    }
+
+    return cachedShortestPaths[vertex][verticesOnEdge->second];
+}
+
+int& Graph::GetEdgeCost(int vertexA, int vertexB) {
+    if (adjacencyMatrix[vertexA][vertexB] < 0) {
+        //cerr << "Trying to get the cost of an edge that does not exist: (" << vertexA << ", " << vertexB << ")" << endl;
+    }
+    return adjacencyMatrix[vertexA][vertexB];
+}
+
+int& Graph::GetOppositeVertexOnEdge(int vertex, int edge) {
+    pair<int, int>* verticesOnEdge = GetVerticesOnEdge(edge);
+    if (verticesOnEdge->first == vertex) {
+        return verticesOnEdge->second;
+    } else if (verticesOnEdge->second == vertex) {
+        return verticesOnEdge->first;
+    }
+    //cerr << "Trying to associate a vertex with an edge that is not related: (vertex: " << vertex << ", edge(" << edge << "): (" << verticesOnEdge->first << ", " << verticesOnEdge->second << "))" << endl;
+    return verticesOnEdge->first;
 }
 
 // utility function for dijkstras

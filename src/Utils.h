@@ -16,6 +16,4 @@ float RandomFraction();
 int Flip(float prob);
 int IntInRange(int low, int high);
 
-
-
 #endif /* UTILS_H_ */

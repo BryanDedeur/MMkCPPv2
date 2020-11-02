@@ -11,6 +11,7 @@
 #include <string>
 #include "Const.h"
 #include "Graph.h"
+#include <iostream>
 
 struct Gene {
     int value;
@@ -22,7 +23,17 @@ struct Gene {
         std::swap(isRobot, other.isRobot);
         return *this;
     }
+
+    friend ostream& operator<<(ostream &os, const Gene& gene)
+    {
+        if (gene.isRobot) {
+            return os << "R" << gene.value;
+        }
+        return os << gene.value;
+    }
 };
+
+
 
 class Individual {
 public:
@@ -41,9 +52,18 @@ public:
     Graph* graph;
     Options* options;
 
+    // operator overrides
+    friend ostream& operator<<(ostream& os, const Individual& individual);
+
+    void Swap(int &indexA, int &indexB);
     void Evaluate(); // Reasoning: seems like evaluation is better done from within the class for better access to data members
+    void Decode();
+    Path* decoding; // one path per robot
+
+    int* robotChromIndex; // for storing the starting index of every robot
     int totalTravelDistance;
     float travelDistribution; // for each robot sum robot travel distance / totalTravelDistance
+
 
 };
 

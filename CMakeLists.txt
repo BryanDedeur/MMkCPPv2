@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 3.17)
 
-set(PROJECT_NAME ga)
-
-project(PROJECT_NAME)
+project(ga)
 
 set(CMAKE_CXX_STANDARD 14)
 
 SET(GCC_COVERAGE_COMPILE_FLAGS "-I.")
 SET(GCC_COVERAGE_LINK_FLAGS    "-lm")
 
-add_executable(PROJECT_NAME src/main.cpp
+add_executable(ga src/main.cpp
         src/GA.cpp src/GA.h
         src/Population.cpp src/Population.h
         src/Individual.cpp src/Individual.h

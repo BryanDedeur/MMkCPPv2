@@ -21,8 +21,26 @@ struct Path {
     vector<int> path; // vector because we don't know the size of the array
     int cost; // total cost to travel path
 
-    Path() : path(), cost(INT_MAX) {} // default constructor
-    Path(vector<int> pth, int &cst) : path(pth) , cost(cst) {} // path struct constructor
+    Path() : path(vector<int>()), cost(INT_MAX) {} // default constructor THINGS WILL BREAK WITH DIJKSTRAS IF COST IS NOT INT_MAX
+    Path(vector<int> pth, int cst) : path(pth) , cost(cst) {} // path struct constructor
+
+    Path& operator=(Path other) { // Assignment operator copying struct
+        this->path = vector<int>();
+        for (int& itr : other.path) {
+            this->path.push_back(itr);
+        }
+        this->cost = other.cost;
+        return *this;
+    }
+
+    // assignment operator override to help with combining paths together
+    Path& operator+=(const Path &rhsPath) {
+        for (const int& it : rhsPath.path) {
+            this->path.push_back(it);
+        }
+        this->cost += rhsPath.cost;
+        return *this;
+    }
 };
 
 const int NUM_VERTICES_PER_EDGE = 2;
@@ -38,8 +56,11 @@ class Graph {
 
         pair<int, int>* GetVerticesOnEdge(int edgeA); // always returns two vertices
 
-        Path* GetShortestPathBetweenVertices(int startVertex, int endVertex);
-        Path* GetShortestPathBetweenEdges(int edgeA, int edgeB);
+        Path& GetShortestPathBetweenVertices(int startVertex, int endVertex);
+        Path& GetShortestPathBetweenEdges(int edgeA, int edgeB);
+        Path& GetShortestPathBetweenVertexAndEdge(int vertex, int edge);
+        int& GetEdgeCost(int vertexA, int vertexB);
+        int& GetOppositeVertexOnEdge(int vertex, int edge);
 
         int numVertices;
         int numEdges;
