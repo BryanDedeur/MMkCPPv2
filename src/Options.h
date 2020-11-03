@@ -24,6 +24,10 @@ typedef struct {
 	float px;
 	float pm;
 
+	// TODO create an option for which mutator
+	// TODO create an option for which crossover
+	// TODO create an option for which selector
+
 	// Unique for mmkcpp
     int numRobots;
 

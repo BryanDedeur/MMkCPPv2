@@ -8,12 +8,12 @@
 #include "Individual.h"
 #include "Utils.h"
 
-Individual::Individual(Options &opts, Graph *gph) : chromLength(gph->numEdges + opts.numRobots) {
+Individual::Individual(Options *opts, Graph *gph) {
     fitness = -1;
     graph = gph;
-    options = &opts;
-    robotChromIndex = new int[opts.numRobots];
-    decoding = new Path[opts.numRobots];
+    options = opts;
+    robotChromIndex = new int[opts->numRobots];
+    decoding = new Path[opts->numRobots];
 }
 
 Individual::~Individual() {
@@ -24,7 +24,7 @@ Individual::~Individual() {
 
 void Individual::Init(){
     // Initialize the chromosome with every possible edge and every possible robot
-	for(int i = 0; i < chromLength; i++) {
+	for(int i = 0; i < options->chromLength; i++) {
         chromosome[i].value = i;
         if (i >= graph->numEdges) {
             chromosome[i].value = i - graph->numEdges;
@@ -32,8 +32,8 @@ void Individual::Init(){
         }
 	}
 	// Randomize chromosome by swapping every element with another element
-	for (int i = 0; i < chromLength; i++) {
-	    int otherIndex = rand() % chromLength;
+	for (int i = 0; i < options->chromLength; i++) {
+	    int otherIndex = rand() % options->chromLength;
         Swap(i, otherIndex);
 	}
 }
@@ -41,9 +41,9 @@ void Individual::Init(){
 ostream& operator<<(ostream& os, const Individual& individual)
 {
     os << "chromosome: [";
-    for (int i = 0; i < individual.chromLength; i++) {
+    for (int i = 0; i < individual.options->chromLength; i++) {
         os << individual.chromosome[i];
-        if (i < individual.chromLength - 1) {
+        if (i < individual.options->chromLength - 1) {
             os << ",";
         }
     }
@@ -73,14 +73,6 @@ void Individual::Swap(int &indexA, int &indexB) {
     }
 }
 
-void Individual::Mutate(double pm){
-	for(int i = 0; i < chromLength; i++){
-		if(Flip(pm)) {
-
-		}
-	}
-}
-
 void Individual::Evaluate() {
     Decode();
     fitness = 0;
@@ -88,7 +80,7 @@ void Individual::Evaluate() {
     for (int r = 0; r < options->numRobots; r++) {
         fitness += decoding[r].cost;
     }
-
+    fitness = 1/fitness; // Larger numbers get smaller
 }
 
 void Individual::Decode() {
@@ -99,10 +91,10 @@ void Individual::Decode() {
     for (int r = 0; r < options->numRobots; r++) {
         decoding[r] = Path(0);
         out << "R" << r << ": " << endl;
-        for (int i = 0; i < chromLength; i++) {
+        for (int i = 0; i < options->chromLength; i++) {
             // to account for cyclic encoding
-            int firstEdgeIndex = (robotChromIndex[r] + i + 1) % chromLength; // [R0, 0, 1
-            int secondEdgeIndex = (robotChromIndex[r] + i + 2) % chromLength;
+            int firstEdgeIndex = (robotChromIndex[r] + i + 1) % options->chromLength; // [R0, 0, 1
+            int secondEdgeIndex = (robotChromIndex[r] + i + 2) % options->chromLength;
             // no more edges to account for, this could happen with random encoding
             if (chromosome[firstEdgeIndex].isRobot) {
                 break;

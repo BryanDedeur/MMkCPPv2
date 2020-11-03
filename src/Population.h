@@ -16,11 +16,11 @@
 
 class Population {
 public:
-	Population(Options options, Graph *graph);
+	Population(Options* options, Graph *graph);
 	virtual ~Population();
 	//------------------------
 
-	Options options;
+	Options* options;
 	Individual *members[MAXPOP];
 	double avg, min, max, sumFitness;
     Graph* graph;
@@ -35,13 +35,17 @@ public:
 
     // Selectors
 	int ProportionalSelector();
+	int CHC(); // Cross generational elitist seletion
 
 	// Crossovers
+    //	void TwoPoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
+    //	void OnePoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
+    void PMX(Individual *p1, Individual *p2, Individual *c1, Individual *c2); // Permutation crossover
+    void OX(Individual *p1, Individual *p2, Individual *c1, Individual *c2); // Ordered crossover (heterogeneous recombination)
 
 	// Mutators
-	void TwoPoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
-	void OnePoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
-
+	// mutator is inside of individual class
+	void SwapMutate(Individual *i); // Two point swap mutation
 };
 
 #endif /* POPULATION_H_ */

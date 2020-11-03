@@ -37,10 +37,9 @@ struct Gene {
 
 class Individual {
 public:
-    Individual(Options &opts, Graph *graph);
+    Individual(Options *opts, Graph *graph);
     virtual ~Individual();
 
-	int chromLength;
 	Gene chromosome[MAX_CHROMLENGTH];
 	double fitness;
 

@@ -24,8 +24,7 @@ using namespace std;
 
 class Graph {
     public:
-        Graph();
-        Graph(Options options);
+        Graph(Options* options);
         virtual ~Graph();
 
         void Init();
@@ -43,6 +42,8 @@ class Graph {
 
         int numVertices;
         int numEdges;
+
+        Options* options;
     private:
         void SetGraphFromFile(string file);
 
