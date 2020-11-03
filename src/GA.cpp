@@ -36,6 +36,7 @@ void GA::SetupOptions(int argc, char *argv[]){
 
 void GA::Init(){
     graph = new Graph(options);
+    cout << *graph << endl;
 	parent = new Population(options, graph);
 	child  = new Population(options, graph);
 	parent->Init(); // evaluates, stats, and reports on initial population

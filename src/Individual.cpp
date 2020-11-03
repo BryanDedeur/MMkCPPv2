@@ -18,6 +18,8 @@ Individual::Individual(Options &opts, Graph *gph) : chromLength(gph->numEdges + 
 
 Individual::~Individual() {
 	// TODO Auto-generated destructor stub
+	delete [] robotChromIndex;
+	delete [] decoding;
 }
 
 void Individual::Init(){
@@ -115,7 +117,7 @@ void Individual::Decode() {
 
             // if two edges exist
             if (!chromosome[secondEdgeIndex].isRobot) {
-                Path& bestPath = graph->GetShortestPathBetweenEdges(chromosome[firstEdgeIndex].value, chromosome[secondEdgeIndex].value);
+                Path bestPath = graph->GetShortestPathBetweenEdges(chromosome[firstEdgeIndex].value, chromosome[secondEdgeIndex].value);
                 // TODO make sure best path starts with vertices on first edge and ends with vertices on second edge
                 out << "path(";
                 for (int& itr : bestPath.path) {
@@ -159,9 +161,15 @@ void Individual::Decode() {
                     } else { // at the best connecting edge
                         // do nothing
                     }
+                    for (int& itr : bestPath.path) {
+                        out << itr << "->";
+                    }
                 } else { // edges are not connected
                     out << "(C4)";
                     // if already at bestpath start vertex
+                    for (int& itr : bestPath.path) {
+                        out << itr << "->";
+                    }
                     if (decoding[r].path.back() == bestPath.path.front()) {
                         bestPath.path.erase(bestPath.path.begin());
                     } else { // travel to best starting vertex
@@ -170,11 +178,8 @@ void Individual::Decode() {
 //                        cout << decoding[r].path.back() << "->";
                     }
                     decoding[r] += bestPath;
+                }
 
-                }
-                for (int& itr : bestPath.path) {
-                    out << itr << "->";
-                }
             } else { // one edge exists
 
                 // if already traveled somewhere

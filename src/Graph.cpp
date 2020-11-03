@@ -26,20 +26,42 @@ Graph::Graph(Options options) : cachedShortestPaths(), adjacencyMatrix(), numEdg
         }
         cachedVerticesOnEdge[i] = make_pair(INT_MAX, INT_MAX);
     }
+    delete pathptr;
 
     SetGraphFromFile(options.datafile);
 
     CalculateNumberOfEdges();
+
+    // pre cache everything so we can print it
+    for (int i = 0; i < numVertices; i++) {
+        Dijkstras(i);
+    }
 }
 
 Graph::~Graph() {
     //TODO auto generated destructor tab
+
 }
 
 void Graph::Init() {
     //cacheShortestPaths();
     // TODO implement, this would be a good place to cache things ahead of time
 }
+
+ostream& operator<<(ostream& os, const Graph& graph) {
+    os << "Graph: costs to get to any vertex" << endl;
+    for (int i = 0; i < graph.numVertices; i++) {
+        for (int j = 0; j < graph.numVertices; j++) {
+            if (j == 0)
+                os << "(" << i << "," << j << ")" << graph.cachedShortestPaths[i][j].cost;
+            else
+                os << "\t" << "(" << i << "," << j << ")"<< graph.cachedShortestPaths[i][j].cost;
+        }
+        os << endl;
+    }
+    return os;
+}
+
 
 void Graph::SetGraphFromFile(string file) {
     fstream readFile;

@@ -24,6 +24,10 @@ Population::Population(Options opts, Graph *gph) {
 
 Population::~Population() {
 	// TODO Auto-generated destructor stub
+    for (int i = 0; i < options.popSize; i++){
+        delete members[i];
+    }
+
 }
 
 void Population::Init(){

@@ -56,6 +56,9 @@ class Graph {
 
         void Init();
 
+        // operator overrides
+        friend ostream& operator<<(ostream& os, const Graph& graph);
+
         pair<int, int>& GetVerticesOnEdge(int& edgeA); // always returns two vertices
 
         Path& GetShortestPathBetweenVertices(int& startVertex, int& endVertex);
