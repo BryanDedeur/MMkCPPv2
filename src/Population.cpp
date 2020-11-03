@@ -32,8 +32,8 @@ void Population::Init(){
 
 void Population::EvaluateMembers(){
 	for (int i = 0; i < options.popSize; i++) {
-		members[i]->Decode();
-		cout << *members[i] << endl;
+		members[i]->Evaluate();
+		//cout << *members[i] << endl;
 	}
 }
 

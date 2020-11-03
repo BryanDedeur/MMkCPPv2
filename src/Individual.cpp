@@ -92,6 +92,8 @@ void Individual::Evaluate() {
 void Individual::Decode() {
     // make sure array is valid
     ostringstream out;
+    out.str("");
+    out << "Individual Decoding: " << endl;
     for (int r = 0; r < options->numRobots; r++) {
         decoding[r] = Path(vector<int>(), 0);
         out << "R" << r << ": " << endl;
@@ -153,7 +155,7 @@ void Individual::Decode() {
                         int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
                         decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
                         decoding[r].path.push_back(oppositeVertex);
-                        out << decoding[r].path.back() << "->";
+                        //out << decoding[r].path.back() << "->";
                     } else { // at the best connecting edge
                         // do nothing
                     }
@@ -168,9 +170,10 @@ void Individual::Decode() {
 //                        cout << decoding[r].path.back() << "->";
                     }
                     decoding[r] += bestPath;
-                    for (int& itr : bestPath.path) {
-                        out << itr << "->";
-                    }
+
+                }
+                for (int& itr : bestPath.path) {
+                    out << itr << "->";
                 }
             } else { // one edge exists
 
@@ -197,7 +200,8 @@ void Individual::Decode() {
 
             }
             out << endl;
-            //cout << out.rdbuf();
         }
     }
+    cout << out.str();
+
 }
