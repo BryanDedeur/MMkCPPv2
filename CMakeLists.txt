@@ -19,4 +19,4 @@ add_executable(ga src/main.cpp
         src/Options.h
         src/Const.h
         src/Graph.cpp src/Graph.h
-        )
+        src/Path.cpp src/Path.h)

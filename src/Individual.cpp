@@ -97,7 +97,7 @@ void Individual::Decode() {
     out.str("");
     out << "Individual Decoding: " << endl;
     for (int r = 0; r < options->numRobots; r++) {
-        decoding[r] = Path(vector<int>(), 0);
+        decoding[r] = Path(0);
         out << "R" << r << ": " << endl;
         for (int i = 0; i < chromLength; i++) {
             // to account for cyclic encoding
@@ -107,21 +107,23 @@ void Individual::Decode() {
             if (chromosome[firstEdgeIndex].isRobot) {
                 break;
             }
-            pair<int, int> vertices = graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
-            out << " - itr: " << i << " {edge" << chromosome[firstEdgeIndex].value << "(" << vertices.first << "," << vertices.second << ")";
+            pair<int, int> *vertices = graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
+            out << " - itr: " << i << " {edge" << chromosome[firstEdgeIndex].value << "(" << vertices->first << "," << vertices->second << ") ";
             if (!chromosome[secondEdgeIndex].isRobot) {
                 vertices = graph->GetVerticesOnEdge(chromosome[secondEdgeIndex].value);
-                out << "edge" << chromosome[secondEdgeIndex].value << "(" << vertices.first << "," << vertices.second << ")";
+                out << "edge" << chromosome[secondEdgeIndex].value << "(" << vertices->first << "," << vertices->second << ")";
             }
-            out << "}: ";
+            out << "}:\t";
 
             // if two edges exist
             if (!chromosome[secondEdgeIndex].isRobot) {
-                Path bestPath = graph->GetShortestPathBetweenEdges(chromosome[firstEdgeIndex].value, chromosome[secondEdgeIndex].value);
+                pair<int, int> firstEdgeVertices = *graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
+                pair<int, int> secondEdgeVertices = *graph->GetVerticesOnEdge(chromosome[secondEdgeIndex].value);
+                Path *bestPath = graph->GetShortestPathBetweenEdges(chromosome[firstEdgeIndex].value, chromosome[secondEdgeIndex].value);
                 // TODO make sure best path starts with vertices on first edge and ends with vertices on second edge
                 out << "path(";
-                for (int& itr : bestPath.path) {
-                    if (itr == bestPath.path.back()) {
+                for (int& itr : bestPath->path) {
+                    if (itr == bestPath->path.back()) {
                         out << itr;
                     } else {
                         out << itr << "->";
@@ -134,50 +136,47 @@ void Individual::Decode() {
                 if (decoding[r].path.empty()) {
                     out << "(C1)";
                     // start travel from opposite vertex on from best path starting edge
-                    int oppositeVertex = graph->GetOppositeVertexOnEdge(bestPath.path.front(), chromosome[firstEdgeIndex].value);
-                    decoding[r].cost += graph->GetEdgeCost(oppositeVertex, bestPath.path.front());
+                    int oppositeVertex = graph->GetOppositeVertexOnEdge(bestPath->path.front(), chromosome[firstEdgeIndex].value);
+                    decoding[r].cost += graph->GetEdgeCost(oppositeVertex, bestPath->path.front());
                     decoding[r].path.push_back(oppositeVertex);
                     out << decoding[r].path.back() << "->";
-                    decoding[r].path.push_back(bestPath.path.front());
+                    decoding[r].path.push_back(bestPath->path.front());
                 } else { // traveled somewhere before
                     out << "(C2)";
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
                     decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
                     out << decoding[r].path.back() << "->";
                     decoding[r].path.push_back(oppositeVertex);
+                    out << decoding[r].path.back() << "->";
                 }
-                out << decoding[r].path.back() << "->";
 
                 // Travel to next edge (but dont travel the edge)
                 // edges are connected
-                if (bestPath.path.size() == 1) {
+                if (bestPath->path.size() == 1) {
                     out << "(C3)";
                     // if not at the best connecting vertex, travel to that vertex
-                    if (bestPath.path.back() != decoding[r].path.back()) {
+                    if (bestPath->path.back() != decoding[r].path.back()) {
                         int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
                         decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
                         decoding[r].path.push_back(oppositeVertex);
-                        //out << decoding[r].path.back() << "->";
+                        out << decoding[r].path.back() << "->";
                     } else { // at the best connecting edge
                         // do nothing
-                    }
-                    for (int& itr : bestPath.path) {
-                        out << itr << "->";
                     }
                 } else { // edges are not connected
                     out << "(C4)";
                     // if already at bestpath start vertex
-                    for (int& itr : bestPath.path) {
+                    for (int& itr : bestPath->path) {
                         out << itr << "->";
                     }
-                    if (decoding[r].path.back() == bestPath.path.front()) {
-                        bestPath.path.erase(bestPath.path.begin());
+                    if (decoding[r].path.back() == bestPath->path.front()) {
+                        decoding[r].path.pop_back();
                     } else { // travel to best starting vertex
 //                        decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), bestPath.path.front());
 //                        decoding[r].path.push_back(bestPath.path.front());
 //                        cout << decoding[r].path.back() << "->";
                     }
-                    decoding[r] += bestPath;
+                    decoding[r] += *bestPath;
                 }
 
             } else { // one edge exists
@@ -190,11 +189,11 @@ void Individual::Decode() {
                     decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
                     decoding[r].path.push_back(oppositeVertex);
                 } else { // randomly start somewhere and end on opposite vertex on edge
-                    pair<int, int> vertices = graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
+                    pair<int, int> *vertices = graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
                     if (rand() % 2 == 0) {
-                        decoding[r].path.push_back(vertices.first);
+                        decoding[r].path.push_back(vertices->first);
                     } else {
-                        decoding[r].path.push_back(vertices.second);
+                        decoding[r].path.push_back(vertices->second);
                     }
                     out << "robot(" << decoding[r].path.back() << "->";
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
@@ -207,6 +206,6 @@ void Individual::Decode() {
             out << endl;
         }
     }
-    cout << out.str();
+    //cout << out.str();
 
 }
