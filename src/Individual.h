@@ -61,9 +61,9 @@ public:
     Path* decoding; // one path per robot
 
     int* robotChromIndex; // for storing the starting index of every robot
-    int totalTravelDistance;
-    float travelDistribution; // for each robot sum robot travel distance / totalTravelDistance
 
+//    int totalTravelDistance;
+//    float travelDistribution; // for each robot sum robot travel distance / totalTravelDistance
 
 };
 

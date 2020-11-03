@@ -35,17 +35,12 @@ public:
 
     // Selectors
 	int ProportionalSelector();
-	// TODO implement CHC selection (Cross generation elitist seletion)
-
 
 	// Crossovers
-    // TODO implement order crossover (Heterogenous recombination)
-
 
 	// Mutators
 	void TwoPoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
 	void OnePoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
-	// TODO implement Cataclysmic mutation
 
 };
 

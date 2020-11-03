@@ -18,8 +18,6 @@ Population::Population(Options opts, Graph *gph) {
     for (int i = 0; i < options.popSize; i++){
         members[i] = new Individual(options, gph);
         members[i]->Init();
-        members[i]->Decode();
-        cout << *members[i] << endl;
     }
     graph = gph;
 }
@@ -34,7 +32,8 @@ void Population::Init(){
 
 void Population::EvaluateMembers(){
 	for (int i = 0; i < options.popSize; i++) {
-	    members[i]->Evaluate();
+		members[i]->Decode();
+		cout << *members[i] << endl;
 	}
 }
 
@@ -78,16 +77,16 @@ void Population::Generation(Population *child){
 
 void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2){
 
-    for(int i = 0; i < options.chromLength; i++){ //First copy
-        c1->chromosome[i] = p1->chromosome[i];
-        c2->chromosome[i] = p2->chromosome[i];
-    }
-    if(Flip(options.px)){ // if prob, then cross/exchange bits
-        OnePoint(p1, p2, c1, c2);
-    }
-
-    c1->Mutate(options.pm);
-    c2->Mutate(options.pm);
+//    for(int i = 0; i < options.chromLength; i++){ //First copy
+//        c1->chromosome[i] = p1->chromosome[i];
+//        c2->chromosome[i] = p2->chromosome[i];
+//    }
+//    if(Flip(options.px)){ // if prob, then cross/exchange bits
+//        OnePoint(p1, p2, c1, c2);
+//    }
+//
+//    c1->Mutate(options.pm);
+//    c2->Mutate(options.pm);
 }
 
 int Population::ProportionalSelector(){
