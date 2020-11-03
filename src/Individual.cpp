@@ -48,14 +48,14 @@ ostream& operator<<(ostream& os, const Individual& individual)
         }
     }
     os << "]" << endl;
-    os << "decoding: " << endl;
-    for (int r = 0; r < individual.options->numRobots; r++) {
-        os << "R" << r << " path(cost: "<< individual.decoding[r].cost << "): ";
-        for (int &itr : individual.decoding[r].path) {
-            os << itr << " ";
-        }
-        os << endl;
-    }
+//    os << "decoding: " << endl;
+//    for (int r = 0; r < individual.options->numRobots; r++) {
+//        os << "R" << r << " path(cost: "<< individual.decoding[r].cost << "): ";
+//        for (int &itr : individual.decoding[r].path) {
+//            os << itr << " ";
+//        }
+//        os << endl;
+//    }
     return os;
 }
 

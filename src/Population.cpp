@@ -89,7 +89,8 @@ void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, 
     // Crossover
     if(Flip(options->px)){ // if prob, then cross/exchange bits
         // TODO add option to make sure we select the right crossover operator
-        PMX(p1, p2, c1, c2);
+        OX(p1, p2, c1, c2);
+
     }
 
     // Mutate
@@ -145,7 +146,41 @@ void Population::PMX(Individual *p1, Individual *p2, Individual *c1, Individual 
 }
 
 void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *c2) {
+    cout << "ORDER CROSSOVER" << endl;
+    cout << "p1:" << endl << *p1 << endl;
+    cout << "p2:" << endl << *p2 << endl;
 
+    //Randomize first index value
+    int t1 = IntInRange(0, options->chromLength);
+
+    //Randomize second index value, not equal to first
+    int t2;
+    do {
+        t2 = IntInRange(0, options->chromLength);
+    } while(t2 == t1);
+
+    //If first is after second, swap
+    if(t1 > t2){
+        int temp = t1;
+        t1 = t2;
+        t2 = temp;
+    }
+
+    cout << t1 << endl;
+    cout << t2 << endl;
+
+    //Arrays to track which value have been copied over
+    int* arr1 = new int[options->chromLength];
+    int* arr2 = new int[options->chromLength];
+
+    //Copy genes directly from t1 to t2, track copied genes
+    for(int i = t1; i < t2; i++) {
+        c1->chromosome[i] = p1->chromosome[i];
+        arr1[i] = p1->chromosome[i].value;
+        c2->chromosome[i] = p2->chromosome[i];
+    }
+    cout << "c1:" << endl << *c1 << endl;
+    cout << "c2:" << endl << *c2 << endl;
 }
 
 // --------------------------- Mutators ---------------------------
