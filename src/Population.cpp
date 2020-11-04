@@ -96,7 +96,7 @@ void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, 
     if(Flip(options->px)){ // if prob, then cross/exchange bits
         // TODO add option to make sure we select the right crossover operator
         //PMX(p1, p2, c1, c2);
-        //OX(p1, p2, c1, c2);
+        OX(p1, p2, c1, c2);
     }
 
     // Mutate
