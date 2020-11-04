@@ -12,7 +12,6 @@
 
 #include <iostream>
 
-#include <climits>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -43,7 +42,6 @@ class Graph {
         int numVertices;
         int numEdges;
 
-        Options* options;
     private:
         void SetGraphFromFile(string file);
 

@@ -19,8 +19,10 @@ struct Gene {
 
     Gene() : value(0), isRobot(false) {}
     Gene& operator=(Gene other) { // Assignment operator copying gene struct
-        std::swap(value, other.value);
-        std::swap(isRobot, other.isRobot);
+        this->value = other.value;
+        this->isRobot = other.isRobot;
+//        std::swap(value, other.value);
+//        std::swap(isRobot, other.isRobot);
         return *this;
     }
 
@@ -47,6 +49,8 @@ public:
     void Mutate(double pm);
 
     // new additions
+    Individual& operator=(Individual other);
+
 
     Graph* graph;
     Options* options;

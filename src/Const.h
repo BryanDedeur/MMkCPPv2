@@ -16,5 +16,4 @@
 #define NUM_VERTICES_PER_EDGE 2
 #define MAX_EDGES 50
 
-
 #endif /* CONST_H_ */

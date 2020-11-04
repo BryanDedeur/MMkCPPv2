@@ -24,8 +24,10 @@ public:
 	Individual *members[MAXPOP];
 	double avg, min, max, sumFitness;
     Graph* graph;
+    Individual* bestIndividual;
 
-	void Init();
+
+    void Init();
 	void EvaluateMembers();
 	void Generation(Population *child);
 	void Report(unsigned long int gen);

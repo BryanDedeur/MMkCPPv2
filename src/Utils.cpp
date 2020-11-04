@@ -10,6 +10,12 @@
 #include <fstream>
 #include <string>
 
+void ClearFile(std::string filename) {
+    std::ofstream ofs;
+    ofs.open(filename, std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+}
+
 void WriteBufToFile(std::string buf, std::string filename){
 	std::ofstream ofs(filename, std::ofstream::app);
 	if(ofs.good()){
@@ -18,6 +24,19 @@ void WriteBufToFile(std::string buf, std::string filename){
 	ofs.flush();
 	ofs.close();
 }
+
+bool ArrayContains(int* arr, int val)
+{
+    for(int i = 0; i < sizeof(arr) / sizeof(int); i++)
+    {
+        if(arr[i] == val)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 int Flip(float prob){
 	return (rand() < prob*RAND_MAX ? 1 : 0);
@@ -32,5 +51,7 @@ int IntInRange(int low, int high){
 float RandomFraction(){
 	return ((float)(rand()%1000))/(float)1000.0;
 }
+
+
 
 

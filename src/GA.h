@@ -28,7 +28,7 @@ public:
 	Population *child;
 	Options options;
 
-
+	Individual* bestIndividual;
 	void SetupOptions(int argc, char*argv[]);
 
 	void Init();

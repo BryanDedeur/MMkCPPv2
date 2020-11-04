@@ -10,7 +10,10 @@
 
 #include <string>
 
+
+void ClearFile(std::string filename);
 void WriteBufToFile(std::string buf, std::string filename);
+bool ArrayContains(int* arr, int val);
 
 float RandomFraction();
 int Flip(float prob);

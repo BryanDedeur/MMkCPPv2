@@ -4,6 +4,9 @@
 
 #include "Path.h"
 
+#include <climits>
+
+
 Path::Path() : path(), cost(INT_MAX) {
 
 } // default constructor THINGS WILL BREAK WITH DIJKSTRAS IF COST IS NOT INT_MAX

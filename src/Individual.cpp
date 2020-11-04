@@ -47,15 +47,15 @@ ostream& operator<<(ostream& os, const Individual& individual)
             os << ",";
         }
     }
-    os << "]" << endl;
-//    os << "decoding: " << endl;
-//    for (int r = 0; r < individual.options->numRobots; r++) {
-//        os << "R" << r << " path(cost: "<< individual.decoding[r].cost << "): ";
-//        for (int &itr : individual.decoding[r].path) {
-//            os << itr << " ";
-//        }
-//        os << endl;
-//    }
+    os << "]";
+    os << endl << "decoding: " << endl;
+    for (int r = 0; r < individual.options->numRobots; r++) {
+        os << "R" << r << " path(cost: "<< individual.decoding[r].cost << "): ";
+        for (int &itr : individual.decoding[r].path) {
+            os << itr << " ";
+        }
+        os << endl;
+    }
     return os;
 }
 
@@ -82,6 +82,15 @@ void Individual::Evaluate() {
     }
     fitness = 1/fitness; // Larger numbers get smaller
 }
+
+Individual& Individual::operator=(Individual other){
+    for (int i = 0; i < options->chromLength; i++) {
+        this->chromosome[i] = other.chromosome[i];
+    }
+    this->fitness = other.fitness;
+    return *this;
+}
+
 
 void Individual::Decode() {
     // make sure array is valid

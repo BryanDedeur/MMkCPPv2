@@ -19,6 +19,9 @@ Population::Population(Options* opts, Graph *gph) {
         members[i] = new Individual(options, gph);
         members[i]->Init();
     }
+    bestIndividual = new Individual(options, gph);
+    bestIndividual->Init();
+    bestIndividual->Evaluate();
     graph = gph;
 }
 
@@ -38,6 +41,9 @@ void Population::EvaluateMembers(){
 	for (int i = 0; i < options->popSize; i++) {
 		members[i]->Evaluate();
 		//cout << *members[i] << endl;
+//		if (members[i]->fitness > bestIndividual->fitness) {
+//		    *bestIndividual = *members[i];
+//		}
 	}
 }
 
@@ -57,9 +63,9 @@ void Population::Statistics(){
 
 void Population::Report(unsigned long int gen){
 	char printbuf[1024];
-	sprintf(printbuf, "%4i \t %f \t %f \t %f\n ", (int)gen, min, avg, max);
+	sprintf(printbuf, "%4i \t %f \t %f \t %f\n ", (int)gen, 1/min, 1/avg, 1/max);
 	WriteBufToFile(std::string(printbuf), options->outfile);
-	std::cout << printbuf;
+	//std::cout << printbuf;
 }
 
 void Population::Generation(Population *child){
@@ -89,8 +95,8 @@ void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, 
     // Crossover
     if(Flip(options->px)){ // if prob, then cross/exchange bits
         // TODO add option to make sure we select the right crossover operator
-        OX(p1, p2, c1, c2);
-
+        //PMX(p1, p2, c1, c2);
+        //OX(p1, p2, c1, c2);
     }
 
     // Mutate
@@ -137,50 +143,97 @@ int Population::CHC() {
 
 void Population::PMX(Individual *p1, Individual *p2, Individual *c1, Individual *c2) {
     // TODO make sure PMX boundary is correct or is it fixed
-    int lowerBound = rand() % options->chromLength;
-    int upperBound = rand() % (options->chromLength - lowerBound) + lowerBound; // TODO double check this
-
-    for(int i = 0; i < options->chromLength; i++){
-
+    int lowerBound = rand() % (options->chromLength - 1) + 1;
+    int upperBound = (rand() % (options->chromLength - lowerBound + 1)) + (lowerBound); // TODO double check this
+    
+    if (lowerBound >= upperBound || lowerBound < 0 || upperBound >= options->chromLength) {
+       // cerr << "NO" << endl;
     }
+
+    cout << endl << "PMX CROSSOVER: " << options->chromLength << " (" << lowerBound << ", " << upperBound << ")" << endl;
+
+    // 1. Copy a random swath of consecutive alleles from parent to corresponding children
+//    for (int i = lowerBound; i <= upperBound; i++) {
+//        c1[i] = p1[i];
+//        c2[i] = p2[i];
+//    }
+    // This is explicit done just by copying the parent to the child
+
+    cout << "p1: " << *p1 << endl;
+    cout << "p2: " << *p2 << endl;
+    cout << "c1: " << *c1 << endl;
+    cout << "c2: " << *c2 << endl;
 }
 
 void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *c2) {
-    cout << "ORDER CROSSOVER" << endl;
-    cout << "p1:" << endl << *p1 << endl;
-    cout << "p2:" << endl << *p2 << endl;
-
-    //Randomize first index value
+    //Get random index points
     int t1 = IntInRange(0, options->chromLength);
-
-    //Randomize second index value, not equal to first
     int t2;
-    do {
+    do
+    {
         t2 = IntInRange(0, options->chromLength);
-    } while(t2 == t1);
+    }while(t2 == t1);
 
-    //If first is after second, swap
-    if(t1 > t2){
+    if(t1 > t2)
+    {
         int temp = t1;
         t1 = t2;
         t2 = temp;
     }
+//    cout << "t1: " << t1 << endl;	//<--TEMP for debugging
+//    cout << "t2: " << t2 << endl;	//<--TEMP for debugging
 
-    cout << t1 << endl;
-    cout << t2 << endl;
-
-    //Arrays to track which value have been copied over
+    //Directly copy genes between index points, track copied values with arrays
+    int len = options->chromLength;
     int* arr1 = new int[options->chromLength];
     int* arr2 = new int[options->chromLength];
+    for (int i = 0; i < options->chromLength; i++) {
+        arr1[i] = -1;
+        arr2[i] = -1;
+    }
 
-    //Copy genes directly from t1 to t2, track copied genes
-    for(int i = t1; i < t2; i++) {
+    for(int i = t1; i <= t2; i++)
+    {
         c1->chromosome[i] = p1->chromosome[i];
         arr1[i] = p1->chromosome[i].value;
         c2->chromosome[i] = p2->chromosome[i];
+        arr2[i] = p2->chromosome[i].value;
     }
-    cout << "c1:" << endl << *c1 << endl;
-    cout << "c2:" << endl << *c2 << endl;
+    //Copy remaining values from opposite parent
+    int i1 = 0;	//<--To access spaces outside of index points
+    int i2 = 0;
+    for(int i = 0; i < options->chromLength; i++)
+    {
+        //Skip spaces already copied to
+        if(i1 == t1)
+        {
+            i1 = t2 + 1;
+        }
+        if(i2 == t1)
+        {
+            i2 = t2 + 1;
+        }
+        if(!ArrayContains(arr1, p2->chromosome[i].value))
+        {
+            c1->chromosome[i1] = p2->chromosome[i];
+            i1++;
+        }
+        if(!ArrayContains(arr2, p1->chromosome[i].value))
+        {
+            c2->chromosome[i2] = p1->chromosome[i];
+            i2++;
+        }
+    }
+
+//    //TEMP: Print children for debugging
+//    cout << "c1: ";
+//    PrintArray(c1);
+//
+//    cout << "c2: ";
+//    PrintArray(c2);
+
+
+
 }
 
 // --------------------------- Mutators ---------------------------

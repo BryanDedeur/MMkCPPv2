@@ -7,11 +7,12 @@
 
 #include "GA.h"
 #include <string>
-#include<iostream>
+#include <iostream>
 
 GA::GA(int argc, char *argv[]) {
 	SetupOptions(argc, argv);
 	srand(options.randomSeed);
+    ClearFile(options.outfile);
 }
 
 GA::~GA() {
@@ -27,7 +28,7 @@ void GA::SetupOptions(int argc, char *argv[]){
 	options.px = 0.7f;
 	options.pm = 0.001f;
     options.infile = std::string ("infile");
-    options.outfile = std::string("outfile");
+    options.outfile = std::string("../outfile");
 
 	// new stuff for mmkcpp
 	options.numRobots = 4;
@@ -42,6 +43,10 @@ void GA::Init(){
 	parent->Init(); // evaluates, stats, and reports on initial population
 	parent->Statistics();
 	parent->Report(0);
+
+    bestIndividual = new Individual(&options, graph);
+    bestIndividual->Init();
+    bestIndividual->Evaluate();
 }
 
 void GA::Run(){
@@ -54,7 +59,9 @@ void GA::Run(){
 		Population *tmp = parent;
 		parent = child;
 		child = tmp;
+		if (bestIndividual->fitness > parent->bestIndividual->fitness) {
+		    *bestIndividual = *parent->bestIndividual;
+		}
 	}
-
 }
 
