@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
         ga.options.randomSeed = time(NULL);
         ga.Init();
         ga.Run();
-        cout << "Trial " << i << " seed(" << ga.options.randomSeed << "): GA "<< ga.options.maxgens << " generations complete" << endl;
+        cout << "Trial " << i << " seed(" << ga.options.randomSeed << "): GA "<< ga.options.maxgens << " generations evolved" << endl;
         end = clock();
         aveTime += double(end - mid);
     }
