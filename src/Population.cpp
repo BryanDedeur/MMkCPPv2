@@ -19,9 +19,7 @@ Population::Population(Options* opts, Graph *gph) {
         members[i] = new Individual(options, gph);
         members[i]->Init();
     }
-    bestIndividual = new Individual(options, gph);
-    bestIndividual->Init();
-    bestIndividual->Evaluate();
+    bestIndividual = members[0];
     graph = gph;
 }
 
@@ -40,11 +38,11 @@ void Population::Init(){
 void Population::EvaluateMembers(){
 	for (int i = 0; i < options->popSize; i++) {
 		members[i]->Evaluate();
-		//cout << *members[i] << endl;
-//		if (members[i]->fitness > bestIndividual->fitness) {
-//		    *bestIndividual = *members[i];
-//		}
+		if (members[i]->fitness > bestIndividual->fitness) {
+		    bestIndividual = members[i];
+		}
 	}
+
 }
 
 void Population::Statistics(){
@@ -71,9 +69,16 @@ void Population::Report(unsigned long int gen){
 void Population::Generation(Population *child){
 	int pi1, pi2, ci1, ci2;
 	Individual *p1, *p2, *c1, *c2;
-	for(int i = 0; i < options->popSize; i += 2){
-		pi1 = ProportionalSelector();
-		pi2 = ProportionalSelector();
+	for(int i = 0; i < options->popSize; i += 2) {
+        switch(options->selector) {
+            case SelectorType::CHC:
+                // TODO Add CHC selection here
+                break;
+            default:
+                pi1 = ProportionalSelector();
+                pi2 = ProportionalSelector();
+                break;
+        }
 
 		ci1 = i;
 		ci2 = i + 1;
@@ -86,23 +91,33 @@ void Population::Generation(Population *child){
 }
 
 void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2){
-    // Reproduce
-    for(int i = 0; i < options->chromLength; i++){
-        c1->chromosome[i] = p1->chromosome[i];
-        c2->chromosome[i] = p2->chromosome[i];
-    }
+    // Reproduce using assignment operator
+    *c1 = *p1;
+    *c2 = *p2;
 
     // Crossover
     if(Flip(options->px)){ // if prob, then cross/exchange bits
-        // TODO add option to make sure we select the right crossover operator
-        //PMX(p1, p2, c1, c2);
-        OX(p1, p2, c1, c2);
+        switch(options->crossover) {
+            case CrossoverType::OX:
+                //OX(p1, p2, c1, c2);
+                break;
+            default:
+                //PMX(p1, p2, c1, c2);
+                break;
+        }
     }
 
     // Mutate
-    // TODO add option to pick which mutation operator
-    SwapMutate(c1);
-    SwapMutate(c2);
+    switch(options->mutator) {
+        case MutationType::Cataclysmic:
+
+            break;
+        default:
+            SwapMutate(c1);
+            SwapMutate(c2);
+            break;
+    }
+
 }
 
 int Population::ProportionalSelector(){

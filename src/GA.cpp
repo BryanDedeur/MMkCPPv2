@@ -6,7 +6,6 @@
  */
 
 #include "GA.h"
-#include <string>
 #include <iostream>
 
 GA::GA(int argc, char *argv[]) {
@@ -21,18 +20,23 @@ GA::~GA() {
 
 
 void GA::SetupOptions(int argc, char *argv[]){
-	options.randomSeed = 121;
+	options.randomSeed = time(NULL);
 	options.popSize = 30;
 	options.chromLength = 10;
-	options.maxgens = 60;
+	options.maxgens = 50;
 	options.px = 0.7f;
 	options.pm = 0.001f;
-    options.infile = std::string ("infile");
-    options.outfile = std::string("../outfile");
+    options.infile = "../infile";
+    options.outfile = "../outfile";
 
 	// new stuff for mmkcpp
 	options.numRobots = 4;
-	options.datafile = std::string("../benchmarks/mmkcpp/graph-gdb1.csv");
+	options.datafile = "../benchmarks/mmkcpp/graph-gdb1.csv";
+	options.decodedfile = "../routes";
+
+	options.selector = FitnessProportional;
+	options.crossover = OX;
+	options.mutator = Swap;
 }
 
 void GA::Init(){
@@ -43,25 +47,22 @@ void GA::Init(){
 	parent->Init(); // evaluates, stats, and reports on initial population
 	parent->Statistics();
 	parent->Report(0);
-
-    bestIndividual = new Individual(&options, graph);
-    bestIndividual->Init();
-    bestIndividual->Evaluate();
 }
 
 void GA::Run(){
 	for(unsigned long int i = 1; i < options.maxgens; i++){
 		parent->Generation(child);
 		child->EvaluateMembers();
-		child->Statistics();
+		if (child->bestIndividual->fitness > bestFitness) {
+            bestFitness = child->bestIndividual->fitness;
+            child->bestIndividual->WriteToFile(options.decodedfile);
+		}
+        child->Statistics();
 		child->Report(i);
 
 		Population *tmp = parent;
 		parent = child;
 		child = tmp;
-		if (bestIndividual->fitness > parent->bestIndividual->fitness) {
-		    *bestIndividual = *parent->bestIndividual;
-		}
 	}
 }
 

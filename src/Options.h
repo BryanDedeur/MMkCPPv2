@@ -10,11 +10,16 @@
 
 #include <string>
 
+enum SelectorType {FitnessProportional, CHC};
+enum CrossoverType {PMX, OX};
+enum MutationType {Swap, Cataclysmic};
+
 typedef struct {
 	std::string infile;
 	std::string outfile;
 
 	std::string datafile;
+	std::string decodedfile;
 
 	long int randomSeed;
 	int popSize;
@@ -24,14 +29,12 @@ typedef struct {
 	float px;
 	float pm;
 
-	// TODO create an option for which mutator
-	// TODO create an option for which crossover
-	// TODO create an option for which selector
+	SelectorType selector;
+	CrossoverType crossover;
+	MutationType mutator;
 
 	// Unique for mmkcpp
     int numRobots;
-
-
 } Options;
 
 #endif /* OPTIONS_H_ */

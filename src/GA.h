@@ -8,6 +8,7 @@
 #ifndef GA_H_
 #define GA_H_
 
+#include <time.h>
 #include "Population.h"
 #include "Options.h"
 #include "Graph.h"
@@ -28,7 +29,7 @@ public:
 	Population *child;
 	Options options;
 
-	Individual* bestIndividual;
+	double bestFitness;
 	void SetupOptions(int argc, char*argv[]);
 
 	void Init();

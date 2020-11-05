@@ -2,6 +2,7 @@
  * @Project: MMkCPP v2
  * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
  * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Copyright: University of Nevada, Reno
  * @Date: 10/18/20
  */
 
@@ -21,8 +22,6 @@ struct Gene {
     Gene& operator=(Gene other) { // Assignment operator copying gene struct
         this->value = other.value;
         this->isRobot = other.isRobot;
-//        std::swap(value, other.value);
-//        std::swap(isRobot, other.isRobot);
         return *this;
     }
 
@@ -44,29 +43,22 @@ public:
 
 	Gene chromosome[MAX_CHROMLENGTH];
 	double fitness;
+    Graph* graph;
+    Options* options;
+    Path* decoding; // one path per robot
+    int* robotChromIndex; // for storing the starting index of every robot
 
     void Init();
     void Mutate(double pm);
-
-    // new additions
-    Individual& operator=(Individual other);
-
-
-    Graph* graph;
-    Options* options;
-
-    // operator overrides
-    friend ostream& operator<<(ostream& os, const Individual& individual);
-
     void Swap(int &indexA, int &indexB);
     void Evaluate(); // Reasoning: seems like evaluation is better done from within the class for better access to data members
     void Decode();
-    Path* decoding; // one path per robot
+    void WriteToFile(string filename); // There might be a better way of doing this
 
-    int* robotChromIndex; // for storing the starting index of every robot
-
-//    int totalTravelDistance;
-//    float travelDistribution; // for each robot sum robot travel distance / totalTravelDistance
+    // new additions
+    Individual& operator=(Individual other);
+    // operator overrides
+    friend ostream& operator<<(ostream& os, const Individual& individual);
 
 };
 

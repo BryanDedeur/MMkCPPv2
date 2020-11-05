@@ -26,6 +26,7 @@ def plotAdjacencyMatrix(adj):
     ax.axes.yaxis.set_ticks([])
     # plot the graph
     plt.plot(x, y, 'bo', color='red', label='POINT')
+    sum = 0
     for i in range(n):
         plt.annotate(i,  # this is the text
                      (x[i], y[i]),  # this is the point to label
@@ -35,6 +36,7 @@ def plotAdjacencyMatrix(adj):
                      color='red')  # horizontal alignment can be left, right or center
         for j in range(i + 1, n):
             if adj[i, j] != -1:
+                sum += adj[i, j]
                 plt.plot((x[i], x[j]), (y[i], y[j]), color='blue')
                 plt.annotate(adj[i, j],  # this is the text
                              ((x[i] + x[j]) / 2, (y[i] + y[j]) / 2),  # this is the point to label
@@ -42,6 +44,7 @@ def plotAdjacencyMatrix(adj):
                              xytext=(0, 5),  # distance from text to points (x,y)
                              ha='center',
                              color='blue')  # horizontal alignment can be left, right or center
+    print("Sum of edges = ", sum)
     plt.show()
     return
 

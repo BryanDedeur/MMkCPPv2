@@ -18,8 +18,8 @@ Individual::Individual(Options *opts, Graph *gph) {
 
 Individual::~Individual() {
 	// TODO Auto-generated destructor stub
-	delete [] robotChromIndex;
-	delete [] decoding;
+//	delete [] robotChromIndex;
+//	delete [] decoding;
 }
 
 void Individual::Init(){
@@ -27,8 +27,10 @@ void Individual::Init(){
 	for(int i = 0; i < options->chromLength; i++) {
         chromosome[i].value = i;
         if (i >= graph->numEdges) {
-            chromosome[i].value = i - graph->numEdges;
+            int robotID = i - graph->numEdges;
+            chromosome[i].value = robotID;
             chromosome[i].isRobot = true;
+            robotChromIndex[robotID] = i;
         }
 	}
 	// Randomize chromosome by swapping every element with another element
@@ -38,39 +40,19 @@ void Individual::Init(){
 	}
 }
 
-ostream& operator<<(ostream& os, const Individual& individual)
-{
-    os << "chromosome: [";
-    for (int i = 0; i < individual.options->chromLength; i++) {
-        os << individual.chromosome[i];
-        if (i < individual.options->chromLength - 1) {
-            os << ",";
-        }
-    }
-    os << "]";
-    os << endl << "decoding: " << endl;
-    for (int r = 0; r < individual.options->numRobots; r++) {
-        os << "R" << r << " path(cost: "<< individual.decoding[r].cost << "): ";
-        for (int &itr : individual.decoding[r].path) {
-            os << itr << " ";
-        }
-        os << endl;
-    }
-    return os;
-}
-
 void Individual::Swap(int &indexA, int &indexB) {
-    Gene temp = chromosome[indexA];
-    chromosome[indexA] = chromosome[indexB];
-    chromosome[indexB] = temp;
 
     // adjust the robot start index if robot
     if (chromosome[indexA].isRobot) {
-        robotChromIndex[chromosome[indexA].value] = indexA;
+        robotChromIndex[chromosome[indexA].value] = indexB;
     }
     if (chromosome[indexB].isRobot) {
-        robotChromIndex[chromosome[indexB].value] = indexB;
+        robotChromIndex[chromosome[indexB].value] = indexA;
     }
+
+    Gene temp = chromosome[indexA];
+    chromosome[indexA] = chromosome[indexB];
+    chromosome[indexB] = temp;
 }
 
 void Individual::Evaluate() {
@@ -83,13 +65,74 @@ void Individual::Evaluate() {
     fitness = 1/fitness; // Larger numbers get smaller
 }
 
+
+ostream& operator<<(ostream& os, const Individual& individual)
+{
+    os << "chromosome: [";
+    for (int i = 0; i < individual.options->chromLength; i++) {
+        os << individual.chromosome[i];
+        if (i < individual.options->chromLength - 1) {
+            os << ",";
+        }
+    }
+    os << "]" << endl;
+    for (int r = 0; r < individual.options->numRobots; r++) {
+        os << "R" << r << ": " << endl;
+        os << " - edge path: ";
+        for (int i = 0; i < individual.options->chromLength; i++) {
+            int firstEdgeIndex = (i + 1 + individual.robotChromIndex[r]) % individual.options->chromLength;
+            if (individual.chromosome[firstEdgeIndex].isRobot) {
+                break;
+            }
+            if (i == 0) {
+                os << individual.chromosome[firstEdgeIndex];
+            } else {
+                os << " " << individual.chromosome[firstEdgeIndex];
+            }
+        }
+
+        os << endl << " - vertex path(cost: " << individual.decoding[r].cost << "): ";
+        for (int &itr : individual.decoding[r].path) {
+            os << itr << " ";
+        }
+        os << endl;
+    }
+    return os;
+}
+
 Individual& Individual::operator=(Individual other){
     for (int i = 0; i < options->chromLength; i++) {
+        if (i < options->numRobots) {
+            this->robotChromIndex[i] = other.robotChromIndex[i];
+        }
         this->chromosome[i] = other.chromosome[i];
     }
     this->fitness = other.fitness;
+
     return *this;
 }
+
+void Individual::WriteToFile(string filename) {
+    ClearFile(filename);
+    string output = "";
+    for (int r = 0; r < options->numRobots; r++) {
+        output = output + "R" + to_string(r) + " ";
+        int count = 0;
+        for (int &itr : decoding[r].path) {
+            if (count == 0) {
+                output = output + to_string(itr);
+            } else {
+                output = output + " " + to_string(itr);
+            }
+            count++;
+        }
+        output = output + "\n";
+    }
+    WriteBufToFile(output, filename);
+}
+
+
+
 
 
 void Individual::Decode() {
@@ -102,12 +145,13 @@ void Individual::Decode() {
         out << "R" << r << ": " << endl;
         for (int i = 0; i < options->chromLength; i++) {
             // to account for cyclic encoding
-            int firstEdgeIndex = (robotChromIndex[r] + i + 1) % options->chromLength; // [R0, 0, 1
-            int secondEdgeIndex = (robotChromIndex[r] + i + 2) % options->chromLength;
+            int firstEdgeIndex = (i + 1 + robotChromIndex[r]) % options->chromLength; // [R0, 0, 1
+            int secondEdgeIndex = (i + 2 + robotChromIndex[r]) % options->chromLength;
             // no more edges to account for, this could happen with random encoding
             if (chromosome[firstEdgeIndex].isRobot) {
                 break;
             }
+
             pair<int, int> *vertices = graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
             out << " - itr: " << i << " {edge" << chromosome[firstEdgeIndex].value << "(" << vertices->first << "," << vertices->second << ") ";
             if (!chromosome[secondEdgeIndex].isRobot) {
@@ -130,7 +174,7 @@ void Individual::Decode() {
                         out << itr << "->";
                     }
                 }
-                out << ")robot";
+                out << ")\trobot";
 
                 // Travel current edge
                 // if first travel
@@ -184,7 +228,7 @@ void Individual::Decode() {
 
                 // if already traveled somewhere
                 if (!decoding[r].path.empty()) {
-                    out << "robot(" << decoding[r].path.back() << "->";
+                    out << "\trobot(" << decoding[r].path.back() << "->";
                     // travel edge (should have arrived at the edge at this point)
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
                     decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
@@ -196,7 +240,7 @@ void Individual::Decode() {
                     } else {
                         decoding[r].path.push_back(vertices->second);
                     }
-                    out << "robot(" << decoding[r].path.back() << "->";
+                    out << "\trobot(" << decoding[r].path.back() << "->";
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
                     decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
                     decoding[r].path.push_back(oppositeVertex);
@@ -207,6 +251,7 @@ void Individual::Decode() {
             out << endl;
         }
     }
+    out << endl << *this << endl;
     //cout << out.str();
 
 }
