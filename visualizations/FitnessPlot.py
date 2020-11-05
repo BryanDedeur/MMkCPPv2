@@ -43,9 +43,9 @@ def plotMatrix(matrix, outDir):
 
 
     ax.set_title('Average Total Travel Distance Per Generation (' + str(count) + ' Trials)')
-    ax.set_ylabel('Sum of each robot travel distance')
+    ax.set_ylabel('Ave sum of robot travel distance in population')
     ax.set_xlabel('Generation')
-    #ax.show()
+    fig.show()
 
     fig.savefig(outputDir + 'ave-fitness-' + str(count) + '-trials-canonical-ga.png')
     return
