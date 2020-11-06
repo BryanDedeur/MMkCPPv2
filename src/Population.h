@@ -26,9 +26,13 @@ public:
     Graph* graph;
     Individual* bestIndividual;
 
-
     void Init();
-	void EvaluateMembers();
+
+    // helpers
+    bool ChromContains(Gene* arr, Gene &gene);
+
+
+    void EvaluateMembers();
 	void Generation(Population *child);
 	void Report(unsigned long int gen);
 	void Statistics();

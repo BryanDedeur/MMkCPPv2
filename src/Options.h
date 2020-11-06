@@ -8,18 +8,23 @@
 #ifndef OPTIONS_H_
 #define OPTIONS_H_
 
+#include "Utils.h"
 #include <string>
 
+using std::string;
+
+// Definitions
 enum SelectorType {FitnessProportional, CHC};
 enum CrossoverType {PMX, OX};
 enum MutationType {Swap, Cataclysmic};
 
+// Options
 typedef struct {
-	std::string infile;
-	std::string outfile;
+	string infile;
+	string outfile;
 
-	std::string datafile;
-	std::string decodedfile;
+	string datafile;
+	string decodedfile;
 
 	long int randomSeed;
 	int popSize;

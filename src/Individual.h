@@ -25,6 +25,10 @@ struct Gene {
         return *this;
     }
 
+    bool operator==(Gene other) {
+        return value == other.value && isRobot == other.isRobot;
+    }
+
     friend ostream& operator<<(ostream &os, const Gene& gene)
     {
         if (gene.isRobot) {
@@ -54,6 +58,9 @@ public:
     void Evaluate(); // Reasoning: seems like evaluation is better done from within the class for better access to data members
     void Decode();
     void WriteToFile(string filename); // There might be a better way of doing this
+    void UpdateRobotChromIndex();
+    bool ChromContains(Gene* arr, Gene &val);
+
 
     // new additions
     Individual& operator=(Individual other);

@@ -12,6 +12,9 @@
 #include "Population.h"
 #include "Options.h"
 #include "Graph.h"
+#include <map>
+
+using std::map;
 
 class GA {
 

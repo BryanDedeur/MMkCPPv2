@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def load_graph_data(fname, inDir):
-  f = open( fname + inDir , 'r')
+  f = open(fname, 'r')
   matrix = []
   for line in f:
     arr = []
@@ -50,7 +50,7 @@ def plotMatrix(matrix, outDir):
     fig.savefig(outputDir + 'ave-fitness-' + str(count) + '-trials-canonical-ga.png')
     return
 
-inputDir = '../'
+inputDir = '../ga-results-graph-gdb1'
 outputDir = '../img/'
 
 data = load_graph_data(inputDir, "outfile")

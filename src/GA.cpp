@@ -26,17 +26,25 @@ void GA::SetupOptions(int argc, char *argv[]){
 	options.maxgens = 50;
 	options.px = 0.7f;
 	options.pm = 0.001f;
-    options.infile = "../infile";
-    options.outfile = "../outfile";
+
+	// strings below helpful for naming the files
+    options.selector = FitnessProportional;
+    options.crossover = OX;
+    options.mutator = Swap;
+
 
 	// new stuff for mmkcpp
-	options.numRobots = 4;
-	options.datafile = "../benchmarks/mmkcpp/graph-gdb1.csv";
+    options.numRobots = 4;
+
+    string filename = "graph-gdb1";
+	options.datafile = "../benchmarks/mmkcpp/" + filename + ".csv";
 	options.decodedfile = "../routes";
 
-	options.selector = FitnessProportional;
-	options.crossover = OX;
-	options.mutator = Swap;
+    options.infile = "../infile";
+    options.outfile = "../ga-results-" + filename; // +
+//            "-" + selectors[options.selector] +
+//            "-" + crossovers[options.crossover] +
+//            "-" + mutators[options.mutator];
 }
 
 void GA::Init(){

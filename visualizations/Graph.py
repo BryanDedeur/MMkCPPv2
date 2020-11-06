@@ -38,10 +38,12 @@ def plotRoutes(fname, route):
     f.close()
     return 0
 
+
 def plotAdjacencyMatrix(adj):
     n = adj.shape[0]
     axis = np.linspace(0, 2*np.pi, n, endpoint=False)
     x, y = np.cos(axis), np.sin(axis)
+    totalCost = 0
 
     f = open(infile, 'r')
     robots = []
@@ -49,13 +51,18 @@ def plotAdjacencyMatrix(adj):
         arr = []
         count = 0
         for token in line.split(' '):
-            if count != 0:
+            if count != 0 and token != '\n':
                 arr.append(int(token))
             count += 1
         robots.append(arr)
     f.close()
 
     fig, axs = plt.subplots(len(robots) + 1, figsize=(5, 5 * len(robots)))
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if adj[i, j] != -1:
+                totalCost += adj[i, j]
 
     count = 0
     for ax in axs:
@@ -104,7 +111,9 @@ def plotAdjacencyMatrix(adj):
 
     plt.show()
     fig.savefig(outfile)
+    print("Total Graph Cost: " + str(totalCost))
     return
 
 adjacency_matrix = load_graph_data(graphfile)
 plotAdjacencyMatrix(adjacency_matrix)
+

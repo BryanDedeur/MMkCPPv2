@@ -58,58 +58,14 @@ void Individual::Swap(int &indexA, int &indexB) {
 void Individual::Evaluate() {
     Decode();
     fitness = 0;
+    double largestPathCost = 0;
     // calculate the distribution of travel among all robots
     for (int r = 0; r < options->numRobots; r++) {
-        fitness += decoding[r].cost;
-    }
-    fitness = 1/fitness; // Larger numbers get smaller
-}
-
-
-ostream& operator<<(ostream& os, const Individual& individual)
-{
-    os << "chromosome: [";
-    for (int i = 0; i < individual.options->chromLength; i++) {
-        os << individual.chromosome[i];
-        if (i < individual.options->chromLength - 1) {
-            os << ",";
+        if (largestPathCost < decoding[r].cost) {
+            largestPathCost = decoding[r].cost;
         }
     }
-    os << "]" << endl;
-    for (int r = 0; r < individual.options->numRobots; r++) {
-        os << "R" << r << ": " << endl;
-        os << " - edge path: ";
-        for (int i = 0; i < individual.options->chromLength; i++) {
-            int firstEdgeIndex = (i + 1 + individual.robotChromIndex[r]) % individual.options->chromLength;
-            if (individual.chromosome[firstEdgeIndex].isRobot) {
-                break;
-            }
-            if (i == 0) {
-                os << individual.chromosome[firstEdgeIndex];
-            } else {
-                os << " " << individual.chromosome[firstEdgeIndex];
-            }
-        }
-
-        os << endl << " - vertex path(cost: " << individual.decoding[r].cost << "): ";
-        for (int &itr : individual.decoding[r].path) {
-            os << itr << " ";
-        }
-        os << endl;
-    }
-    return os;
-}
-
-Individual& Individual::operator=(Individual other){
-    for (int i = 0; i < options->chromLength; i++) {
-        if (i < options->numRobots) {
-            this->robotChromIndex[i] = other.robotChromIndex[i];
-        }
-        this->chromosome[i] = other.chromosome[i];
-    }
-    this->fitness = other.fitness;
-
-    return *this;
+    fitness = 1/largestPathCost; // Larger numbers get smaller
 }
 
 void Individual::WriteToFile(string filename) {
@@ -131,9 +87,13 @@ void Individual::WriteToFile(string filename) {
     WriteBufToFile(output, filename);
 }
 
-
-
-
+void Individual::UpdateRobotChromIndex() {
+    for (int i = 0; i < options->chromLength; i++) {
+        if (chromosome[i].isRobot) {
+            robotChromIndex[chromosome[i].value] = i;
+        }
+    }
+}
 
 void Individual::Decode() {
     // make sure array is valid
@@ -254,4 +214,50 @@ void Individual::Decode() {
     out << endl << *this << endl;
     //cout << out.str();
 
+}
+
+ostream& operator<<(ostream& os, const Individual& individual)
+{
+    os << "chromosome: [";
+    for (int i = 0; i < individual.options->chromLength; i++) {
+        os << individual.chromosome[i];
+        if (i < individual.options->chromLength - 1) {
+            os << ",";
+        }
+    }
+    os << "]" << endl;
+//    for (int r = 0; r < individual.options->numRobots; r++) {
+//        os << "R" << r << ": " << endl;
+//        os << " - edge path: ";
+//        for (int i = 0; i < individual.options->chromLength; i++) {
+//            int firstEdgeIndex = (i + 1 + individual.robotChromIndex[r]) % individual.options->chromLength;
+//            if (individual.chromosome[firstEdgeIndex].isRobot) {
+//                break;
+//            }
+//            if (i == 0) {
+//                os << individual.chromosome[firstEdgeIndex];
+//            } else {
+//                os << " " << individual.chromosome[firstEdgeIndex];
+//            }
+//        }
+//
+//        os << endl << " - vertex path(cost: " << individual.decoding[r].cost << "): ";
+//        for (int &itr : individual.decoding[r].path) {
+//            os << itr << " ";
+//        }
+//        os << endl;
+//    }
+    return os;
+}
+
+Individual& Individual::operator=(Individual other){
+    for (int i = 0; i < options->chromLength; i++) {
+        if (i < options->numRobots) {
+            this->robotChromIndex[i] = other.robotChromIndex[i];
+        }
+        this->chromosome[i] = other.chromosome[i];
+    }
+    this->fitness = other.fitness;
+
+    return *this;
 }
