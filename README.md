@@ -5,58 +5,28 @@
 ### Dependencies
 
 A list of dependencies that must be installed prior to code execution
-- Jsoncpp: https://github.com/open-source-parsers/jsoncpp
-- MatPlotLib-cpp: https://github.com/lava/matplotlib-cpp
+ - Python3.X
+   - Numpy
+   - Scipy
+   - MatPlot
 
-#### Windows
+#### Windows 10
 
-1. Download vcpkg
-- In powershell we must use *vcpkg* and *integrate* to get the necessary packages installed properly
-- Download *vcpkg* using the GitHub repository interface https://github.com/Microsoft/vcpkg
+1. Click in the Windows search bar and search for the application "Mircosoft Store"
+2. Search in "Microsoft Store" for "Python 3.X" (any sub version of python 3 should work, I'm using 3.8)
+3. Click on the Python App and Install it
+4. Open "Powershell" and install the following Python packages
 ```
-git clone https://github.com/Microsoft/vcpkg.git
-```
-- At this point you should unzip and rename the containing folder to simply "vcpkg"
-
-2. Create a "src" directory under C: drive or windows install location and move vcpkg to the newly created directory
-3. Install vcpkg
-```
-cd /src/vcpkg
-./bootstrap-vcpkg.sh
-./vcpkg integrate install
-```
-4. Install the necessary packages
-```
-./vcpkg install jsoncpp
-./vcpkg install matplotlib-cpp
-```
-
-5. If you are using Clion you must add vcpkg tool chain to the cmake "File->Settings->Build, Execution, Deployment->CMake->CMake options:"
-```
--DCMAKE_TOOLCHAIN_FILE=/src/vcpkg/scripts/buildsystems/vcpkg.cmake
-```
-- At this point its good to do the same for a debug and release profile
-- Click Apply to fininalize your settings.
-
-6. Install Python 2.X because MatPlotLib needs Python2 libraries. 
-https://www.python.org/downloads/release/python-2718/
-
-7. Install Numpy for Python 2.7 by:
-- Making sure you have the proper environment variables
-```
-setx PATH “%PATH%;C:\Python27\Scripts”
-```
-- Then install numpy with pip
-```
-pip-2 install numpy
+python3 -m pip install numpy
+python3 -m pip install scipy
+python3 -m pip install matplotlib
 ```
 
 #### Linux
 
 In terminal, install the following packages
 ```
-sudo apt-get install libjsoncpp-dev
-sudo apt-get install python3-matplotlib python-numpy python3-dev
+
 
 ```
 
