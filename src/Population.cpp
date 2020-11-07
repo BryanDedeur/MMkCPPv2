@@ -14,6 +14,7 @@
 Population::Population(Options* opts, Graph *gph) {
     options = opts;
     avg = min = max = sumFitness = -1;
+    aveTotalTravelDistance = 0;
     assert(options->popSize <= MAXPOP);
     for (int i = 0; i < options->popSize; i++){
         members[i] = new Individual(options, gph);
@@ -62,7 +63,7 @@ void Population::Statistics(){
 
 void Population::Report(unsigned long int gen){
 	char printbuf[1024];
-	sprintf(printbuf, "%4i \t %f \t %f \t %f\n ", (int)gen, 1/min, 1/avg, 1/max);
+	sprintf(printbuf, "%4i \t %f \t %f \t %f \t %f\n ", (int)gen, 1/min, 1/avg, 1/max);
 	WriteBufToFile(std::string(printbuf), options->outfile);
 	//std::cout << printbuf;
 }

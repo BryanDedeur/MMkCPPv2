@@ -21,33 +21,41 @@ GA::~GA() {
 
 void GA::SetupOptions(int argc, char *argv[]){
 	options.randomSeed = time(NULL);
-	options.popSize = 30;
-	options.chromLength = 10;
-	options.maxgens = 50;
+	options.popSize = 80; // if this is an odd number this will break
+	//options.chromLength = 10;
+	options.maxgens = 200;
 	options.px = 0.7f;
-	options.pm = 0.001f;
+	// options.pm = 0.001f; // This is set by the graph
 
-	// strings below helpful for naming the files
     options.selector = FitnessProportional;
     options.crossover = OX;
     options.mutator = Swap;
 
-
 	// new stuff for mmkcpp
     options.numRobots = 4;
 
-    string filename = "graph-gdb1";
-	options.datafile = "../benchmarks/mmkcpp/" + filename + ".csv";
-	options.decodedfile = "../routes";
+    string graphName = "graph-gdb3";
 
     options.infile = "../infile";
-    options.outfile = "../ga-results-" + filename; // +
-//            "-" + selectors[options.selector] +
-//            "-" + crossovers[options.crossover] +
-//            "-" + mutators[options.mutator];
+    options.datafile = "../benchmarks/mmkcpp/" + graphName + ".csv";
+
+
+    // output file name
+    string GAParamsStr = graphName + "-" +
+            to_string(options.numRobots) + "R-" +
+            "pops" + to_string(options.popSize) + "-" +
+            to_string(options.maxgens) + "gens-" +
+            options.GetSelectorStr() + "-" +
+            options.GetCrossoverStr() + "-" +
+            options.GetMutatorStr();
+
+    options.decodedfile = "../results/route-" + GAParamsStr + ".tsv";
+    options.outfile = "../results/fitness-" + GAParamsStr + ".tsv";
+
 }
 
 void GA::Init(){
+    // Initalize GA
     graph = new Graph(&options);
     //cout << *graph << endl;
 	parent = new Population(&options, graph);

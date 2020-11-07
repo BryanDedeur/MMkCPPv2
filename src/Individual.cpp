@@ -14,6 +14,7 @@ Individual::Individual(Options *opts, Graph *gph) {
     options = opts;
     robotChromIndex = new int[opts->numRobots];
     decoding = new Path[opts->numRobots];
+    totalTravelDistance = 0;
 }
 
 Individual::~Individual() {
@@ -59,8 +60,10 @@ void Individual::Evaluate() {
     Decode();
     fitness = 0;
     double largestPathCost = 0;
+    totalTravelDistance = 0;
     // calculate the distribution of travel among all robots
     for (int r = 0; r < options->numRobots; r++) {
+        totalTravelDistance += decoding[r].cost;
         if (largestPathCost < decoding[r].cost) {
             largestPathCost = decoding[r].cost;
         }

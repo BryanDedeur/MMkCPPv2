@@ -31,6 +31,7 @@ Graph::Graph(Options* options) : cachedShortestPaths(), adjacencyMatrix(), numEd
     CalculateNumberOfEdges();
 
     options->chromLength = numEdges + options->numRobots;
+    options->pm = 1/options->chromLength;
 
     // pre cache everything so we can print it
     for (int i = 0; i < numVertices; i++) {

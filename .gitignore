@@ -3,6 +3,8 @@ cmake-build-debug\*
 cmake-build-debug/*
 cmake-build-release\*
 cmake-build-release/*
+venv\*
+venv/*
 
 .idea/*
 
@@ -13,6 +15,8 @@ cmake-build-release/*
 *.internal
 *.make
 *.obj
+
+*.pyc
 
 
 src/cmake-build-release/CMakeFiles/progress.marks

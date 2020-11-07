@@ -13,7 +13,7 @@
 
 using std::string;
 
-// Definitions
+// Definitions (if you add to this you need to update the get...str functions in options
 enum SelectorType {FitnessProportional, CHC};
 enum CrossoverType {PMX, OX};
 enum MutationType {Swap, Cataclysmic};
@@ -37,8 +37,28 @@ typedef struct {
 	SelectorType selector;
 	CrossoverType crossover;
 	MutationType mutator;
+	string GetSelectorStr() {
+        switch(selector) {
+            case CHC: return "chc";
+            case FitnessProportional: return "fp";
+            default: return "";
+        }
+	}
+    string GetCrossoverStr() {
+        switch(crossover) {
+            case OX: return "ox";
+            case PMX: return "pmx";
+            default: return "";
+        }
+    }
+    string GetMutatorStr() {
+        switch(mutator) {
+            case Swap: return "swap";
+            default: return "";
+        }
+	}
 
-	// Unique for mmkcpp
+        // Unique for mmkcpp
     int numRobots;
 } Options;
 

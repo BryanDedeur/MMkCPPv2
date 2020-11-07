@@ -1,57 +1,60 @@
+# importing the helpers
+from Helpers import *
+
 # importing the required modules
 import matplotlib.pyplot as plt
-import numpy as np
+import sys
 
-def load_graph_data(fname, inDir):
-  f = open(fname, 'r')
-  matrix = []
-  for line in f:
-    arr = []
-    count = 0
-    for token in line.split('\t'):
-        if (count == 0 or count == 2):
-            if token != ' ':
-                arr.append(float(token))
-        count += 1;
-    matrix.append(arr)
-  f.close()
-  data = np.array(matrix)
-  return data
+args = sys.argv
+if len(args) > 1:
+    inputDir = args[1] #file path pass as command line arguement
+else:
+    inputDir = '../results/fitness-graph-gdb19-4R-pops30-50gens-fp-ox-swap.tsv'
 
-def plotMatrix(matrix, outDir):
-    averages = []
-    count = 0
-    for coordpairA in matrix:
-        if len(coordpairA) > 0:
-            aveOfGen = []
-            aveOfGen.append(coordpairA[0])
-            sum = 0
-            count = 0
-            for coordpairB in matrix:
-                if len(coordpairB) > 0:
-                    if coordpairA[0] == coordpairB[0]:
-                        sum += coordpairB[1]
-                        count += 1
-            aveOfGen.append(sum / count)
-            averages.append(aveOfGen)
-    averages = np.array(averages)
+graph, numRobots, popSize, numGens, sType, xType, mType = get_params_from_string(inputDir)
+data = load_fitness_file(inputDir)
 
+outputDir = '../img/fitness-plot-' +\
+            graph + '-' +\
+            str(numRobots) + 'R-' +\
+            'pops' + str(popSize) + '-' +\
+            str(numGens) + 'gens-' +\
+            sType + '-' + xType + '-' + mType +\
+            '.png'
+
+def plotMatrix(matrix):
+    # TODO add horizontal line and make label on best resutl
     fig = plt.figure()
     ax = fig.add_subplot()
-    for coordpair in averages:
-        ax.scatter(coordpair[0],coordpair[-1], color='blue')
-
-
-    ax.set_title('Average Total Travel Distance Per Generation (' + str(count) + ' Trials)')
-    ax.set_ylabel('Ave sum of robot travel distance in population')
+    ax.set_ylabel('Robot travel distance')
     ax.set_xlabel('Generation')
-    fig.show()
 
-    fig.savefig(outputDir + 'ave-fitness-' + str(count) + '-trials-canonical-ga.png')
+    averages = []
+    for i in range(numGens):
+        baw = [] # best average worst
+        for j in range(len(matrix[0])):
+            baw.append(0)
+        averages.append(baw)
+
+    runs = 0
+    for row in matrix:
+        gen = int(row[0])
+        for j in range(len(matrix[0])):
+            if j != 0:
+                averages[gen][j - 1] += row[j]
+        if gen == 0:
+            runs += 1
+
+    for g in range(numGens):
+        #ax.scatter(g, averages[g][0] / runs, color='red', s=2)
+        ax.scatter(g, averages[g][1] / runs, color='blue', s=2)
+        ax.scatter(g, averages[g][2] / runs, color='green', s=2)
+        #ax.scatter(g, averages[g][3] / runs, color='green', s=2)
+
+    ax.set_title('Average of Best and Average\nLongest Traveling Robot Per Generation (' +
+                 str(runs) + ' Runs)')
+    plt.show(block=True)
+    fig.savefig(outputDir)
     return
 
-inputDir = '../ga-results-graph-gdb1'
-outputDir = '../img/'
-
-data = load_graph_data(inputDir, "outfile")
-plotMatrix(data, outputDir)
+plotMatrix(data)
