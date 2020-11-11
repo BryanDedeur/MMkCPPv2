@@ -71,9 +71,7 @@ g++ -o ga *.cpp -I. -lm -ljsoncpp
 
 ## Documentation
 
-### File input/output
-
-![File IO](/img/file-io.png)
+### Full Cycle
 
 ## Meta
 Working Environments: 
