@@ -2,6 +2,7 @@
  * @Project: MMkCPP v2
  * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
  * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Copyright: University of Nevada, Reno
  * @Date: 10/18/20
  */
 
@@ -11,6 +12,7 @@
 #include <string>
 #include "Const.h"
 #include "Graph.h"
+#include <iostream>
 
 struct Gene {
     int value;
@@ -18,32 +20,55 @@ struct Gene {
 
     Gene() : value(0), isRobot(false) {}
     Gene& operator=(Gene other) { // Assignment operator copying gene struct
-        std::swap(value, other.value);
-        std::swap(isRobot, other.isRobot);
+        if (this != &other) {
+            this->value = other.value;
+            this->isRobot = other.isRobot;
+        }
         return *this;
+    }
+
+    bool operator==(Gene other) {
+        return value == other.value && isRobot == other.isRobot;
+    }
+
+    friend ostream& operator<<(ostream &os, const Gene& gene)
+    {
+        if (gene.isRobot) {
+            return os << "R" << gene.value;
+        }
+        return os << gene.value;
     }
 };
 
+
+
 class Individual {
 public:
-    Individual(Options &opts, Graph *graph);
+    Individual(Options *opts, Graph *graph);
     virtual ~Individual();
 
-	int chromLength;
 	Gene chromosome[MAX_CHROMLENGTH];
 	double fitness;
+	int totalTravelDistance;
+    Graph* graph;
+    Options* options;
+    Path* decoding; // one path per robot
+    int* robotChromIndex; // for storing the starting index of every robot
 
     void Init();
     void Mutate(double pm);
+    void Swap(int &indexA, int &indexB);
+    void Evaluate(); // Reasoning: seems like evaluation is better done from within the class for better access to data members
+    void Decode();
+    void WriteToFile(string filename); // There might be a better way of doing this
+    void UpdateRobotChromIndex();
+    bool ChromContains(Gene* arr, Gene &val);
+
 
     // new additions
-
-    Graph* graph;
-    Options* options;
-
-    void Evaluate(); // Reasoning: seems like evaluation is better done from within the class for better access to data members
-    int totalTravelDistance;
-    float travelDistribution; // for each robot sum robot travel distance / totalTravelDistance
+    Individual& operator=(Individual other);
+    // operator overrides
+    friend ostream& operator<<(ostream& os, const Individual& individual);
 
 };
 

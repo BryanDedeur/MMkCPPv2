@@ -6,78 +6,43 @@
  */
 
 #include "Graph.h"
-#include <iostream>
-#include <fstream>
-
-#ifdef _WIN32
-    #include <json.h>
-#else
-    #include <jsoncpp/json/json.h>
-#endif
 
 using namespace std;
 
 // Graph Constructor
-Graph::Graph(Options options) : cachedShortestPaths() {
+Graph::Graph(Options* options) : cachedShortestPaths(), adjacencyMatrix(), numEdges(0), numVertices(0) {
 
-	//Create ifstream to read from option.dataFile
-	ifstream graph_file(options.datafile, ifstream::binary);
-	if(graph_file.fail())
-	{
-		cerr << "ERROR: JSON file not found" << endl;
-		return;
-	}
-	
-	//jsonGraph will hold the object in the json file
-	Json::Value jsonGraph;
-	graph_file >> jsonGraph;
-	
-	//Create float** to hold data read from json file
-	int numVerti = jsonGraph["graph"].size();
+    for (int i = 0; i < MAX_VERTICES; i++) {
+        for (int j = 0; j < MAX_VERTICES; j++) {
+            adjacencyMatrix[i][j] = 0;
+            cachedShortestPaths[i][j] = Path(-1);
+        }
+    }
 
-	//Read data from json to float**
-	for(int i = 0; i < numVerti; i++)
-	{
-		for(int j = 0; j < numVerti; j++)
-		{
-			adjacencyMatrix.at(i).at(j) = jsonGraph["graph"][i]["list"][j].asFloat();
-		}
-	}
+    for (int i = 0; i < MAX_EDGES; i++) {
+        for (int j = 0; j < MAX_EDGES; j++) {
+            cachedShortestPathBetweenEdges[i][j] = Path(-1);
+        }
+        cachedVerticesOnEdge[i] = make_pair(INT_MAX, INT_MAX);
+    }
 
-    calculateNumberOfEdges();
+    SetGraphFromFile(options->datafile);
 
-    Path* path = getShortestPathBetweenEdges(1, 10);
+    CalculateNumberOfEdges();
 
+    options->chromLength = numEdges + options->numRobots;
+    options->pm = 1/(options->chromLength);
+
+    // pre cache everything so we can print it
+    for (int i = 0; i < numVertices; i++) {
+        Dijkstras(i);
+    }
 
 }
-
-// Graph Constructor
-// @param adjMatrix is an existing multi dim array
-// @param numVerti is the number of vertices on the graph
-Graph::Graph(float **adjMatrix, int numVerti) : cachedShortestPaths(){
-    calculateNumberOfEdges();
-}
-
-//Graph::Graph(int adjMatrix[], int numVerti) {
-//    setAdjacencyMatrix(adjMatrix[], numVerti);
-//    calculateNumberOfEdges();
-//}
-
 
 Graph::~Graph() {
     //TODO auto generated destructor tab
-}
 
-void Graph::calculateNumberOfEdges() {
-    numEdges = 0;
-    for (int i = 0; i < numVertices; i++) {
-        for (int j = i; j < numVertices; j++) {
-            // if weight is greater than 0 then valid edge
-            if (0 < adjacencyMatrix.at(i).at(j)) {
-                numEdges ++;
-            }
-        }
-    }
 }
 
 void Graph::Init() {
@@ -85,18 +50,76 @@ void Graph::Init() {
     // TODO implement, this would be a good place to cache things ahead of time
 }
 
-pair<int, int>* Graph::getVerticesOnEdge(int edge) {
+ostream& operator<<(ostream& os, const Graph& graph) {
+    os << "Graph: costs to get to any vertex" << endl;
+    for (int i = 0; i < graph.numVertices; i++) {
+        for (int j = 0; j < graph.numVertices; j++) {
+            if (j == 0)
+                os << "(" << i << "," << j << ")" << graph.cachedShortestPaths[i][j].cost;
+            else
+                os << "\t" << "(" << i << "," << j << ")"<< graph.cachedShortestPaths[i][j].cost;
+        }
+        os << endl;
+    }
+    return os;
+}
+
+
+void Graph::SetGraphFromFile(string file) {
+    fstream readFile;
+    readFile.open(file, ios::in );
+
+    if (!readFile.is_open()) {
+        cerr << "Cannot locate file: " << file << endl;
+        return;
+    } else {
+        string line, token, temp = "";
+
+        // Read data, line by line
+        int i = 0;
+        while(getline(readFile, line, '\n')) {
+            size_t pos = 0;
+            int j = 0;
+            while((pos = line.find(',')) != std::string::npos) {
+                token = line.substr(0, pos);
+                adjacencyMatrix[i][j] = stoi(token);
+                line.erase(0, pos + 1);
+                j++;
+            }
+            pos = line.find('\n');
+            token = line.substr(0, pos);
+            adjacencyMatrix[i][j] = stoi(token);
+            //line.erase(0, pos + 1);
+            i++;
+        }
+        numVertices = i;
+    }
+    readFile.close();
+}
+void Graph::CalculateNumberOfEdges() {
+    numEdges = 0;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = i; j < numVertices; j++) {
+            // if weight is greater than 0 then valid edge
+            if (0 < adjacencyMatrix[i][j]) {
+                numEdges ++;
+            }
+        }
+    }
+}
+
+pair<int, int>* Graph::GetVerticesOnEdge(int& edge) {
     int currentEdge = 0;
     // check cache before scanning for edge vertices
-    if (cachedVerticesOnEdge.find(edge) == cachedVerticesOnEdge.end()) { // key not found
+    if (cachedVerticesOnEdge[edge].first == INT_MAX) { // key not found
         for (int vertexA = 0; vertexA < numVertices; vertexA++) {
             for (int vertexB = vertexA; vertexB < numVertices; vertexB++) {
                 // if weight is greater than 0 then valid edge
-                if (0 < adjacencyMatrix.at(vertexA).at(vertexB)) {
+                if (0 < adjacencyMatrix[vertexA][vertexB]) {
                     currentEdge ++;
-
                     if (currentEdge > edge) {
-                        cachedVerticesOnEdge[edge] = make_pair(vertexA, vertexB);
+                        cachedVerticesOnEdge[edge].first = vertexA;
+                        cachedVerticesOnEdge[edge].second = vertexB;
                         return &cachedVerticesOnEdge[edge];
                     }
                 }
@@ -108,44 +131,86 @@ pair<int, int>* Graph::getVerticesOnEdge(int edge) {
 }
 
 
-Path* Graph::getShortestPathBetweenVertices(int startVertex, int endVertex) {
+Path* Graph::GetShortestPathBetweenVertices(int& startVertex, int& endVertex) {
+    Path* path = nullptr;
     // check cache before running dijkstras
-    if (cachedShortestPaths.find(startVertex) == cachedShortestPaths.end()) { // start vertex has no existing path calculations
-        dijkstras(startVertex);
+    if (cachedShortestPaths[startVertex][0].cost == -1) { // start vertex has no existing path calculations
+        Dijkstras(startVertex);
     }
 
-    return &cachedShortestPaths[startVertex][endVertex];
+    path = &cachedShortestPaths[startVertex][endVertex];
+
+    return path;
 }
 
-Path* Graph::getShortestPathBetweenEdges(int edgeA, int edgeB) {
+Path* Graph::GetShortestPathBetweenEdges(int& edgeA, int& edgeB) {
+    Path* path = nullptr;
+
     // check if best path has been cached
-    if (cachedShortestPathBetweenEdges.find(edgeA) != cachedShortestPathBetweenEdges.end()) {
-        if (cachedShortestPathBetweenEdges[edgeA].find(edgeB) != cachedShortestPathBetweenEdges[edgeA].end()) {
-            return &cachedShortestPathBetweenEdges[edgeA][edgeB];
-        }
+    if (cachedShortestPathBetweenEdges[edgeA][edgeB].cost != -1) {
+        path = &cachedShortestPathBetweenEdges[edgeA][edgeB];
+        return path;
     }
 
-    pair<int, int>* verticesOnEdgeA = getVerticesOnEdge(edgeA);
-    pair<int, int>* verticesOnEdgeB = getVerticesOnEdge(edgeB);
+    pair<int, int> *verticesOnEdgeA = GetVerticesOnEdge(edgeA);
+    pair<int, int> *verticesOnEdgeB = GetVerticesOnEdge(edgeB);
 
-    Path* bestPath = getShortestPathBetweenVertices(verticesOnEdgeA->first, verticesOnEdgeB->first);
-    Path* tempPath = getShortestPathBetweenVertices(verticesOnEdgeA->first, verticesOnEdgeB->second);
+    Path *bestPath = GetShortestPathBetweenVertices(verticesOnEdgeA->first, verticesOnEdgeB->first);
+    Path *tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->first, verticesOnEdgeB->second);
     if (bestPath->cost > tempPath->cost)
         bestPath = tempPath;
-    tempPath = getShortestPathBetweenVertices(verticesOnEdgeA->second, verticesOnEdgeB->first);
+    tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->second, verticesOnEdgeB->first);
     if (bestPath->cost > tempPath->cost)
         bestPath = tempPath;
-    tempPath = getShortestPathBetweenVertices(verticesOnEdgeA->second, verticesOnEdgeB->second);
+    tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->second, verticesOnEdgeB->second);
     if (bestPath->cost > tempPath->cost)
         bestPath = tempPath;
 
     cachedShortestPathBetweenEdges[edgeA][edgeB] = *bestPath;
+    path = &cachedShortestPathBetweenEdges[edgeA][edgeB];
+    return path;
+}
 
-    return bestPath;
+Path* Graph::GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge) {
+    pair<int, int> *verticesOnEdge = GetVerticesOnEdge(edge);
+    // check cache before running dijkstras
+    if (cachedShortestPaths[vertex][0].cost == -1) { // start vertex has no existing path calculations
+        Dijkstras(vertex);
+    }
+
+    // for debugging
+    if (vertex != verticesOnEdge->first && cachedShortestPaths[vertex][verticesOnEdge->first].cost == 0) {
+        cerr << "This cost should be greater than 0" << endl;
+    } else if (vertex != verticesOnEdge->second && cachedShortestPaths[vertex][verticesOnEdge->second].cost == 0) {
+        cerr << "This cost should be greater than 0" << endl;
+    }
+
+    if (cachedShortestPaths[vertex][verticesOnEdge->first].cost < cachedShortestPaths[vertex][verticesOnEdge->second].cost) {
+        return &cachedShortestPaths[vertex][verticesOnEdge->first];
+    }
+
+    return &cachedShortestPaths[vertex][verticesOnEdge->second];
+}
+
+int& Graph::GetEdgeCost(int& vertexA, int& vertexB) {
+    if (adjacencyMatrix[vertexA][vertexB] < 0) {
+  //      cerr << "Trying to get the cost of an edge that does not exist: (" << vertexA << ", " << vertexB << ")" << endl;
+    }
+    return adjacencyMatrix[vertexA][vertexB];
+}
+
+int& Graph::GetOppositeVertexOnEdge(int& vertex, int& edge) {
+    pair<int, int> *verticesOnEdge = GetVerticesOnEdge(edge);
+    int v = verticesOnEdge->first;
+    if (verticesOnEdge->first == vertex) {
+        v = verticesOnEdge->second;
+    }
+    //cerr << "Trying to associate a vertex with an edge that is not related: (vertex: " << vertex << ", edge(" << edge << "): (" << verticesOnEdge->first << ", " << verticesOnEdge.second << "))" << endl;
+    return v;
 }
 
 // utility function for dijkstras
-int Graph::minDistance(int dist[], bool visited[])
+int Graph::MinDistance(int dist[], bool visited[])
 {
     // Initialize min value
     int min = INT_MAX, min_index;
@@ -158,40 +223,39 @@ int Graph::minDistance(int dist[], bool visited[])
 }
 
 // dijkstras in this implementation will not return anything because it will add the paths it finds to the cache
-void Graph::dijkstras(int startVertex) {
-    int* dist = new int[numVertices];
-    bool* visited = new bool[numVertices];
-
-    vector<int> *path = new vector<int>[numVertices];
+void Graph::Dijkstras(int startVertex) {
+    int dist[MAX_VERTICES];
+    bool visited[MAX_VERTICES];
+    vector<int> paths[MAX_VERTICES];
 
     for (int i = 0; i < numVertices; i++) {
         dist[i] = INT_MAX;
         visited[i] = false;
-        path[i].push_back(startVertex);
+        paths[i].push_back(startVertex);
     }
 
     dist[startVertex] = 0;
-    cachedShortestPaths[startVertex][startVertex] = Path(path[startVertex], dist[startVertex]);
-
-    // TODO this might be a little faster if every path from previous calcuations was considered
+    cachedShortestPaths[startVertex][startVertex] = Path(0);
+    cachedShortestPaths[startVertex][startVertex].path = paths[startVertex];
 
     for (int count = 0; count < numVertices - 1; count++) {
-        int nearestUnvisitedVertex = minDistance(dist, visited);
+        int nearestUnvisitedVertex = MinDistance(dist, visited);
 
         visited[nearestUnvisitedVertex] = true;
 
         for (int v = 0; v < numVertices; v++) {
             if (!visited[v]     // not visited
-                && -1 != adjacencyMatrix.at(nearestUnvisitedVertex).at(v) // edge exists
+                && -1 != adjacencyMatrix[nearestUnvisitedVertex][v] // edge exists
                 && dist[nearestUnvisitedVertex] != INT_MAX          // explored
-                && dist[nearestUnvisitedVertex] + adjacencyMatrix.at(nearestUnvisitedVertex).at(v) < dist[v]) {
+                && dist[nearestUnvisitedVertex] + adjacencyMatrix[nearestUnvisitedVertex][v] < dist[v]) {
 
-                dist[v] = dist[nearestUnvisitedVertex] + adjacencyMatrix.at(nearestUnvisitedVertex).at(v);
+                dist[v] = dist[nearestUnvisitedVertex] + adjacencyMatrix[nearestUnvisitedVertex][v];
 
-                path[v] = path[nearestUnvisitedVertex];
-                path[v].push_back(v);
+                paths[v] = paths[nearestUnvisitedVertex];
+                paths[v].push_back(v);
 
-                cachedShortestPaths[startVertex][v] = Path(path[v], dist[v]);
+                cachedShortestPaths[startVertex][v] = Path(dist[v]);
+                cachedShortestPaths[startVertex][v].path = paths[v];
             }
         }
     }

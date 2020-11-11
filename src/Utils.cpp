@@ -10,6 +10,12 @@
 #include <fstream>
 #include <string>
 
+void ClearFile(std::string filename) {
+    std::ofstream ofs;
+    ofs.open(filename, std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+}
+
 void WriteBufToFile(std::string buf, std::string filename){
 	std::ofstream ofs(filename, std::ofstream::app);
 	if(ofs.good()){
@@ -28,10 +34,12 @@ int IntInRange(int low, int high){
 	return low + rand()%(high - low);
 }
 
-
-
 /* greater than equal to 0 and less than 1 */
 float RandomFraction(){
 	return ((float)(rand()%1000))/(float)1000.0;
 }
+
+
+
+
 

@@ -8,13 +8,23 @@
 #ifndef OPTIONS_H_
 #define OPTIONS_H_
 
+#include "Utils.h"
 #include <string>
 
-typedef struct {
-	std::string infile;
-	std::string outfile;
+using std::string;
 
-	std::string datafile;
+// Definitions (if you add to this you need to update the get...str functions in options
+enum SelectorType {Proportionate, CHC}; // proportionate ranking, tournament, genitor/ steady state
+enum CrossoverType {NoCross, PMX, OX};
+enum MutationType {NoMut, Swap, Cataclysmic};
+
+// Options
+typedef struct {
+	string infile;
+	string outfile;
+
+	string datafile;
+	string decodedfile;
 
 	long int randomSeed;
 	int popSize;
@@ -24,10 +34,32 @@ typedef struct {
 	float px;
 	float pm;
 
-	// Unique for mmkcpp
+	SelectorType selector;
+	CrossoverType crossover;
+	MutationType mutator;
+	string GetSelectorStr() {
+        switch(selector) {
+            case CHC: return "chc";
+            case Proportionate: return "fp";
+            default: return "";
+        }
+	}
+    string GetCrossoverStr() {
+        switch(crossover) {
+            case OX: return "ox";
+            case PMX: return "pmx";
+            default: return "";
+        }
+    }
+    string GetMutatorStr() {
+        switch(mutator) {
+            case Swap: return "swap";
+            default: return "";
+        }
+	}
+
+        // Unique for mmkcpp
     int numRobots;
-
-
 } Options;
 
 #endif /* OPTIONS_H_ */

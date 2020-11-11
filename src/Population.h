@@ -12,36 +12,53 @@
 #include "Options.h"
 #include "Individual.h"
 #include "Graph.h"
-#include <algorithm> // for min and max
+#include <algorithm> // for min and max and sort
+
+using std::sort;
 
 class Population {
 public:
-	Population(Options options, Graph *graph);
+	Population(Options* options, Graph *graph);
 	virtual ~Population();
 	//------------------------
 
-	Options options;
+	Options* options;
 	Individual *members[MAXPOP];
-	double avg, min, max, sumFitness;
-    Graph* graph;
 
-	void Init();
-	void Evaluate();
+    double avg, min, max, sumFitness;
+    Graph* graph;
+    Individual* bestIndividual;
+
+    void Init();
+
+    // helpers
+    bool ChromContains(Gene* arr, Gene &gene);
+
+    void EvaluateMembers();
 	void Generation(Population *child);
 	void Report(unsigned long int gen);
 	void Statistics();
 
+	// Helpers
     void XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
+    int ProportionalSelector();
 
-    // Selectors
-	int ProportionalSelector();
+    // Generation production strategies
+    void FitnessProportional(Population *child);
+    void CHC(Population *child); // Cross generational elitist seletion
 
-	// Crossovers
+    // Crossovers
+    //	void TwoPoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
+    //	void OnePoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
+    void PMX(Individual *p1, Individual *p2, Individual *c1, Individual *c2); // Permutation crossover
+    void OX(Individual *p1, Individual *p2, Individual *c1, Individual *c2); // Ordered crossover (heterogeneous recombination)
 
 	// Mutators
-	void TwoPoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
-	void OnePoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
-
+	// mutator is inside of individual class
+	void SwapMutate(Individual *i); // Two point swap mutation
+private:
+    // For CHC
+    Individual *tempMembers[MAXPOP];
 };
 
 #endif /* POPULATION_H_ */
