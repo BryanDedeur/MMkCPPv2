@@ -39,9 +39,16 @@ In terminal, install the following packages
 ##### Clion
 
 1. Open the project
-2. Right click src/CMakeLists.txt and select "Reload CMake Project"
+2. Set the ToolChain to Microsoft Visual Studio
+   - Click File
+   - Click Settings
+   - Click the tab "Build, Execution, Deployment"
+   - Click the "Toolchains" tab
+   - Type the Name "Visual Studio"
+   - Set the environment to your version of Visual Studio (mine is C:\Program Files (x86)\Microsoft Visual Studio\2017\Community)
+3. Right click src/CMakeLists.txt and select "Reload CMake Project"
    - To create the cmake-build-debug that clion recognizes
-3. Use the build hammer to "build" or press the play "button to build" and run.
+4. Use the build hammer to "build" or press the play "button to build" and run.
 
 #### Using GCC and Command Line Interface
 
