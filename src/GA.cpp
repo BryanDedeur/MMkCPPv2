@@ -21,20 +21,20 @@ GA::~GA() {
 
 void GA::SetupOptions(int argc, char *argv[]){
 	options.randomSeed = time(NULL);
-	options.popSize = 80; // if this is an odd number this will break
+	options.popSize = 1000; // if this is an odd number this will break
 	//options.chromLength = 10;
-	options.maxgens = 200;
+	options.maxgens = 1000;
 	options.px = 0.7f;
 	// options.pm = 0.001f; // This is set by the graph
 
-    options.selector = FitnessProportional;
+    options.selector = Proportionate;
     options.crossover = OX;
     options.mutator = Swap;
 
 	// new stuff for mmkcpp
-    options.numRobots = 4;
+    options.numRobots = 1;
 
-    string graphName = "graph-gdb3";
+    string graphName = "graph-gdb1";
 
     options.infile = "../infile";
     options.datafile = "../benchmarks/mmkcpp/" + graphName + ".csv";
@@ -68,7 +68,9 @@ void GA::Init(){
 void GA::Run(){
 	for(unsigned long int i = 1; i < options.maxgens; i++){
 		parent->Generation(child);
-		child->EvaluateMembers();
+		if (options.selector != SelectorType::CHC) {
+            child->EvaluateMembers();
+        }
 		if (child->bestIndividual->fitness > bestFitness) {
             bestFitness = child->bestIndividual->fitness;
             child->bestIndividual->WriteToFile(options.decodedfile);

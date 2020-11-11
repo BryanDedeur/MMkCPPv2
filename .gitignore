@@ -6,6 +6,13 @@ cmake-build-release/*
 venv\*
 venv/*
 
+results/fitness*.tsv
+results/route*.tsv
+img/fitness*.png
+img/route*.png
+img/overlap*.png
+
+
 .idea/*
 
 *.xml
@@ -20,3 +27,8 @@ venv/*
 
 
 src/cmake-build-release/CMakeFiles/progress.marks
+img/fitness-plot-gdb3-4R-pops80-200gens-fp-ox-swap.tsv.png
+img/overlap-plot-gdb3-4R-pops80-200gens-fp-ox-swap.tsv.png
+img/route-plot-gdb3-4R-pops80-200gens-fp-ox-swap.tsv.png
+results/fitness-graph-gdb3-4R-pops80-200gens-fp-ox-swap.tsv
+results/route-graph-gdb3-4R-pops80-200gens-fp-ox-swap.tsv

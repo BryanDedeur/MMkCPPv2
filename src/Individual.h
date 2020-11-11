@@ -20,8 +20,10 @@ struct Gene {
 
     Gene() : value(0), isRobot(false) {}
     Gene& operator=(Gene other) { // Assignment operator copying gene struct
-        this->value = other.value;
-        this->isRobot = other.isRobot;
+        if (this != &other) {
+            this->value = other.value;
+            this->isRobot = other.isRobot;
+        }
         return *this;
     }
 

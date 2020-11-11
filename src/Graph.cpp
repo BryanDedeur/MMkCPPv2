@@ -31,7 +31,7 @@ Graph::Graph(Options* options) : cachedShortestPaths(), adjacencyMatrix(), numEd
     CalculateNumberOfEdges();
 
     options->chromLength = numEdges + options->numRobots;
-    options->pm = 1/options->chromLength;
+    options->pm = 1/(options->chromLength);
 
     // pre cache everything so we can print it
     for (int i = 0; i < numVertices; i++) {
@@ -138,9 +138,6 @@ Path* Graph::GetShortestPathBetweenVertices(int& startVertex, int& endVertex) {
         Dijkstras(startVertex);
     }
 
-    if (startVertex != endVertex && cachedShortestPaths[startVertex][endVertex].cost == 0) {
-        //cerr << "ABORT" << endl;
-    }
     path = &cachedShortestPaths[startVertex][endVertex];
 
     return path;
@@ -168,17 +165,6 @@ Path* Graph::GetShortestPathBetweenEdges(int& edgeA, int& edgeB) {
     tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->second, verticesOnEdgeB->second);
     if (bestPath->cost > tempPath->cost)
         bestPath = tempPath;
-
-//    // for debugging
-//    if (verticesOnEdgeA.first != verticesOnEdgeB.first && GetShortestPathBetweenVertices(verticesOnEdgeA.first, verticesOnEdgeB.first).cost == 0)
-//        cerr << "Problem" << endl;
-//    if (verticesOnEdgeA.first != verticesOnEdgeB.second && GetShortestPathBetweenVertices(verticesOnEdgeA.first, verticesOnEdgeB.second).cost == 0)
-//        cerr << "Problem" << endl;
-//    if (verticesOnEdgeA.second != verticesOnEdgeB.first && GetShortestPathBetweenVertices(verticesOnEdgeA.second, verticesOnEdgeB.first).cost == 0)
-//        cerr << "Problem" << endl;
-//    if (verticesOnEdgeA.second != verticesOnEdgeB.second && GetShortestPathBetweenVertices(verticesOnEdgeA.second, verticesOnEdgeB.second).cost == 0)
-//        cerr << "Problem" << endl;
-
 
     cachedShortestPathBetweenEdges[edgeA][edgeB] = *bestPath;
     path = &cachedShortestPathBetweenEdges[edgeA][edgeB];

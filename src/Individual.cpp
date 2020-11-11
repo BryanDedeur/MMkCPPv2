@@ -254,13 +254,14 @@ ostream& operator<<(ostream& os, const Individual& individual)
 }
 
 Individual& Individual::operator=(Individual other){
-    for (int i = 0; i < options->chromLength; i++) {
-        if (i < options->numRobots) {
-            this->robotChromIndex[i] = other.robotChromIndex[i];
+    if (this != &other) {
+        for (int i = 0; i < options->chromLength; i++) {
+            if (i < options->numRobots) {
+                this->robotChromIndex[i] = other.robotChromIndex[i];
+            }
+            this->chromosome[i] = other.chromosome[i];
         }
-        this->chromosome[i] = other.chromosome[i];
+        this->fitness = other.fitness;
     }
-    this->fitness = other.fitness;
-
     return *this;
 }
