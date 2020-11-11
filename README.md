@@ -34,9 +34,7 @@ In terminal, install the following packages
 
 ### Compilation and Execution
 
-#### Using CMake from IDE
-
-##### Clion
+#### Clion IDE using CMake
 
 1. Open the project
 2. Set the ToolChain to Microsoft Visual Studio
@@ -54,7 +52,7 @@ In terminal, install the following packages
 
 ```
 cd src
-g++ -o ga *.cpp -I. -lm -ljsoncpp
+g++ -o ga *.cpp -I. -lm
 ./ga
 ``` 
 
