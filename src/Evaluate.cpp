@@ -12,7 +12,6 @@
 double Eval(Individual *individual){
 	double sum = 0;
 //	for (int i = 0; i < individual->chromLength; i++) {
-//	    // TODO fix for new chromosome
 //		sum += individual->calculateFitness();
 //	}
     // migrated this to individual.h class

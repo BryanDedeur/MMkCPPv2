@@ -53,11 +53,6 @@ def plotTravelPlans(routes, adj):
 
     fig, axs = plt.subplots(numRobots + 1, figsize=(5, 5 * numRobots))
     # TODO adjust the layout of the graphs so they form two columns
-    totalCost = 0
-    for i in range(vertices):
-        for j in range(i + 1, vertices):
-            if adj[i, j] != -1:
-                totalCost += adj[i, j]
 
     travelCost = 0
     count = 0
@@ -93,10 +88,10 @@ def plotTravelPlans(routes, adj):
         r += 1
 
 
-    plt.show()
+    # plt.show()
     fig.savefig(outputDir)
-    print("Sum of Edge Weights: " + str(totalCost))
-    print("Sum of All Robot Travel Costs: " + str(travelCost))
+    # print("Sum of Edge Weights: " + str(totalCost))
+    # print("Sum of All Robot Travel Costs: " + str(travelCost))
     return
 
 plotTravelPlans(routes, adj)

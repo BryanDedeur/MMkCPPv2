@@ -13,10 +13,11 @@
 
 Population::Population(Options* opts, Graph *gph) {
     options = opts;
-    avg = min = max = sumFitness = -1;
+    avgFitness = minFitness = maxFitness = sumFitness = -1;
+    avgTravelDist = minTravelDist = maxTravelDist = sumTravelDist = -1;
 
-    assert((options->popSize) <= MAXPOP);
-    for (int i = 0; i < options->popSize; i++){
+    assert((options->popSize * 2) <= MAXPOP);
+    for (int i = 0; i < options->popSize * 2; i++){
         members[i] = new Individual(options, gph);
         members[i]->Init();
     }
@@ -37,89 +38,53 @@ void Population::Init(){
 void Population::EvaluateMembers(){
 	for (int i = 0; i < options->popSize; i++) {
 		members[i]->Evaluate();
-		if (members[i]->fitness > bestIndividual->fitness) {
-		    bestIndividual = members[i];
-		}
+        StoreIfBest(members[i]);
 	}
 }
 
 void Population::Statistics(){
 	sumFitness = 0;
-	min = members[0]->fitness;
-	max = members[0]->fitness;
-	for(int i = 0; i < options->popSize; i++){
+	minFitness = members[0]->fitness;
+	maxFitness = members[0]->fitness;
+	for (int i = 0; i < options->popSize; i++){
 		sumFitness += members[i]->fitness;
-		if(min > members[i]->fitness)
-			min = members[i]->fitness;
-		if(max < members[i]->fitness)
-			max = members[i]->fitness;
+		if (minFitness > members[i]->fitness)
+			minFitness = members[i]->fitness;
+		if (maxFitness < members[i]->fitness)
+			maxFitness = members[i]->fitness;
 	}
-	avg = sumFitness/options->popSize;
+	avgFitness = sumFitness/options->popSize;
+
+	// total travel distance
+    sumTravelDist = 0;
+    minTravelDist = members[0]->totalTravelDistance;
+    maxTravelDist = members[0]->totalTravelDistance;
+    for (int i = 0; i < options->popSize; i++){
+        sumTravelDist += members[i]->totalTravelDistance;
+        if (minTravelDist > members[i]->totalTravelDistance)
+            minTravelDist = members[i]->totalTravelDistance;
+        if (maxTravelDist < members[i]->totalTravelDistance)
+            maxTravelDist = members[i]->totalTravelDistance;
+    }
+    avgTravelDist = sumTravelDist/options->popSize;
 }
 
 void Population::Report(unsigned long int gen){
 	char printbuf[1024];
-	sprintf(printbuf, "%4i \t %f \t %f \t %f \n ", (int)gen, 1/min, 1/avg, 1/max);
-	WriteBufToFile(std::string(printbuf), options->outfile);
-	//std::cout << printbuf;
+	sprintf(printbuf, "%4i \t %f \t %f \t %f \n ", (int)gen, 1/minFitness, 1/avgFitness, 1/maxFitness);
+	WriteBufToFile(std::string(printbuf), options->fitnessfile);
+    char printbuf2[1024];
+    sprintf(printbuf2, "%4i \t %f \t %f \t %f \n ", (int)gen, minTravelDist, avgTravelDist, maxTravelDist);
+    WriteBufToFile(std::string(printbuf), options->travelfile);
+}
+
+void Population::StoreIfBest(Individual* ind) {
+    if (ind->fitness > bestIndividual->fitness) {
+        bestIndividual = ind;
+    }
 }
 
 void Population::Generation(Population *child) {
-    switch(options->selector) {
-        case SelectorType::CHC:
-            CHC(child);
-            break;
-        default:
-            FitnessProportional(child);
-            break;
-    }
-}
-
-void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2){
-    // Reproduce using assignment operator
-
-    // TODO make sure we need this, might not be necessary
-    *c1 = *p1;
-    *c2 = *p2;
-
-    // Crossover
-    if(Flip(options->px)){ // if prob, then cross/exchange bits
-        switch(options->crossover) {
-            case CrossoverType::OX:
-                OX(p1, p2, c1, c2);
-                break;
-            default:
-                //PMX(p1, p2, c1, c2);
-                break;
-        }
-    }
-
-    // Mutate
-    switch(options->mutator) {
-        case MutationType::Cataclysmic:
-
-            break;
-        default:
-            SwapMutate(c1);
-            SwapMutate(c2);
-            break;
-    }
-
-}
-
-int Population::ProportionalSelector(){
-	int i = -1;
-	float sum = 0;
-	float limit = RandomFraction() * sumFitness;
-	do {
-		i = i + 1;
-		sum += members[i]->fitness;
-	} while (sum < limit && i < options->popSize-1 );
-
-	return i;
-}
-
-void Population::FitnessProportional(Population *child) {
     int pi1, pi2, ci1, ci2;
     Individual *p1, *p2, *c1, *c2;
 
@@ -140,66 +105,80 @@ void Population::FitnessProportional(Population *child) {
     }
 }
 
-
 bool CompareFitness(Individual *a, Individual *b) {
     return (a->fitness > b->fitness);
 }
 
-void PrintFitness(Individual* arr[], int size, string message) {
-    cout << message << endl;
-    for (int i = 0; i < size; i++) {
-        cout << arr[i]->fitness << " ";
-    }
-    cout << endl << endl;
-}
-
-void Population::CHC(Population *child) {
-    // Add new children population to current population
+void Population::CHCGeneration(Population *child) {
+    int pi1, pi2, ci1, ci2;
     Individual *p1, *p2, *c1, *c2;
 
-    const int doublePopSize = options->popSize * 2;
-    //Individual* tempMembers2[doublePopSize];
+    // Create the large population
+    int doublePopSize = 2 * options->popSize;
+    for (int i = 0; i < options->popSize; i += 2) {
+        pi1 = ProportionalSelector();
+        pi2 = ProportionalSelector();
 
-    for(int i = 0; i < options->popSize; i += 2) {
-        // Fitness proportional select parents
-        p1 = members[ProportionalSelector()];
-        p2 = members[ProportionalSelector()];
+        ci1 = options->popSize + i;
+        ci2 = options->popSize + i + 1;
 
-        tempMembers[i] = p1;
-        tempMembers[i + 1] = p2;
+        p1 = members[pi1]; p2 = members[pi2];
+        c1 = members[ci1]; c2 = members[ci2];
 
-        // just get some children to reference
-        c1 = child->members[i];
-        c2 = child->members[i + 1];
-
-        // produce children with crossover and mutation
         XoverAndMutate(p1, p2, c1, c2);
-
-        // must evaluate children so we can sort properly
-
-        c1->Evaluate();
-        c2->Evaluate();
-
-        if (c1->fitness > bestIndividual->fitness) {
-            bestIndividual = c1;
-        } else if (c2->fitness > bestIndividual->fitness) {
-            bestIndividual = c2;
-        }
-
-        // put evaluated children in temp population
-        tempMembers[i + options->popSize] = c1;
-        tempMembers[i + 1 + options->popSize] = c2;
     }
 
-    // PrintFitness(tempMembers, doublePopSize, "Before sort: ");
-    // Sort the population highest fitness to lowest fitness
-    sort(tempMembers, tempMembers + doublePopSize, CompareFitness);
-    //PrintFitness(tempMembers, doublePopSize, "After sort: ");
+    // Halve the population
+    for (int i = options->popSize; i < doublePopSize; i++) {
+        members[i]->Evaluate();
+        StoreIfBest(members[i]);
+    }
 
-    // Keep the best N highest fitness members
+    sort(members, members + doublePopSize, CompareFitness);
+//    if (members[0] > members[doublePopSize - 1]) {
+//        cout << "we good" << endl;
+//    }
+
     for (int i = 0; i < options->popSize; i++) {
-        child->members[i] = tempMembers[i];
+        child->members[i] = members[i];
     }
+}
+
+void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2){
+    // Crossover
+    if(Flip(options->px)){ // if prob, then cross/exchange bits
+        switch(options->crossover) {
+            case CrossoverType::OX:
+                OX(p1, p2, c1, c2); break;
+            case CrossoverType::PMX: PMX(p1, p2, c1, c2); break;
+            case CrossoverType::NoCross: break;
+            default: break;
+        }
+    }
+
+    // Mutate
+    switch(options->mutator) {
+        case MutationType::Invert:
+            InvertMutate(c1);
+            InvertMutate(c2); break;
+        case MutationType::Swap:
+            SwapMutate(c1);
+            SwapMutate(c2); break;
+        case MutationType::NoMut: break;
+        default: break;
+    }
+}
+
+int Population::ProportionalSelector(){
+	int i = -1;
+	float sum = 0;
+	float limit = RandomFraction() * sumFitness;
+	do {
+		i = i + 1;
+		sum += members[i]->fitness;
+	} while (sum < limit && i < options->popSize-1 );
+
+	return i;
 }
 
 void Population::PMX(Individual *p1, Individual *p2, Individual *c1, Individual *c2) {
@@ -306,6 +285,26 @@ void Population::SwapMutate(Individual *ind) {
             ind->Swap(i, pos2);
         }
     }
+}
+
+void Population::InvertMutate(Individual *ind) {
+
+    if(Flip(options->pm)) {
+        // pick two locations
+        int lowerBound = rand() % options->chromLength;
+        int upperBound = rand() % options->chromLength;
+        int l = min(upperBound, lowerBound), r = max(upperBound, lowerBound);
+        int diff = r - l;
+
+        // swap everything inbetween
+        //cout << "before mutation: " << *ind << " left/right: " << l << "/" << r << endl;
+        for (; l < r; l++, r--) {
+            ind->Swap(l, r);
+        }
+        //cout << "after mutation: " << *ind << endl << endl;
+
+    }
+
 }
 
 

@@ -11,7 +11,12 @@
 GA::GA(int argc, char *argv[]) {
 	SetupOptions(argc, argv);
 	srand(options.randomSeed);
-    ClearFile(options.outfile);
+    ClearFile(options.fitnessfile);
+    ClearFile(options.travelfile);
+    graph = new Graph(&options);
+    best = new Individual(&options, graph);
+    best->totalTravelDistance = 0;
+    best->fitness = 0;
 }
 
 GA::~GA() {
@@ -24,21 +29,20 @@ void GA::SetupOptions(int argc, char *argv[]){
 	options.popSize = 1000; // if this is an odd number this will break
 	//options.chromLength = 10;
 	options.maxgens = 1000;
-	options.px = 0.7f;
-	// options.pm = 0.001f; // This is set by the graph
+	options.px = 0.99;
+	options.pm = 0.4; // This is set by the graph
 
-    options.selector = Proportionate;
+    options.selector = CHC;
     options.crossover = OX;
-    options.mutator = Swap;
+    options.mutator = Invert;
 
 	// new stuff for mmkcpp
     options.numRobots = 1;
 
-    string graphName = "graph-gdb1";
+    string graphName = "graph-gdb3";
 
     options.infile = "../infile";
     options.datafile = "../benchmarks/mmkcpp/" + graphName + ".csv";
-
 
     // output file name
     string GAParamsStr = graphName + "-" +
@@ -50,13 +54,11 @@ void GA::SetupOptions(int argc, char *argv[]){
             options.GetMutatorStr();
 
     options.decodedfile = "../results/route-" + GAParamsStr + ".tsv";
-    options.outfile = "../results/fitness-" + GAParamsStr + ".tsv";
-
+    options.fitnessfile = "../results/fitness-" + GAParamsStr + ".tsv";
+    options.travelfile = "../results/travel-" + GAParamsStr + ".tsv";
 }
 
 void GA::Init(){
-    // Initalize GA
-    graph = new Graph(&options);
     //cout << *graph << endl;
 	parent = new Population(&options, graph);
 	child  = new Population(&options, graph);
@@ -67,13 +69,14 @@ void GA::Init(){
 
 void GA::Run(){
 	for(unsigned long int i = 1; i < options.maxgens; i++){
-		parent->Generation(child);
-		if (options.selector != SelectorType::CHC) {
+        if (options.selector == SelectorType::CHC) {
+            parent->CHCGeneration(child);
+        } else {
+            parent->Generation(child);
             child->EvaluateMembers();
         }
-		if (child->bestIndividual->fitness > bestFitness) {
-            bestFitness = child->bestIndividual->fitness;
-            child->bestIndividual->WriteToFile(options.decodedfile);
+		if (child->bestIndividual->fitness > best->fitness) {
+            *best = *child->bestIndividual;
 		}
         child->Statistics();
 		child->Report(i);

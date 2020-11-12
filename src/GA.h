@@ -32,7 +32,7 @@ public:
 	Population *child;
 	Options options;
 
-	double bestFitness;
+	Individual *best;
 	void SetupOptions(int argc, char*argv[]);
 
 	void Init();

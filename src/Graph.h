@@ -41,7 +41,7 @@ class Graph {
 
         int numVertices;
         int numEdges;
-
+        int sumEdges;
     private:
         void SetGraphFromFile(string file);
 
