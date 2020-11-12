@@ -51,7 +51,10 @@ int main(int argc, char *argv[]) {
 
     // Percentage best member is above lower bound
     float percentAboveLowerBound = float(ga.best->totalTravelDistance)/float(ga.graph->sumEdges);
-    cout << "Best individual percentage above lower bound: " << (percentAboveLowerBound - 1) * 100 << "%" << endl << endl;
+
+    cout << "Best individual results:" << endl;
+    cout << " - Sum of edges vs travel distance: " << ga.graph->sumEdges << " vs "<< ga.best->totalTravelDistance << endl;
+    cout << " - Percentage above lower bound: " << (percentAboveLowerBound - 1) * 100 << "%" << endl << endl;
 
     // Show where to find the output files
     cout << "Fitness Results: " << ga.options.fitnessfile << endl;

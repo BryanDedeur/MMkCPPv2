@@ -58,6 +58,7 @@ public:
 	// Mutators
 	// mutator is inside of individual class
 	void SwapMutate(Individual *i); // Two point swap mutation
+    void InvertMutate(Individual *ind);
 };
 
 #endif /* POPULATION_H_ */

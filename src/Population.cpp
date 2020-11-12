@@ -145,28 +145,27 @@ void Population::CHCGeneration(Population *child) {
 }
 
 void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2){
-    // Reproduce using assignment operator
-
     // Crossover
     if(Flip(options->px)){ // if prob, then cross/exchange bits
         switch(options->crossover) {
             case CrossoverType::OX:
-                OX(p1, p2, c1, c2);
-                break;
-            default:
-                //PMX(p1, p2, c1, c2);
-                break;
+                OX(p1, p2, c1, c2); break;
+            case CrossoverType::PMX: PMX(p1, p2, c1, c2); break;
+            case CrossoverType::NoCross: break;
+            default: break;
         }
     }
 
     // Mutate
     switch(options->mutator) {
-        case MutationType::Cataclysmic:
-            break;
-        default:
+        case MutationType::Invert:
+            InvertMutate(c1);
+            InvertMutate(c2); break;
+        case MutationType::Swap:
             SwapMutate(c1);
-            SwapMutate(c2);
-            break;
+            SwapMutate(c2); break;
+        case MutationType::NoMut: break;
+        default: break;
     }
 }
 
@@ -286,6 +285,26 @@ void Population::SwapMutate(Individual *ind) {
             ind->Swap(i, pos2);
         }
     }
+}
+
+void Population::InvertMutate(Individual *ind) {
+
+    if(Flip(options->pm)) {
+        // pick two locations
+        int lowerBound = rand() % options->chromLength;
+        int upperBound = rand() % options->chromLength;
+        int l = min(upperBound, lowerBound), r = max(upperBound, lowerBound);
+        int diff = r - l;
+
+        // swap everything inbetween
+        //cout << "before mutation: " << *ind << " left/right: " << l << "/" << r << endl;
+        for (; l < r; l++, r--) {
+            ind->Swap(l, r);
+        }
+        //cout << "after mutation: " << *ind << endl << endl;
+
+    }
+
 }
 
 

@@ -34,12 +34,12 @@ void GA::SetupOptions(int argc, char *argv[]){
 
     options.selector = CHC;
     options.crossover = OX;
-    options.mutator = Swap;
+    options.mutator = Invert;
 
 	// new stuff for mmkcpp
     options.numRobots = 1;
 
-    string graphName = "graph-gdb1";
+    string graphName = "graph-gdb3";
 
     options.infile = "../infile";
     options.datafile = "../benchmarks/mmkcpp/" + graphName + ".csv";

@@ -14,9 +14,9 @@
 using std::string;
 
 // Definitions (if you add to this you need to update the get...str functions in options
-enum SelectorType {Proportionate, CHC}; // proportionate ranking, tournament, genitor/ steady state
-enum CrossoverType {NoCross, PMX, OX};
-enum MutationType {NoMut, Swap, Cataclysmic};
+enum SelectorType {FP, CHC}; // proportional ranking, tournament, genitor/ steady state
+enum CrossoverType {NoCross, PMX, OX, CX, EX};
+enum MutationType {NoMut, Swap, Invert, Slide};
 
 // Options
 typedef struct {
@@ -43,7 +43,7 @@ typedef struct {
 	string GetSelectorStr() {
         switch(selector) {
             case CHC: return "chc";
-            case Proportionate: return "fp";
+            case FP: return "fp";
             default: return "";
         }
 	}
@@ -57,6 +57,8 @@ typedef struct {
     string GetMutatorStr() {
         switch(mutator) {
             case Swap: return "swap";
+            case Invert: return "inv";
+            case Slide: return "sld";
             default: return "";
         }
 	}
