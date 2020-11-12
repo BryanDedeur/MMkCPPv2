@@ -6,12 +6,13 @@ cmake-build-release/*
 venv\*
 venv/*
 
-results/fitness*.tsv
-results/route*.tsv
-img/fitness*.png
-img/route*.png
-img/overlap*.png
-
+results/fitness*
+results/travel*
+results/route*
+img/fitness*
+img/travel*
+img/route*
+img/overlap*
 
 .idea/*
 

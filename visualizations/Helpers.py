@@ -65,7 +65,7 @@ def get_params_from_string(str):
         elif index == 7:
             xType = token
         elif index == 8:
-            mType = token
+            mType = token.split('.tsv')[0]
 
         index += 1
     return graph, numRobots, popSize, numGens, sType, xType, mType

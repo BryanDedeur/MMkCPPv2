@@ -93,7 +93,7 @@ def plotTravelPlans(routes, countAdj, max):
 
     ax.legend([line_up, line_down], ['1 Pass', str(max) + ' Pass'])
 
-    plt.show()
+    # plt.show()
     fig.savefig(outputDir)
     return
 

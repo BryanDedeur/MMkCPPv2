@@ -88,7 +88,7 @@ def plotTravelPlans(routes, adj):
         r += 1
 
 
-    plt.show()
+    # plt.show()
     fig.savefig(outputDir)
     # print("Sum of Edge Weights: " + str(totalCost))
     # print("Sum of All Robot Travel Costs: " + str(travelCost))
