@@ -25,7 +25,8 @@ public:
 	Options* options;
 	Individual *members[MAXPOP];
 
-    double avg, min, max, sumFitness;
+    double avgFitness, minFitness, maxFitness, sumFitness;
+    int avgTravelDist, minTravelDist, maxTravelDist, sumTravelDist;
     Graph* graph;
     Individual* bestIndividual;
 

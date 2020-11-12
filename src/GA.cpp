@@ -11,8 +11,12 @@
 GA::GA(int argc, char *argv[]) {
 	SetupOptions(argc, argv);
 	srand(options.randomSeed);
-    ClearFile(options.outfile);
+    ClearFile(options.fitnessfile);
+    ClearFile(options.travelfile);
     graph = new Graph(&options);
+    best = new Individual(&options, graph);
+    best->totalTravelDistance = 0;
+    best->fitness = 0;
 }
 
 GA::~GA() {
@@ -40,7 +44,6 @@ void GA::SetupOptions(int argc, char *argv[]){
     options.infile = "../infile";
     options.datafile = "../benchmarks/mmkcpp/" + graphName + ".csv";
 
-
     // output file name
     string GAParamsStr = graphName + "-" +
             to_string(options.numRobots) + "R-" +
@@ -51,8 +54,8 @@ void GA::SetupOptions(int argc, char *argv[]){
             options.GetMutatorStr();
 
     options.decodedfile = "../results/route-" + GAParamsStr + ".tsv";
-    options.outfile = "../results/fitness-" + GAParamsStr + ".tsv";
-
+    options.fitnessfile = "../results/fitness-" + GAParamsStr + ".tsv";
+    options.travelfile = "../results/travel-" + GAParamsStr + ".tsv";
 }
 
 void GA::Init(){
@@ -66,15 +69,14 @@ void GA::Init(){
 
 void GA::Run(){
 	for(unsigned long int i = 1; i < options.maxgens; i++){
-        if (options.selector != SelectorType::CHC) {
+        if (options.selector == SelectorType::CHC) {
             parent->CHCGeneration(child);
         } else {
             parent->Generation(child);
             child->EvaluateMembers();
         }
-		if (child->bestIndividual->fitness > bestFitness) {
-            bestFitness = child->bestIndividual->fitness;
-            child->bestIndividual->WriteToFile(options.decodedfile);
+		if (child->bestIndividual->fitness > best->fitness) {
+            *best = *child->bestIndividual;
 		}
         child->Statistics();
 		child->Report(i);

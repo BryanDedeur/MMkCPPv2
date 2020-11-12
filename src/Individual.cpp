@@ -116,8 +116,6 @@ void Individual::Decode() {
                 pair<int, int> firstEdgeVertices = *graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
                 pair<int, int> secondEdgeVertices = *graph->GetVerticesOnEdge(chromosome[secondEdgeIndex].value);
                 Path *bestPath = graph->GetShortestPathBetweenEdges(chromosome[firstEdgeIndex].value, chromosome[secondEdgeIndex].value);
-                // TODO make sure best path starts with vertices on first edge and ends with vertices on second edge
-
                 // Travel current edge
                 // if first travel
                 if (decoding[r].path.empty()) {
@@ -174,7 +172,6 @@ void Individual::Decode() {
                     decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
                     decoding[r].path.push_back(oppositeVertex);
                 }
-
             }
         }
     }
@@ -218,11 +215,12 @@ Individual& Individual::operator=(Individual other){
     if (this != &other) {
         for (int i = 0; i < options->chromLength; i++) {
             if (i < options->numRobots) {
-                this->robotChromIndex[i] = other.robotChromIndex[i];
+                this->decoding[i] = other.decoding[i];
             }
             this->chromosome[i] = other.chromosome[i];
         }
         this->fitness = other.fitness;
+        this->totalTravelDistance = other.totalTravelDistance;
     }
     return *this;
 }

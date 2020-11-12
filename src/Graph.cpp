@@ -10,7 +10,7 @@
 using namespace std;
 
 // Graph Constructor
-Graph::Graph(Options* options) : cachedShortestPaths(), adjacencyMatrix(), numEdges(0), numVertices(0) {
+Graph::Graph(Options* options) : cachedShortestPaths(), adjacencyMatrix(), numEdges(0), numVertices(0), sumEdges(0) {
 
     for (int i = 0; i < MAX_VERTICES; i++) {
         for (int j = 0; j < MAX_VERTICES; j++) {
@@ -102,6 +102,7 @@ void Graph::CalculateNumberOfEdges() {
             // if weight is greater than 0 then valid edge
             if (0 < adjacencyMatrix[i][j]) {
                 numEdges ++;
+                sumEdges += adjacencyMatrix[i][j];
             }
         }
     }

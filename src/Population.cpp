@@ -13,7 +13,8 @@
 
 Population::Population(Options* opts, Graph *gph) {
     options = opts;
-    avg = min = max = sumFitness = -1;
+    avgFitness = minFitness = maxFitness = sumFitness = -1;
+    avgTravelDist = minTravelDist = maxTravelDist = sumTravelDist = -1;
 
     assert((options->popSize * 2) <= MAXPOP);
     for (int i = 0; i < options->popSize * 2; i++){
@@ -43,23 +44,38 @@ void Population::EvaluateMembers(){
 
 void Population::Statistics(){
 	sumFitness = 0;
-	min = members[0]->fitness;
-	max = members[0]->fitness;
-	for(int i = 0; i < options->popSize; i++){
+	minFitness = members[0]->fitness;
+	maxFitness = members[0]->fitness;
+	for (int i = 0; i < options->popSize; i++){
 		sumFitness += members[i]->fitness;
-		if(min > members[i]->fitness)
-			min = members[i]->fitness;
-		if(max < members[i]->fitness)
-			max = members[i]->fitness;
+		if (minFitness > members[i]->fitness)
+			minFitness = members[i]->fitness;
+		if (maxFitness < members[i]->fitness)
+			maxFitness = members[i]->fitness;
 	}
-	avg = sumFitness/options->popSize;
+	avgFitness = sumFitness/options->popSize;
+
+	// total travel distance
+    sumTravelDist = 0;
+    minTravelDist = members[0]->totalTravelDistance;
+    maxTravelDist = members[0]->totalTravelDistance;
+    for (int i = 0; i < options->popSize; i++){
+        sumTravelDist += members[i]->totalTravelDistance;
+        if (minTravelDist > members[i]->totalTravelDistance)
+            minTravelDist = members[i]->totalTravelDistance;
+        if (maxTravelDist < members[i]->totalTravelDistance)
+            maxTravelDist = members[i]->totalTravelDistance;
+    }
+    avgTravelDist = sumTravelDist/options->popSize;
 }
 
 void Population::Report(unsigned long int gen){
 	char printbuf[1024];
-	sprintf(printbuf, "%4i \t %f \t %f \t %f \n ", (int)gen, 1/min, 1/avg, 1/max);
-	WriteBufToFile(std::string(printbuf), options->outfile);
-	//std::cout << printbuf;
+	sprintf(printbuf, "%4i \t %f \t %f \t %f \n ", (int)gen, 1/minFitness, 1/avgFitness, 1/maxFitness);
+	WriteBufToFile(std::string(printbuf), options->fitnessfile);
+    char printbuf2[1024];
+    sprintf(printbuf2, "%4i \t %f \t %f \t %f \n ", (int)gen, minTravelDist, avgTravelDist, maxTravelDist);
+    WriteBufToFile(std::string(printbuf), options->travelfile);
 }
 
 void Population::StoreIfBest(Individual* ind) {
@@ -119,6 +135,9 @@ void Population::CHCGeneration(Population *child) {
     }
 
     sort(members, members + doublePopSize, CompareFitness);
+//    if (members[0] > members[doublePopSize - 1]) {
+//        cout << "we good" << endl;
+//    }
 
     for (int i = 0; i < options->popSize; i++) {
         child->members[i] = members[i];
@@ -127,10 +146,6 @@ void Population::CHCGeneration(Population *child) {
 
 void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2){
     // Reproduce using assignment operator
-
-//    // TODO make sure we need this, might not be necessary
-//    *c1 = *p1;
-//    *c2 = *p2;
 
     // Crossover
     if(Flip(options->px)){ // if prob, then cross/exchange bits
@@ -153,7 +168,6 @@ void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, 
             SwapMutate(c2);
             break;
     }
-
 }
 
 int Population::ProportionalSelector(){

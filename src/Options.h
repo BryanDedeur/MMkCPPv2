@@ -20,11 +20,14 @@ enum MutationType {NoMut, Swap, Cataclysmic};
 
 // Options
 typedef struct {
+    // in files
 	string infile;
-	string outfile;
+    string datafile;
 
-	string datafile;
-	string decodedfile;
+    // output files
+    string decodedfile;
+    string fitnessfile;
+    string travelfile;
 
 	long int randomSeed;
 	int popSize;
