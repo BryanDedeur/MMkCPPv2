@@ -12,6 +12,7 @@ GA::GA(int argc, char *argv[]) {
 	SetupOptions(argc, argv);
 	srand(options.randomSeed);
     ClearFile(options.outfile);
+    graph = new Graph(&options);
 }
 
 GA::~GA() {
@@ -24,10 +25,10 @@ void GA::SetupOptions(int argc, char *argv[]){
 	options.popSize = 1000; // if this is an odd number this will break
 	//options.chromLength = 10;
 	options.maxgens = 1000;
-	options.px = 0.7f;
-	// options.pm = 0.001f; // This is set by the graph
+	options.px = 0.99;
+	options.pm = 0.4; // This is set by the graph
 
-    options.selector = Proportionate;
+    options.selector = CHC;
     options.crossover = OX;
     options.mutator = Swap;
 
@@ -55,8 +56,6 @@ void GA::SetupOptions(int argc, char *argv[]){
 }
 
 void GA::Init(){
-    // Initalize GA
-    graph = new Graph(&options);
     //cout << *graph << endl;
 	parent = new Population(&options, graph);
 	child  = new Population(&options, graph);
@@ -67,8 +66,10 @@ void GA::Init(){
 
 void GA::Run(){
 	for(unsigned long int i = 1; i < options.maxgens; i++){
-		parent->Generation(child);
-		if (options.selector != SelectorType::CHC) {
+        if (options.selector != SelectorType::CHC) {
+            parent->CHCGeneration(child);
+        } else {
+            parent->Generation(child);
             child->EvaluateMembers();
         }
 		if (child->bestIndividual->fitness > bestFitness) {

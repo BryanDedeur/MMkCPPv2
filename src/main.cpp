@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     clock_t start, mid, end;
     start = clock();
 
-    const int numTrials = 30;
+    const int numTrials = 3;
 
     // Start the GA
     GA ga = GA(argc, argv);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 
     // Call the visualization stuff
     cout << "Running visualization commands: " << endl;
-    runCommand("python3 ../visualizations/FitnessPlot.py " + ga.options.outfile);
+    runCommand("python3 ../visualizations/FitnessPlot.py " + ga.options.outfile + " " + ga.options.datafile);
     runCommand("python3 ../visualizations/GraphTravelPlans.py " + ga.options.decodedfile + " " + ga.options.datafile);
     runCommand("python3 ../visualizations/GraphTravelOverlap.py " + ga.options.decodedfile + " " + ga.options.datafile);
 

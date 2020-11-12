@@ -100,12 +100,8 @@ void Individual::UpdateRobotChromIndex() {
 
 void Individual::Decode() {
     // make sure array is valid
-    ostringstream out;
-    out.str("");
-    out << "Individual Decoding: " << endl;
     for (int r = 0; r < options->numRobots; r++) {
         decoding[r] = Path(0);
-        out << "R" << r << ": " << endl;
         for (int i = 0; i < options->chromLength; i++) {
             // to account for cyclic encoding
             int firstEdgeIndex = (i + 1 + robotChromIndex[r]) % options->chromLength; // [R0, 0, 1
@@ -114,69 +110,41 @@ void Individual::Decode() {
             if (chromosome[firstEdgeIndex].isRobot) {
                 break;
             }
-
             pair<int, int> *vertices = graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
-            out << " - itr: " << i << " {edge" << chromosome[firstEdgeIndex].value << "(" << vertices->first << "," << vertices->second << ") ";
-            if (!chromosome[secondEdgeIndex].isRobot) {
-                vertices = graph->GetVerticesOnEdge(chromosome[secondEdgeIndex].value);
-                out << "edge" << chromosome[secondEdgeIndex].value << "(" << vertices->first << "," << vertices->second << ")";
-            }
-            out << "}:\t";
-
             // if two edges exist
             if (!chromosome[secondEdgeIndex].isRobot) {
                 pair<int, int> firstEdgeVertices = *graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
                 pair<int, int> secondEdgeVertices = *graph->GetVerticesOnEdge(chromosome[secondEdgeIndex].value);
                 Path *bestPath = graph->GetShortestPathBetweenEdges(chromosome[firstEdgeIndex].value, chromosome[secondEdgeIndex].value);
                 // TODO make sure best path starts with vertices on first edge and ends with vertices on second edge
-                out << "path(";
-                for (int& itr : bestPath->path) {
-                    if (itr == bestPath->path.back()) {
-                        out << itr;
-                    } else {
-                        out << itr << "->";
-                    }
-                }
-                out << ")\trobot";
 
                 // Travel current edge
                 // if first travel
                 if (decoding[r].path.empty()) {
-                    out << "(C1)";
                     // start travel from opposite vertex on from best path starting edge
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(bestPath->path.front(), chromosome[firstEdgeIndex].value);
                     decoding[r].cost += graph->GetEdgeCost(oppositeVertex, bestPath->path.front());
                     decoding[r].path.push_back(oppositeVertex);
-                    out << decoding[r].path.back() << "->";
                     decoding[r].path.push_back(bestPath->path.front());
                 } else { // traveled somewhere before
-                    out << "(C2)";
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
                     decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
-                    out << decoding[r].path.back() << "->";
                     decoding[r].path.push_back(oppositeVertex);
-                    out << decoding[r].path.back() << "->";
                 }
 
                 // Travel to next edge (but dont travel the edge)
                 // edges are connected
                 if (bestPath->path.size() == 1) {
-                    out << "(C3)";
                     // if not at the best connecting vertex, travel to that vertex
                     if (bestPath->path.back() != decoding[r].path.back()) {
                         int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
                         decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
                         decoding[r].path.push_back(oppositeVertex);
-                        out << decoding[r].path.back() << "->";
                     } else { // at the best connecting edge
                         // do nothing
                     }
                 } else { // edges are not connected
-                    out << "(C4)";
                     // if already at bestpath start vertex
-                    for (int& itr : bestPath->path) {
-                        out << itr << "->";
-                    }
                     if (decoding[r].path.back() == bestPath->path.front()) {
                         decoding[r].path.pop_back();
                     } else { // travel to best starting vertex
@@ -191,7 +159,6 @@ void Individual::Decode() {
 
                 // if already traveled somewhere
                 if (!decoding[r].path.empty()) {
-                    out << "\trobot(" << decoding[r].path.back() << "->";
                     // travel edge (should have arrived at the edge at this point)
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
                     decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
@@ -203,20 +170,14 @@ void Individual::Decode() {
                     } else {
                         decoding[r].path.push_back(vertices->second);
                     }
-                    out << "\trobot(" << decoding[r].path.back() << "->";
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
                     decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
                     decoding[r].path.push_back(oppositeVertex);
                 }
-                out << decoding[r].path.back() << ")} ";
 
             }
-            out << endl;
         }
     }
-    out << endl << *this << endl;
-    //cout << out.str();
-
 }
 
 ostream& operator<<(ostream& os, const Individual& individual)

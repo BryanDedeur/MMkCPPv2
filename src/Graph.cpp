@@ -31,7 +31,6 @@ Graph::Graph(Options* options) : cachedShortestPaths(), adjacencyMatrix(), numEd
     CalculateNumberOfEdges();
 
     options->chromLength = numEdges + options->numRobots;
-    options->pm = 1/(options->chromLength);
 
     // pre cache everything so we can print it
     for (int i = 0; i < numVertices; i++) {
@@ -47,7 +46,7 @@ Graph::~Graph() {
 
 void Graph::Init() {
     //cacheShortestPaths();
-    // TODO implement, this would be a good place to cache things ahead of time
+    // TODO implement, this would be a good place to cache things ahead of time but not needed because caching happens regardless
 }
 
 ostream& operator<<(ostream& os, const Graph& graph) {
@@ -178,13 +177,6 @@ Path* Graph::GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge) {
         Dijkstras(vertex);
     }
 
-    // for debugging
-    if (vertex != verticesOnEdge->first && cachedShortestPaths[vertex][verticesOnEdge->first].cost == 0) {
-        cerr << "This cost should be greater than 0" << endl;
-    } else if (vertex != verticesOnEdge->second && cachedShortestPaths[vertex][verticesOnEdge->second].cost == 0) {
-        cerr << "This cost should be greater than 0" << endl;
-    }
-
     if (cachedShortestPaths[vertex][verticesOnEdge->first].cost < cachedShortestPaths[vertex][verticesOnEdge->second].cost) {
         return &cachedShortestPaths[vertex][verticesOnEdge->first];
     }
@@ -193,9 +185,6 @@ Path* Graph::GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge) {
 }
 
 int& Graph::GetEdgeCost(int& vertexA, int& vertexB) {
-    if (adjacencyMatrix[vertexA][vertexB] < 0) {
-  //      cerr << "Trying to get the cost of an edge that does not exist: (" << vertexA << ", " << vertexB << ")" << endl;
-    }
     return adjacencyMatrix[vertexA][vertexB];
 }
 
@@ -224,6 +213,7 @@ int Graph::MinDistance(int dist[], bool visited[])
 
 // dijkstras in this implementation will not return anything because it will add the paths it finds to the cache
 void Graph::Dijkstras(int startVertex) {
+
     int dist[MAX_VERTICES];
     bool visited[MAX_VERTICES];
     vector<int> paths[MAX_VERTICES];

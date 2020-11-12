@@ -36,16 +36,17 @@ public:
 
     void EvaluateMembers();
 	void Generation(Population *child);
+    void CHCGeneration(Population *child);
 	void Report(unsigned long int gen);
 	void Statistics();
 
 	// Helpers
     void XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
     int ProportionalSelector();
+    void StoreIfBest(Individual* ind);
 
     // Generation production strategies
-    void FitnessProportional(Population *child);
-    void CHC(Population *child); // Cross generational elitist seletion
+    //void FitnessProportional(Population *child);
 
     // Crossovers
     //	void TwoPoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
@@ -56,9 +57,6 @@ public:
 	// Mutators
 	// mutator is inside of individual class
 	void SwapMutate(Individual *i); // Two point swap mutation
-private:
-    // For CHC
-    Individual *tempMembers[MAXPOP];
 };
 
 #endif /* POPULATION_H_ */
