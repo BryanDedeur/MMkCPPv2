@@ -11,6 +11,7 @@ A list of dependencies that must be installed prior to code execution
    - Numpy
    - Scipy
    - MatPlot
+ - Git Bash
 
 #### Windows 10
 
@@ -33,6 +34,17 @@ In terminal, install the following packages
 ```
 
 ### Compilation and Execution
+
+#### Bash Script on Windows
+
+1. Open Git Bash
+2. Move to project directory with deploy.sh file
+3. Run the following commands
+
+```
+chmod +x deploy.sh
+./deploy.sh
+```
 
 #### Clion IDE using CMake
 
