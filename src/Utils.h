@@ -1,8 +1,9 @@
 /*
- * Utils.h
- *
- *  Created on: Sep 20, 2020
- *      Author: sushil
+ * @Project: MMkCPP v2
+ * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
+ * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Copyright: University of Nevada, Reno
+ * @Date: 10/18/20
  */
 
 #ifndef UTILS_H_
@@ -10,8 +11,11 @@
 
 #include <string>
 
+using std::string;
+
 void ClearFile(std::string filename);
 void WriteBufToFile(std::string buf, std::string filename);
+std::string ExtractNameOfFile(std::string);
 
 float RandomFraction();
 int Flip(float prob);

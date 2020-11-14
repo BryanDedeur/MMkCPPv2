@@ -1,8 +1,9 @@
 /*
- * Utils.cpp
- *
- *  Created on: Sep 20, 2020
- *      Author: sushil
+ * @Project: MMkCPP v2
+ * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
+ * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Copyright: University of Nevada, Reno
+ * @Date: 10/18/20
  */
 
 #include "Utils.h"
@@ -23,6 +24,20 @@ void WriteBufToFile(std::string buf, std::string filename){
 	}
 	ofs.flush();
 	ofs.close();
+}
+
+string ExtractNameOfFile(string filePath) {
+    size_t pos = 0;
+    std::string token;
+    string delimiter = "/";
+    string delimeter2 = ".";
+    while ((pos = filePath.find(delimiter)) != std::string::npos) {
+        token = filePath.substr(0, pos);
+        filePath.erase(0, pos + delimiter.length());
+        if ((pos = filePath.find(delimeter2)) != std::string::npos)
+            filePath.erase(pos, token.length() - pos);
+    }
+    return filePath;
 }
 
 int Flip(float prob){
