@@ -24,6 +24,7 @@ using namespace std;
 class Graph {
     public:
         Graph(Options* options);
+
         virtual ~Graph();
 
         void Init();

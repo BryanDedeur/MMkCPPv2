@@ -11,7 +11,6 @@ using namespace std;
 
 // Graph Constructor
 Graph::Graph(Options* options) : cachedShortestPaths(), adjacencyMatrix(), numEdges(0), numVertices(0), sumEdges(0) {
-
     for (int i = 0; i < MAX_VERTICES; i++) {
         for (int j = 0; j < MAX_VERTICES; j++) {
             adjacencyMatrix[i][j] = 0;
@@ -26,17 +25,17 @@ Graph::Graph(Options* options) : cachedShortestPaths(), adjacencyMatrix(), numEd
         cachedVerticesOnEdge[i] = make_pair(INT_MAX, INT_MAX);
     }
 
-    SetGraphFromFile(options->datafile);
+    SetGraphFromFile(options->graphfile);
 
     CalculateNumberOfEdges();
 
     options->chromLength = numEdges + options->numRobots;
+    options->pm = float(1)/float(options->chromLength);
 
     // pre cache everything so we can print it
     for (int i = 0; i < numVertices; i++) {
         Dijkstras(i);
     }
-
 }
 
 Graph::~Graph() {
