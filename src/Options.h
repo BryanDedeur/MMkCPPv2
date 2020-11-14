@@ -22,14 +22,18 @@ enum MutationType {NoMut, Swap, Invert, Slide};
 typedef struct {
     // in files
 	string infile;
-    string datafile;
+    string graphfile;
 
     // output files
     string decodedfile;
     string fitnessfile;
     string travelfile;
+    string resultsfile;
+
+    string graphName;
 
 	long int randomSeed;
+	int numRuns;
 	int popSize;
 	int chromLength;
 	unsigned int maxgens;
@@ -63,7 +67,7 @@ typedef struct {
         }
 	}
 
-        // Unique for mmkcpp
+        // Unique for arc-routing
     int numRobots;
 } Options;
 
