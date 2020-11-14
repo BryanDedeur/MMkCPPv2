@@ -12,14 +12,9 @@
 #include "Population.h"
 #include "Options.h"
 #include "Graph.h"
-#include <map>
-
-using std::map;
+#include <time.h>
 
 class GA {
-
-private:
-	void Construct();
 
 public:
 	GA(int argc, char *argv[]);
@@ -33,11 +28,15 @@ public:
 	Options options;
 
 	Individual *best;
-	void SetupOptions(int argc, char*argv[]);
+    void SetGraph(string graphfile);
+    void SetupOptions(int argc, char*argv[]);
 
 	void Init();
 	void Run();
+    void Report();
 
+    int runCount;
+    double timeSeconds;
 };
 
 #endif /* GA_H_ */
