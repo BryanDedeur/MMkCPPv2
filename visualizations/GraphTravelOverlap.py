@@ -13,7 +13,7 @@ if len(args) > 1:
     graphDir = args[2]
 else:
     routeDir = '../results/route-graph-gdb3-4R-pops80-200gens-fp-ox-swap.tsv'
-    graphDir = '../benchmarks/mmkcpp/graph-gdb3.csv'
+    graphDir = '../benchmarks/arc-routing/graph-gdb3.csv'
 
 graph, numRobots, popSize, numGens, sType, xType, mType = get_params_from_string(routeDir)
 outputDir = '../img/overlap-plot-' +\
@@ -53,7 +53,6 @@ def sumEdgeTravelCount(routes):
     return count
 
 highestNum = sumEdgeTravelCount(routes)
-print()
 # show a graph with the overlap of travel show a graph with the color indicating the lowest cost edges
 
 for i in range(len(counterAdj)):
@@ -72,6 +71,8 @@ def plotTravelPlans(routes, countAdj, max):
     ax.axes.xaxis.set_ticks([])
     ax.axes.yaxis.set_ticks([])
     # plt.aspect('equal', adjustable='box')
+    line_up, = ax.plot(0)
+    line_down, = ax.plot(0)
 
     for i in range(len(countAdj)):
         ax.annotate(i, (x[i], y[i]),
@@ -91,7 +92,8 @@ def plotTravelPlans(routes, countAdj, max):
 
     ax.plot(x, y, 'bo', color='black', label='POINT', markersize=2)
 
-    ax.legend([line_up, line_down], ['1 Pass', str(max) + ' Pass'])
+    if line_up and line_down:
+        ax.legend([line_up, line_down], ['1 Pass', str(max) + ' Pass'])
 
     # plt.show()
     fig.savefig(outputDir)

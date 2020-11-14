@@ -11,7 +11,7 @@ if len(args) > 1:
     graphDir = args[2]
 else:
     inputDir = '../results/travel-graph-gdb1-1R-pops200-200gens-chc-ox-swap.tsv'
-    graphDir = '../benchmarks/mmkcpp/graph-gdb1.csv'
+    graphDir = '../benchmarks/arc-routing/graph-gdb1.csv'
 
 
 graph, numRobots, popSize, numGens, sType, xType, mType = get_params_from_string(inputDir)

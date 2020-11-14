@@ -13,7 +13,7 @@ if len(args) > 1:
     graphDir = args[2]
 else:
     routeDir = '../results/route-graph-gdb19-4R-pops30-50gens-fp-ox-swap.tsv'
-    graphDir = '../benchmarks/mmkcpp/graph-gdb19.csv'
+    graphDir = '../benchmarks/arc-routing/graph-gdb19.csv'
 
 graph, numRobots, popSize, numGens, sType, xType, mType = get_params_from_string(routeDir)
 outputDir = '../img/route-plot-' +\
