@@ -30,7 +30,7 @@ Graph::Graph(Options* options) : cachedShortestPaths(), adjacencyMatrix(), numEd
     CalculateNumberOfEdges();
 
     options->chromLength = numEdges + options->numRobots;
-    options->pm = float(1)/float(options->chromLength);
+    //options->pm = float(1)/float(options->chromLength);
 
     // pre cache everything so we can print it
     for (int i = 0; i < numVertices; i++) {
@@ -78,15 +78,24 @@ void Graph::SetGraphFromFile(string file) {
         while(getline(readFile, line, '\n')) {
             size_t pos = 0;
             int j = 0;
+            int cost = 0;
             while((pos = line.find(',')) != std::string::npos) {
                 token = line.substr(0, pos);
-                adjacencyMatrix[i][j] = stoi(token);
+                cost = stoi(token);
+                if (i != j && cost == 0) {
+                    cost = -1;
+                }
+                adjacencyMatrix[i][j] = cost;
                 line.erase(0, pos + 1);
                 j++;
             }
             pos = line.find('\n');
             token = line.substr(0, pos);
-            adjacencyMatrix[i][j] = stoi(token);
+            cost = stoi(token);
+            if (i != j && cost == 0) {
+                cost = -1;
+            }
+            adjacencyMatrix[i][j] = cost;
             //line.erase(0, pos + 1);
             i++;
         }
