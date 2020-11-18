@@ -1,4 +1,5 @@
 import numpy as np
+from pathlib import Path
 
 def load_fitness_file(fname):
   f = open(fname, 'r')
@@ -27,6 +28,22 @@ def load_graph_file(fname):
   adj = np.array(matrix)
   return adj
 
+def load_coordinate_file(fname):
+    fname = fname.split('.csv')[0] + '.cord'
+    f = Path(fname)
+    if f.is_file():
+        file = open(fname, 'r')
+        matrix = []
+        for line in file:
+            arr = []
+            for token in line.split(','):
+                arr.append(int(token))
+            matrix.append(arr)
+        file.close()
+        adj = np.array(matrix)
+        return adj
+    return []
+
 def load_route_file(fname):
     f = open(fname, 'r')
     robots = []
@@ -43,29 +60,20 @@ def load_route_file(fname):
 
 def get_params_from_string(str):
     tokens = str.split('/')
-    index = 0
-    graph = ""
-    numRobots = 0
-    popSize = 0
-    numGens = 0
-    sType = ""
-    xType = ""
-    mType = ""
-    for token in tokens[len(tokens) - 1].split('-'):
-        if index == 2:
-            graph = token
-        elif index == 3:
-            numRobots = int(token.split('R')[0])
-        elif index == 4:
-            popSize = int(token.split('pops')[1])
-        elif index == 5:
-            numGens = int(token.split('gens')[0])
-        elif index == 6:
-            sType = token
-        elif index == 7:
-            xType = token
-        elif index == 8:
-            mType = token.split('.tsv')[0]
+    ga_info = tokens[len(tokens) - 1].split('.')[0].split('-')
 
-        index += 1
+    for i in range(len(ga_info) - 6):
+        if i == len(ga_info) - 7:
+            graph = ga_info[i]
+        else:
+            graph = ga_info[i] + '-'
+
+    #graph = ga_info[len(ga_info) - 1]
+    numRobots = int(ga_info[len(ga_info) - 6].split('R')[0])
+    popSize = int(ga_info[len(ga_info) - 5].split('pops')[1])
+    numGens = int(ga_info[len(ga_info) - 4].split('gens')[0])
+    sType = ga_info[len(ga_info) - 3]
+    xType = ga_info[len(ga_info) - 2]
+    mType = ga_info[len(ga_info) - 1]
+
     return graph, numRobots, popSize, numGens, sType, xType, mType

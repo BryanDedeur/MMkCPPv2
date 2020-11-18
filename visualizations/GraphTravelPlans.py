@@ -12,8 +12,8 @@ if len(args) > 1:
     routeDir = args[1] #file path passed as command line arguement
     graphDir = args[2]
 else:
-    routeDir = '../results/route-graph-gdb19-4R-pops30-50gens-fp-ox-swap.tsv'
-    graphDir = '../benchmarks/arc-routing/graph-gdb19.csv'
+    routeDir = '../results/route-graph-raw-3R-pops100-100gens-chc-ox-inv.tsv'
+    graphDir = '../benchmarks/stacs-graphs/graph-raw.csv'
 
 graph, numRobots, popSize, numGens, sType, xType, mType = get_params_from_string(routeDir)
 outputDir = '../img/route-plot-' +\
@@ -26,10 +26,11 @@ outputDir = '../img/route-plot-' +\
 
 routes = load_route_file(routeDir)
 adj = load_graph_file(graphDir)
+cords = load_coordinate_file(graphDir)
 
 vertices = adj.shape[0]
 
-colors = ['orange', 'green', 'pink', 'purple', 'red', 'brown']
+colors = ['red', 'green', 'blue', 'purple', 'orange', 'brown']
 
 def plotGraph(ax, x, y, count):
     ax.plot(x, y, 'bo', color='black', label='POINT', markersize=2)
@@ -48,10 +49,13 @@ def plotGraph(ax, x, y, count):
 
 
 def plotTravelPlans(routes, adj):
-    axis = np.linspace(0, 2*np.pi, vertices, endpoint=False)
-    x, y = np.cos(axis), np.sin(axis) # convert the number of vertices to a circle plot
+    if len(cords) != 0:
+        x, y = cords[:,0], cords[:,1] # convert the number of vertices to a circle plot
+    else:
+        axis = np.linspace(0, 2*np.pi, vertices, endpoint=False)
+        x, y = np.cos(axis), np.sin(axis) # convert the number of vertices to a circle plot
 
-    fig, axs = plt.subplots(numRobots + 1, figsize=(5, 5 * numRobots))
+    fig, axs = plt.subplots(numRobots + 1, figsize=(10, 10 * numRobots))
     # TODO adjust the layout of the graphs so they form two columns
 
     travelCost = 0
@@ -78,12 +82,12 @@ def plotTravelPlans(routes, adj):
             if v < len(route) - 1:
                 travelCost += adj[route[v], route[v + 1]]
                 ax.plot((x[route[v]], x[route[v + 1]]), (y[route[v]], y[route[v + 1]]), c=colors[r])
-                ax.annotate(adj[route[v], route[v + 1]],  # this is the text
-                             ((x[route[v]] + x[route[v + 1]]) / 2, (y[route[v]] + y[route[v + 1]]) / 2),  # this is the point to label
-                             textcoords="offset points",  # how to position the text
-                             xytext=(0, 5),  # distance from text to points (x,y)
-                             ha='center',
-                             c=colors[r])  # horizontal alignment can be left, right or center
+                # ax.annotate(adj[route[v], route[v + 1]],  # this is the text
+                #              ((x[route[v]] + x[route[v + 1]]) / 2, (y[route[v]] + y[route[v + 1]]) / 2),  # this is the point to label
+                #              textcoords="offset points",  # how to position the text
+                #              xytext=(0, 5),  # distance from text to points (x,y)
+                #              ha='center',
+                #              c=colors[r])  # horizontal alignment can be left, right or center
             count += 1
         r += 1
 

@@ -10,8 +10,8 @@ if len(args) > 1:
     inputDir = args[1] #file path pass as command line arguement
     graphDir = args[2]
 else:
-    inputDir = '../results/travel-graph-gdb1-1R-pops200-200gens-chc-ox-swap.tsv'
-    graphDir = '../benchmarks/arc-routing/graph-gdb1.csv'
+    inputDir = '../results/travel-test2-3R-pops1000-1500gens-chc-ox-inv.tsv'
+    graphDir = '../benchmarks/custom-graphs/test2.csv'
 
 
 graph, numRobots, popSize, numGens, sType, xType, mType = get_params_from_string(inputDir)

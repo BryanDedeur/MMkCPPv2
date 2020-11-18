@@ -26,6 +26,7 @@ outputDir = '../img/overlap-plot-' +\
 
 routes = load_route_file(routeDir)
 adj = load_graph_file(graphDir)
+cords = load_coordinate_file(graphDir)
 
 def createNewAdjMatrixWithNoEdgeCost(adj):
     adj_with_overlap = []
@@ -62,10 +63,13 @@ for i in range(len(counterAdj)):
 
 
 def plotTravelPlans(routes, countAdj, max):
-    axis = np.linspace(0, 2*np.pi, len(countAdj), endpoint=False)
-    x, y = np.cos(axis), np.sin(axis) # convert the number of vertices to a circle plot
+    if len(cords) != 0:
+        x, y = cords[:,0], cords[:,1] # convert the number of vertices to a circle plot
+    else:
+        axis = np.linspace(0, 2*np.pi, vertices, endpoint=False)
+        x, y = np.cos(axis), np.sin(axis) # convert the number of vertices to a circle plot
     # TODO fix plot to show sum of backwards travel on edge
-    fig, ax = plt.subplots(figsize=(5, 5))
+    fig, ax = plt.subplots(figsize=(10, 10))
     #TODO fix this from not saving to file
     ax.set_title(graph + ' Robot Overlap from Best Result')
     ax.axes.xaxis.set_ticks([])
