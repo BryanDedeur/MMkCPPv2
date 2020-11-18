@@ -32,7 +32,7 @@ GA::~GA() {
 void GA::SetupOptions(int argc, char *argv[]){
 	options.randomSeed = time(NULL);
 	options.popSize = 1000;
-	options.maxgens = 2000;
+	options.maxgens = 1000;
 	options.px = 0.99;
 	options.pm = 0.4; // This is set by the graph
 
