@@ -46,26 +46,23 @@ void Population::Statistics(){
 	sumFitness = 0;
 	minFitness = members[0]->fitness;
 	maxFitness = members[0]->fitness;
+    sumTravelDist = 0;
+    minTravelDist = members[0]->totalTravelDistance;
+    maxTravelDist = members[0]->totalTravelDistance;
 	for (int i = 0; i < options->popSize; i++){
 		sumFitness += members[i]->fitness;
 		if (minFitness > members[i]->fitness)
 			minFitness = members[i]->fitness;
 		if (maxFitness < members[i]->fitness)
 			maxFitness = members[i]->fitness;
-	}
-	avgFitness = sumFitness/options->popSize;
 
-	// total travel distance
-    sumTravelDist = 0;
-    minTravelDist = members[0]->totalTravelDistance;
-    maxTravelDist = members[0]->totalTravelDistance;
-    for (int i = 0; i < options->popSize; i++){
         sumTravelDist += members[i]->totalTravelDistance;
         if (minTravelDist > members[i]->totalTravelDistance)
             minTravelDist = members[i]->totalTravelDistance;
         if (maxTravelDist < members[i]->totalTravelDistance)
             maxTravelDist = members[i]->totalTravelDistance;
-    }
+	}
+	avgFitness = sumFitness/options->popSize;
     avgTravelDist = sumTravelDist/options->popSize;
 }
 
@@ -74,8 +71,8 @@ void Population::Report(unsigned long int gen){
 	sprintf(printbuf, "%4i \t %f \t %f \t %f \n ", (int)gen, 1/minFitness, 1/avgFitness, 1/maxFitness);
 	WriteBufToFile(std::string(printbuf), options->fitnessfile);
     char printbuf2[1024];
-    sprintf(printbuf2, "%4i \t %f \t %f \t %f \n ", (int)gen, minTravelDist, avgTravelDist, maxTravelDist);
-    WriteBufToFile(std::string(printbuf), options->travelfile);
+    sprintf(printbuf2, "%4i \t %i \t %i \t %i \n ", (int)gen, minTravelDist, avgTravelDist, maxTravelDist);
+    WriteBufToFile(std::string(printbuf2), options->travelfile);
 }
 
 void Population::StoreIfBest(Individual* ind) {
@@ -135,9 +132,6 @@ void Population::CHCGeneration(Population *child) {
     }
 
     sort(members, members + doublePopSize, CompareFitness);
-//    if (members[0] > members[doublePopSize - 1]) {
-//        cout << "we good" << endl;
-//    }
 
     for (int i = 0; i < options->popSize; i++) {
         child->members[i] = members[i];
