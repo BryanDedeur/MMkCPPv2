@@ -139,7 +139,7 @@ pair<int, int>* Graph::GetVerticesOnEdge(int& edge) {
 }
 
 
-Path* Graph::GetShortestPathBetweenVertices(int& startVertex, int& endVertex) {
+Path* Graph::GetShortestPathBetweenVertices(const int& startVertex, const int& endVertex) {
     Path* path = nullptr;
     // check cache before running dijkstras
     if (cachedShortestPaths[startVertex][0].cost == -1) { // start vertex has no existing path calculations

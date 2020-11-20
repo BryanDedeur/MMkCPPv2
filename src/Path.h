@@ -5,8 +5,10 @@
 #ifndef GA_PATH_H
 #define GA_PATH_H
 
+#include <ostream>
 #include <vector>
 using std::vector;
+using std::ostream;
 
 class Path {
 public:
@@ -14,10 +16,13 @@ public:
     Path();
     Path(int cst);
 
+    friend ostream& operator<<(ostream& os, const Path& path);
+
     Path& operator=(Path other);
 
     // assignment operator override to help with combining paths together
     Path& operator+=(const Path &rhsPath);
+    Path& operator+(const Path &rhsPath);
 
     vector<int> path; // vector because we don't know the size of the array
     int cost; // total cost to travel path

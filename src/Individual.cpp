@@ -12,6 +12,7 @@ Individual::Individual(Options *opts, Graph *gph) {
     fitness = -1;
     graph = gph;
     options = opts;
+    seed = opts->randomSeed;
     robotChromIndex = new int[opts->numRobots];
     decoding = new Path[opts->numRobots];
     totalTravelDistance = 0;
@@ -39,6 +40,7 @@ void Individual::Init(){
 	    int otherIndex = rand() % options->chromLength;
         Swap(i, otherIndex);
 	}
+    seed = options->randomSeed;
 }
 
 void Individual::Swap(int &indexA, int &indexB) {
@@ -175,6 +177,23 @@ void Individual::Decode() {
             }
         }
     }
+    // complete routes to some vertex
+    if (!options->openRoutes) {
+        for (int r = 0; r < options->numRobots; r++) {
+            if (!decoding[r].path.empty()) {
+                Path* startVertexToStartRoute = graph->GetShortestPathBetweenVertices(options->startVertex[r], decoding[r].path.front());
+                Path* endRouteToEndVertex = graph->GetShortestPathBetweenVertices(decoding[r].path.back(), options->startVertex[r]);
+                cout << "Before: " << decoding[r] << endl;
+
+                Path copy1 = *startVertexToStartRoute;
+                Path copy2 = decoding[r];
+                Path copy3 = *endRouteToEndVertex;
+
+                decoding[r] = copy1 + copy2 + copy3;
+                cout << "After: " << decoding[r] << endl;
+            }
+        }
+    }
 }
 
 ostream& operator<<(ostream& os, const Individual& individual)
@@ -187,27 +206,6 @@ ostream& operator<<(ostream& os, const Individual& individual)
         }
     }
     os << "]" << endl;
-//    for (int r = 0; r < individual.options->numRobots; r++) {
-//        os << "R" << r << ": " << endl;
-//        os << " - edge path: ";
-//        for (int i = 0; i < individual.options->chromLength; i++) {
-//            int firstEdgeIndex = (i + 1 + individual.robotChromIndex[r]) % individual.options->chromLength;
-//            if (individual.chromosome[firstEdgeIndex].isRobot) {
-//                break;
-//            }
-//            if (i == 0) {
-//                os << individual.chromosome[firstEdgeIndex];
-//            } else {
-//                os << " " << individual.chromosome[firstEdgeIndex];
-//            }
-//        }
-//
-//        os << endl << " - vertex path(cost: " << individual.decoding[r].cost << "): ";
-//        for (int &itr : individual.decoding[r].path) {
-//            os << itr << " ";
-//        }
-//        os << endl;
-//    }
     return os;
 }
 
@@ -221,6 +219,7 @@ Individual& Individual::operator=(Individual other){
         }
         this->fitness = other.fitness;
         this->totalTravelDistance = other.totalTravelDistance;
+        this->seed = other.seed;
     }
     return *this;
 }

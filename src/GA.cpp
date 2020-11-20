@@ -8,6 +8,9 @@
 #include "GA.h"
 #include <iostream>
 #include <assert.h>
+#include <filesystem>
+namespace fs = experimental::filesystem;
+
 
 GA::GA(int argc, char *argv[]) : runCount(0), timeSeconds(0) {
 	SetupOptions(argc, argv);
@@ -20,6 +23,9 @@ GA::GA(int argc, char *argv[]) : runCount(0), timeSeconds(0) {
     best = new Individual(&options, graph);
     best->totalTravelDistance = 0;
     best->fitness = 0;
+
+    if (options.minimalOutput)
+        cout.setstate(std::ios_base::failbit);
 }
 
 GA::~GA() {
@@ -32,7 +38,7 @@ GA::~GA() {
 void GA::SetupOptions(int argc, char *argv[]){
 	options.randomSeed = time(NULL);
 	options.popSize = 1000;
-	options.maxgens = 1000;
+	options.maxgens = 500;
 	options.px = 0.99;
 	options.pm = 0.4; // This is set by the graph
 
@@ -42,6 +48,11 @@ void GA::SetupOptions(int argc, char *argv[]){
 
     options.numRobots = 1;
     options.numRuns = 1;
+
+    options.openRoutes = true;
+    for (int i = 0; i < options.numRobots; i++) {
+        options.startVertex[i] = 0;
+    }
 
     options.graphfile = "../benchmarks/arc-routing/graph-gdb1.csv";
 
@@ -58,6 +69,9 @@ void GA::SetupOptions(int argc, char *argv[]){
     }
 
     SetGraph(options.graphfile);
+
+    options.minimalOutput = false;
+    options.makeVisuals = false;
 }
 
 void GA::SetGraph(string graphf) {
@@ -91,6 +105,7 @@ void GA::Init(){
     }
 
     options.randomSeed = time(NULL);
+    srand(options.randomSeed);
     parent = new Population(&options, graph);
 	child  = new Population(&options, graph);
 	parent->Init(); // evaluates, stats, and reports on initial population
@@ -134,15 +149,15 @@ void runCommand(string commandStr) {
     int ret_val = system(command);
 
     if(!(ret_val == 0 && errno == 0)) {
-        cerr << "There was an error with the command: " << ret_val << endl;
+        //cerr << "There was an error with the command: " << ret_val << endl;
     }
 }
 
 void GA::Report() {
     char printbuf[1024];
-    float percentAboveLowerBound = (float(best->totalTravelDistance)/float(graph->sumEdges) - 1) * 100;
+    float percentAboveLowerBound = (1/best->fitness/float(graph->sumEdges) - 1) * 100;
 
-    sprintf(printbuf, "%s \t %i \t %i \t %f \t %f \n ", options.graphName.c_str(), graph->sumEdges, best->totalTravelDistance, percentAboveLowerBound, timeSeconds);
+    sprintf(printbuf, "%s \t %i \t %i \t %f \t %f \t %i \n ", options.graphName.c_str(), graph->sumEdges, int(1/best->fitness), percentAboveLowerBound, timeSeconds, best->seed);
     WriteBufToFile(std::string(printbuf), options.resultsfile);
 
     best->WriteToFile(options.decodedfile);
@@ -151,12 +166,32 @@ void GA::Report() {
 
     cout << "Best result written to: " << options.decodedfile << endl;
 
-    cout << "Creating visuals... ";
-    runCommand("python3 ../visualizations/TravelPlot.py " + options.travelfile + " " + options.graphfile);
-    runCommand("python3 ../visualizations/FitnessPlot.py " + options.fitnessfile + " " + options.graphfile);
-    runCommand("python3 ../visualizations/GraphTravelPlans.py " + options.decodedfile + " " + options.graphfile);
-    runCommand("python3 ../visualizations/GraphTravelOverlap.py " + options.decodedfile + " " + options.graphfile);
-    cout << "Done!" << endl;
+    if (options.makeVisuals) {
+        cout << "Creating visuals... ";
+        runCommand("python3 ../visualizations/TravelPlot.py " + options.travelfile + " " + options.graphfile);
+        runCommand("python3 ../visualizations/FitnessPlot.py " + options.fitnessfile + " " + options.graphfile);
+        runCommand("python3 ../visualizations/GraphTravelPlans.py " + options.decodedfile + " " + options.graphfile);
+        runCommand("python3 ../visualizations/GraphTravelOverlap.py " + options.decodedfile + " " + options.graphfile);
+    }
 
+    cout << "Done!" << endl;
+    if (options.minimalOutput) {
+        cout.clear();
+        for (int r = 0; r < options.numRobots; r++) {
+            cout << "R" + to_string(r) + " ";
+            int count = 0;
+            for (int &itr : best->decoding[r].path) {
+                if (count == 0) {
+                    cout << to_string(itr);
+                } else {
+                    cout << " " + to_string(itr);
+                }
+                count++;
+            }
+            if (r != options.numRobots - 1) {
+                cout << endl;
+            }
+        }
+    }
 }
 

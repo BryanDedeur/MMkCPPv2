@@ -34,7 +34,7 @@ class Graph {
 
         pair<int, int>* GetVerticesOnEdge(int& edgeA); // always returns two vertices
 
-        Path* GetShortestPathBetweenVertices(int& startVertex, int& endVertex);
+        Path* GetShortestPathBetweenVertices(const int& startVertex, const int& endVertex);
         Path* GetShortestPathBetweenEdges(int& edgeA, int& edgeB);
         Path* GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge);
         int& GetEdgeCost(int& vertexA, int& vertexB);

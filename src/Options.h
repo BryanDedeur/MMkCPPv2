@@ -8,6 +8,7 @@
 #ifndef OPTIONS_H_
 #define OPTIONS_H_
 
+#include "Const.h"
 #include "Utils.h"
 #include <string>
 
@@ -29,6 +30,11 @@ typedef struct {
     string fitnessfile;
     string travelfile;
     string resultsfile;
+
+    bool minimalOutput;
+    bool makeVisuals;
+    bool openRoutes; // start and end vertex does not matter
+    int startVertex[MAX_NUM_ROBOTS];
 
     string graphName;
 

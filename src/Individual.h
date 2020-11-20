@@ -54,6 +54,7 @@ public:
     Options* options;
     Path* decoding; // one path per robot
     int* robotChromIndex; // for storing the starting index of every robot
+    long int seed;
 
     void Init();
     void Mutate(double pm);

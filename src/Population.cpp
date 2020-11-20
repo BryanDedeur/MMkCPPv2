@@ -68,10 +68,10 @@ void Population::Statistics(){
 
 void Population::Report(unsigned long int gen){
 	char printbuf[1024];
-	sprintf(printbuf, "%4i \t %f \t %f \t %f \n ", (int)gen, 1/minFitness, 1/avgFitness, 1/maxFitness);
+	sprintf(printbuf, "%4i \t %f \t %f \t %f \t %i \n ", (int)gen, 1/minFitness, 1/avgFitness, 1/maxFitness, options->randomSeed);
 	WriteBufToFile(std::string(printbuf), options->fitnessfile);
     char printbuf2[1024];
-    sprintf(printbuf2, "%4i \t %i \t %i \t %i \n ", (int)gen, minTravelDist, avgTravelDist, maxTravelDist);
+    sprintf(printbuf2, "%4i \t %i \t %i \t %i \t %i  \n ", (int)gen, minTravelDist, avgTravelDist, maxTravelDist, options->randomSeed);
     WriteBufToFile(std::string(printbuf2), options->travelfile);
 }
 
@@ -296,7 +296,6 @@ void Population::InvertMutate(Individual *ind) {
             ind->Swap(l, r);
         }
         //cout << "after mutation: " << *ind << endl << endl;
-
     }
 
 }
