@@ -34,7 +34,7 @@ typedef struct {
     bool minimalOutput;
     bool makeVisuals;
     bool openRoutes; // start and end vertex does not matter
-    int startVertex[MAX_NUM_ROBOTS];
+    int startVertex;
 
     string graphName;
 
