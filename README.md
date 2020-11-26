@@ -5,6 +5,12 @@
 You can download the lastest working executable from here: 
 
 Running the program with optional aruments: 
+
+Example
+```
+./ga.exe [graph file] [num robots] [pop size] [num gens] [num runs] [closed route vertex]
+```
+Arguments
 ```
 ./ga.exe [graph file] [num robots] [pop size] [num gens] [num runs] [closed route vertex]
 ```
