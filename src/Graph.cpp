@@ -68,7 +68,7 @@ void Graph::SetGraphFromFile(string file) {
     readFile.open(file, ios::in );
 
     if (!readFile.is_open()) {
-        cerr << "Cannot locate file: " << file << endl;
+        AssertWithErrorMessage("Cannot locate file: " + file, readFile.is_open());
         return;
     } else {
         string line, token, temp = "";
