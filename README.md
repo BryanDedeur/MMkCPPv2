@@ -8,11 +8,11 @@ Running the program with optional aruments:
 
 Example
 ```
-./ga.exe [graph file] [num robots] [pop size] [num gens] [num runs] [closed route vertex]
+./ga.exe ../benchmarks/gdb/gdb1.dat 2 1000 1000 5 3 0
 ```
 Arguments
 ```
-./ga.exe [graph file] [num robots] [pop size] [num gens] [num runs] [closed route vertex]
+./ga.exe [graph file] [num robots] [pop size] [num gens] [num runs] [closed route vertex] [minimal output]
 ```
 
 `[graph file]` the .csv or .dat graph. Must speficy the path to the file if not in same directory as ga.exe. Default is 
@@ -27,7 +27,7 @@ Arguments
 
 `[closed route vertex]` starting and ending vertex for all robots. Default is 
 
-// TODO `[minimal output]` can be 1 or 0. Will show you more or less information about the GA as it runs.
+`[minimal output]` can be 1 or 0. Will show you more or less information about the GA as it runs.
 
 // TODO `[seed file]` the file with a set of random seeds.
 
