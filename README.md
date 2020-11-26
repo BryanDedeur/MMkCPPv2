@@ -1,5 +1,31 @@
 # Min Max k-Chinese Postman Problem (MMkCPP)
 
+## Latest Release
+
+You can download the lastest working executable from here: 
+
+Running the program with optional aruments: 
+```
+./ga.exe [graph file] [num robots] [pop size] [num gens] [num runs] [closed route vertex]
+```
+
+`[graph file]` the .csv or .dat graph. Must speficy the path to the file if not in same directory as ga.exe. Default is 
+
+`[num robots]` the number of robots can be any number greater than or equal to 1 (k=...). Default is 
+
+`[pop size]` number of individuals. Must be an even number. Default is 
+
+`[num gens]` number of times to reproduce individuals. Can be any size. Default is 
+
+`[num runs]` how many times the ga will restart. The best individual will be held from any of the runs. Default is 
+
+`[closed route vertex]` starting and ending vertex for all robots. Default is 
+
+// TODO `[minimal output]` can be 1 or 0. Will show you more or less information about the GA as it runs.
+
+// TODO `[seed file]` the file with a set of random seeds.
+
+
 ## Getting Started for Development
 
 ### Dependencies
