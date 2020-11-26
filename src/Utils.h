@@ -19,6 +19,7 @@ using std::string;
 void ClearFile(std::string filename);
 void WriteBufToFile(std::string buf, std::string filename);
 std::string ExtractNameOfFile(std::string);
+std::string ExtractFileFormat(std::string);
 float RandomFraction();
 int Flip(float prob);
 int IntInRange(int low, int high);
