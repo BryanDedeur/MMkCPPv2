@@ -4,7 +4,7 @@
 
 You can download the lastest working executable from here: 
 
-Running the program with optional aruments: 
+### Running the program: 
 
 Example
 ```
