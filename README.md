@@ -8,26 +8,20 @@ You can download the lastest working executable from here:
 
 Example
 ```
-./ga.exe ../benchmarks/gdb/gdb1.dat 2 1000 1000 5 3 0
+./ga.exe ../benchmarks/gdb/gdb1.dat 2 1000 1000 5 3 0 1
 ```
 Arguments
 ```
-./ga.exe [graph file] [num robots] [pop size] [num gens] [num runs] [closed route vertex] [minimal output]
+./ga.exe [graph file] [num robots] [pop size] [num gens] [num runs] [closed route vertex] [minimal output] [make visuals]
 ```
-
-`[graph file]` the .csv or .dat graph. Must speficy the path to the file if not in same directory as ga.exe. Default is 
-
-`[num robots]` the number of robots can be any number greater than or equal to 1 (k=...). Default is 
-
-`[pop size]` number of individuals. Must be an even number. Default is 
-
-`[num gens]` number of times to reproduce individuals. Can be any size. Default is 
-
-`[num runs]` how many times the ga will restart. The best individual will be held from any of the runs. Default is 
-
-`[closed route vertex]` starting and ending vertex for all robots. Use -1 for open routes. Default is 
-
-`[minimal output]` can be 1 or 0. Will show you more or less information about the GA as it runs.
+1. `[graph file]` the .csv or .dat graph. Must speficy the path to the file if not in same directory as ga.exe. Default is 
+2. `[num robots]` the number of robots can be any number greater than or equal to 1 (k=...). Default is 
+3. `[pop size]` number of individuals. Must be an even number. Default is 
+4. `[num gens]` number of times to reproduce individuals. Can be any size. Default is 
+5. `[num runs]` how many times the ga will restart. The best individual will be held from any of the runs. Default is 
+6. `[closed route vertex]` starting and ending vertex for all robots. Use -1 for open routes. Default is 
+7. `[minimal output]` can be 1 or 0. Will show you more or less information about the GA as it runs.
+8. `[make visuals]` can be 1 or 0. Will run the python visualizations after the GA is finished.
 
 // TODO `[seed file]` the file with a set of random seeds.
 
