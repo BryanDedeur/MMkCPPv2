@@ -178,19 +178,25 @@ void Individual::Decode() {
         }
     }
     // complete routes to some vertex
-    if (!options->openRoutes) {
+    if (options->closedRouteVertex != -1) {
         for (int r = 0; r < options->numRobots; r++) {
             if (!decoding[r].path.empty()) {
-                Path* startVertexToStartRoute = graph->GetShortestPathBetweenVertices(options->startVertex[r], decoding[r].path.front());
-                Path* endRouteToEndVertex = graph->GetShortestPathBetweenVertices(decoding[r].path.back(), options->startVertex[r]);
-                cout << "Before: " << decoding[r] << endl;
+                int vstart = options->closedRouteVertex;
+                int vstart2 = decoding[r].path.front();
+                int vend = decoding[r].path.back();
 
-                Path copy1 = *startVertexToStartRoute;
-                Path copy2 = decoding[r];
-                Path copy3 = *endRouteToEndVertex;
+                Path* startVertexToStartRoute = graph->GetShortestPathBetweenVertices(vstart, vstart2);
+                Path* endRouteToEndVertex = graph->GetShortestPathBetweenVertices(vend, vstart);
+                //cout << "Before: " << decoding[r] << endl;
 
-                decoding[r] = copy1 + copy2 + copy3;
-                cout << "After: " << decoding[r] << endl;
+                Path temp = decoding[r];
+                decoding[r] = Path(0);
+
+                decoding[r] += *startVertexToStartRoute;
+                decoding[r] += temp;
+                decoding[r] += *endRouteToEndVertex;
+
+                //cout << "After: " << decoding[r] << endl;
             }
         }
     }
