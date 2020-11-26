@@ -6,17 +6,17 @@
  */
 
 #include "Population.h"
-#include <assert.h>
 #include "Evaluate.h"
 #include "Utils.h"
+
 #include <iostream>
 
 Population::Population(Options* opts, Graph *gph) {
     options = opts;
     avgFitness = minFitness = maxFitness = sumFitness = -1;
     avgTravelDist = minTravelDist = maxTravelDist = sumTravelDist = -1;
+    AssertWithErrorMessage("The constant MAXPOP is too small for CHC, increase MAXPOP to at least " + to_string(options->popSize * 2), (options->popSize * 2) <= MAXPOP);
 
-    assert((options->popSize * 2) <= MAXPOP);
     for (int i = 0; i < options->popSize * 2; i++){
         members[i] = new Individual(options, gph);
         members[i]->Init();

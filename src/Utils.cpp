@@ -7,9 +7,8 @@
  */
 
 #include "Utils.h"
-#include <iostream>
-#include <fstream>
-#include <string>
+
+
 
 void ClearFile(std::string filename) {
     std::ofstream ofs;
@@ -52,6 +51,11 @@ int IntInRange(int low, int high){
 /* greater than equal to 0 and less than 1 */
 float RandomFraction(){
 	return ((float)(rand()%1000))/(float)1000.0;
+}
+
+void AssertWithErrorMessage(string message, bool didPass) {
+    std::cerr << message << std::endl;
+    assert(didPass);
 }
 
 
