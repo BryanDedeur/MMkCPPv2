@@ -37,7 +37,7 @@ GA::~GA() {
 void GA::SetupOptions(int argc, char *argv[]){
 	options.randomSeed = time(NULL);
 	options.popSize = 30;
-	options.maxgens = 15;
+	options.maxgens = 45;
 	options.px = 0.99;
 	options.pm = 0.4; // This is set by the graph
 
@@ -50,9 +50,11 @@ void GA::SetupOptions(int argc, char *argv[]){
 
     options.closedRouteVertex = -1;
 
-    options.graphfile = "../benchmarks/arc-routing/graph-gdb1.csv";
+    options.graphfile = "../benchmarks/benchmarks/gdb/gdb1.dat";
 
-    // Read arguments if they are coming in [graphName], [runs], [robots].. etc
+    options.minimalOutput = false;
+    options.makeVisuals = true;
+
     for (int i = 0; i < argc; ++i) {
         switch(i) {
             case 1: options.graphfile = argv[i]; break;
@@ -61,14 +63,15 @@ void GA::SetupOptions(int argc, char *argv[]){
             case 4: options.maxgens = std::strtol(argv[i], NULL, 10); break;
             case 5: options.numRuns = std::strtol(argv[i], NULL, 10); break;
             case 6: options.closedRouteVertex = std::strtol(argv[i], NULL, 10); break;
+            case 7: options.minimalOutput = argv[i] == "1"; break;
+            case 8: options.makeVisuals = argv[i] == "1"; break;
             default: break;
         }
     }
 
     SetGraph(options.graphfile);
 
-    options.minimalOutput = false;
-    options.makeVisuals = true;
+
 }
 
 void GA::SetGraph(string graphf) {
