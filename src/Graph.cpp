@@ -68,38 +68,68 @@ void Graph::SetGraphFromFile(string file) {
     readFile.open(file, ios::in );
 
     if (!readFile.is_open()) {
-        cerr << "Cannot locate file: " << file << endl;
+        AssertWithErrorMessage("Cannot locate file: " + file, readFile.is_open());
         return;
     } else {
-        string line, token, temp = "";
+        string line = "";
+        string token = "";
+        string fileFormat = ExtractFileFormat(file);
 
-        // Read data, line by line
-        int i = 0;
-        while(getline(readFile, line, '\n')) {
-            size_t pos = 0;
-            int j = 0;
-            int cost = 0;
-            while((pos = line.find(',')) != std::string::npos) {
+        if (fileFormat == ".csv") {
+            int i = 0;
+            while(getline(readFile, line, '\n')) {
+                size_t pos = 0;
+                int j = 0;
+                int cost = 0;
+                while((pos = line.find(',')) != std::string::npos) {
+                    token = line.substr(0, pos);
+                    cost = stoi(token);
+                    if (i != j && cost == 0) {
+                        cost = -1;
+                    }
+                    adjacencyMatrix[i][j] = cost;
+                    line.erase(0, pos + 1);
+                    j++;
+                }
+                pos = line.find('\n');
                 token = line.substr(0, pos);
                 cost = stoi(token);
                 if (i != j && cost == 0) {
                     cost = -1;
                 }
                 adjacencyMatrix[i][j] = cost;
-                line.erase(0, pos + 1);
-                j++;
+                i++;
             }
-            pos = line.find('\n');
-            token = line.substr(0, pos);
-            cost = stoi(token);
-            if (i != j && cost == 0) {
-                cost = -1;
+            numVertices = i;
+        } else if (fileFormat == ".dat") {
+            int count = 0;
+            while(getline(readFile, line, '\n')) {
+                size_t pos = 0;
+                vector<string> tokens;
+                while((pos = line.find(' ')) != std::string::npos) {
+                    tokens.push_back(line.substr(0, pos));
+                    line.erase(0, pos + 1);
+                }
+                tokens.push_back(line.substr(0, pos));
+                switch(count) {
+                    case 2:
+                        numVertices = std::stoi(tokens[3]);
+                        break;
+                    default:
+                        if (tokens.size() > 7) {
+                            int v1 = std::stoi(tokens[2].erase(tokens[2].length() - 1, 1)) - 1;
+                            int v2 = std::stoi(tokens[3].erase(tokens[3].length() - 1, 1)) - 1;
+                            int cost = std::stoi(tokens[6]);
+                            adjacencyMatrix[v1][v2] = cost;
+                            adjacencyMatrix[v2][v1] = cost;
+                        } else { // last line
+                            // TODO last line of .dat file might be important
+                        }
+                        break;
+                }
+                count++;
             }
-            adjacencyMatrix[i][j] = cost;
-            //line.erase(0, pos + 1);
-            i++;
         }
-        numVertices = i;
     }
     readFile.close();
 }
@@ -107,8 +137,7 @@ void Graph::CalculateNumberOfEdges() {
     numEdges = 0;
     for (int i = 0; i < numVertices; i++) {
         for (int j = i; j < numVertices; j++) {
-            // if weight is greater than 0 then valid edge
-            if (0 < adjacencyMatrix[i][j]) {
+            if (adjacencyMatrix[i][j] > 0 && i != j) {
                 numEdges ++;
                 sumEdges += adjacencyMatrix[i][j];
             }
@@ -139,7 +168,7 @@ pair<int, int>* Graph::GetVerticesOnEdge(int& edge) {
 }
 
 
-Path* Graph::GetShortestPathBetweenVertices(int& startVertex, int& endVertex) {
+Path* Graph::GetShortestPathBetweenVertices(const int& startVertex, const int& endVertex) {
     Path* path = nullptr;
     // check cache before running dijkstras
     if (cachedShortestPaths[startVertex][0].cost == -1) { // start vertex has no existing path calculations

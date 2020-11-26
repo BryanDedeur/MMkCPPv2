@@ -7,9 +7,6 @@
  */
 
 #include "Utils.h"
-#include <iostream>
-#include <fstream>
-#include <string>
 
 void ClearFile(std::string filename) {
     std::ofstream ofs;
@@ -40,6 +37,20 @@ string ExtractNameOfFile(string filePath) {
     return filePath;
 }
 
+string ExtractFileFormat(string filePath) {
+    size_t pos = 0;
+    std::string token;
+    string delimiter = "/";
+    string delimeter2 = ".";
+    while ((pos = filePath.find(delimiter)) != std::string::npos) {
+        token = filePath.substr(0, pos);
+        filePath.erase(0, pos + delimiter.length());
+        if ((pos = filePath.find(delimeter2)) != std::string::npos)
+            filePath.erase(0, pos);
+    }
+    return filePath;
+}
+
 int Flip(float prob){
 	return (rand() < prob*RAND_MAX ? 1 : 0);
 }
@@ -52,6 +63,12 @@ int IntInRange(int low, int high){
 /* greater than equal to 0 and less than 1 */
 float RandomFraction(){
 	return ((float)(rand()%1000))/(float)1000.0;
+}
+
+void AssertWithErrorMessage(string message, bool didPass) {
+    if (!didPass)
+        std::cerr << message << std::endl;
+    assert(didPass);
 }
 
 

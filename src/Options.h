@@ -8,6 +8,7 @@
 #ifndef OPTIONS_H_
 #define OPTIONS_H_
 
+#include "Const.h"
 #include "Utils.h"
 #include <string>
 
@@ -29,6 +30,10 @@ typedef struct {
     string fitnessfile;
     string travelfile;
     string resultsfile;
+
+    bool minimalOutput;
+    bool makeVisuals;
+    int closedRouteVertex;
 
     string graphName;
 

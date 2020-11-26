@@ -6,17 +6,17 @@
  */
 
 #include "Population.h"
-#include <assert.h>
 #include "Evaluate.h"
 #include "Utils.h"
+
 #include <iostream>
 
 Population::Population(Options* opts, Graph *gph) {
     options = opts;
     avgFitness = minFitness = maxFitness = sumFitness = -1;
     avgTravelDist = minTravelDist = maxTravelDist = sumTravelDist = -1;
+    AssertWithErrorMessage("The constant MAXPOP is too small for CHC, increase MAXPOP to at least " + to_string(options->popSize * 2), (options->popSize * 2) <= MAXPOP);
 
-    assert((options->popSize * 2) <= MAXPOP);
     for (int i = 0; i < options->popSize * 2; i++){
         members[i] = new Individual(options, gph);
         members[i]->Init();
@@ -68,10 +68,10 @@ void Population::Statistics(){
 
 void Population::Report(unsigned long int gen){
 	char printbuf[1024];
-	sprintf(printbuf, "%4i \t %f \t %f \t %f \n ", (int)gen, 1/minFitness, 1/avgFitness, 1/maxFitness);
+	sprintf(printbuf, "%4i \t %f \t %f \t %f \t %i \n ", (int)gen, 1/minFitness, 1/avgFitness, 1/maxFitness, options->randomSeed);
 	WriteBufToFile(std::string(printbuf), options->fitnessfile);
     char printbuf2[1024];
-    sprintf(printbuf2, "%4i \t %i \t %i \t %i \n ", (int)gen, minTravelDist, avgTravelDist, maxTravelDist);
+    sprintf(printbuf2, "%4i \t %i \t %i \t %i \t %i  \n ", (int)gen, minTravelDist, avgTravelDist, maxTravelDist, options->randomSeed);
     WriteBufToFile(std::string(printbuf2), options->travelfile);
 }
 
@@ -296,7 +296,6 @@ void Population::InvertMutate(Individual *ind) {
             ind->Swap(l, r);
         }
         //cout << "after mutation: " << *ind << endl << endl;
-
     }
 
 }

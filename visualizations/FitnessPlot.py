@@ -10,7 +10,7 @@ if len(args) > 1:
     inputDir = args[1] #file path pass as command line arguement
     graphDir = args[2]
 else:
-    inputDir = '../results/fitness-graph-gdb1-1R-pops20-80gens-chc-ox-swap.tsv'
+    inputDir = '../results/fitness-graph-gdb1-1R-pops1000-1000gens-chc-ox-inv.tsv'
     graphDir = '../benchmarks/arc-routing/graph-gdb1.csv'
 
 
@@ -55,7 +55,7 @@ def plotMatrix(matrix):
     runs = 0
     for row in matrix:
         gen = int(row[0])
-        for j in range(len(matrix[0])):
+        for j in range(4):
             if j != 0:
                 averages[gen][j - 1] += row[j]
         if gen == 0:

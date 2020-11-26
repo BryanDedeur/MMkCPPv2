@@ -27,6 +27,7 @@ outputDir = '../img/overlap-plot-' +\
 routes = load_route_file(routeDir)
 adj = load_graph_file(graphDir)
 cords = load_coordinate_file(graphDir)
+vertices = adj.shape[0]
 
 def createNewAdjMatrixWithNoEdgeCost(adj):
     adj_with_overlap = []
