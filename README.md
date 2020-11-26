@@ -25,7 +25,7 @@ Arguments
 
 `[num runs]` how many times the ga will restart. The best individual will be held from any of the runs. Default is 
 
-`[closed route vertex]` starting and ending vertex for all robots. Default is 
+`[closed route vertex]` starting and ending vertex for all robots. Use -1 for open routes. Default is 
 
 `[minimal output]` can be 1 or 0. Will show you more or less information about the GA as it runs.
 
