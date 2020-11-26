@@ -195,7 +195,6 @@ void Individual::Decode() {
                 decoding[r] += *startVertexToStartRoute;
                 decoding[r] += temp;
                 decoding[r] += *endRouteToEndVertex;
-
                 //cout << "After: " << decoding[r] << endl;
             }
         }
