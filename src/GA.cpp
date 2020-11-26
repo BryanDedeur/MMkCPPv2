@@ -7,7 +7,6 @@
 
 #include "GA.h"
 #include <iostream>
-#include <assert.h>
 #include <filesystem>
 namespace fs = experimental::filesystem;
 
@@ -37,8 +36,8 @@ GA::~GA() {
 
 void GA::SetupOptions(int argc, char *argv[]){
 	options.randomSeed = time(NULL);
-	options.popSize = 1000;
-	options.maxgens = 500;
+	options.popSize = 30;
+	options.maxgens = 15;
 	options.px = 0.99;
 	options.pm = 0.4; // This is set by the graph
 
@@ -49,10 +48,7 @@ void GA::SetupOptions(int argc, char *argv[]){
     options.numRobots = 1;
     options.numRuns = 1;
 
-    options.openRoutes = true;
-    for (int i = 0; i < options.numRobots; i++) {
-        options.startVertex[i] = 0;
-    }
+    options.closedRouteVertex = -1;
 
     options.graphfile = "../benchmarks/arc-routing/graph-gdb1.csv";
 
@@ -60,10 +56,11 @@ void GA::SetupOptions(int argc, char *argv[]){
     for (int i = 0; i < argc; ++i) {
         switch(i) {
             case 1: options.graphfile = argv[i]; break;
-            case 2: options.numRuns = std::strtol(argv[i], NULL, 10); break;
-            case 3: options.numRobots = std::strtol(argv[i], NULL, 10); break;
-            case 4: options.popSize = std::strtol(argv[i], NULL, 10); break;
-            case 5: options.maxgens = std::strtol(argv[i], NULL, 10); break;
+            case 2: options.numRobots = std::strtol(argv[i], NULL, 10); break;
+            case 3: options.popSize = std::strtol(argv[i], NULL, 10); break;
+            case 4: options.maxgens = std::strtol(argv[i], NULL, 10); break;
+            case 5: options.numRuns = std::strtol(argv[i], NULL, 10); break;
+            case 6: options.closedRouteVertex = std::strtol(argv[i], NULL, 10); break;
             default: break;
         }
     }
@@ -71,7 +68,7 @@ void GA::SetupOptions(int argc, char *argv[]){
     SetGraph(options.graphfile);
 
     options.minimalOutput = false;
-    options.makeVisuals = false;
+    options.makeVisuals = true;
 }
 
 void GA::SetGraph(string graphf) {
@@ -96,9 +93,10 @@ void GA::SetGraph(string graphf) {
 }
 
 void GA::Init(){
-    assert(("Population size is not even" ,options.popSize % 2 == 0));
-    assert(("Number of runs should be at least 1" ,options.numRuns > 0));
-    assert(("Number of robots should be at least 1" ,options.numRobots > 0));
+    AssertWithErrorMessage("Population size is not even", options.popSize % 2 == 0);
+    AssertWithErrorMessage("Number of runs should be at least 1", options.numRuns > 0);
+    AssertWithErrorMessage("Number of robots should be at least 1", options.numRobots > 0);
+    AssertWithErrorMessage("Closed route start vertex is out of bounds", options.closedRouteVertex < options.chromLength);
 
     if (graph == nullptr) {
         graph = new Graph(&options);
@@ -155,9 +153,10 @@ void runCommand(string commandStr) {
 
 void GA::Report() {
     char printbuf[1024];
-    float percentAboveLowerBound = (1/best->fitness/float(graph->sumEdges) - 1) * 100;
+    float percentAboveLowerBound = (best->totalTravelDistance/float(graph->sumEdges) - 1) * 100;
 
-    sprintf(printbuf, "%s \t %i \t %i \t %f \t %f \t %i \n ", options.graphName.c_str(), graph->sumEdges, int(1/best->fitness), percentAboveLowerBound, timeSeconds, best->seed);
+    // TODO include both best fitness and total travel cost
+    sprintf(printbuf, "%s \t %i \t %i \t %f \t %f \t %i \n ", options.graphName.c_str(), graph->sumEdges, best->totalTravelDistance, percentAboveLowerBound, timeSeconds, best->seed);
     WriteBufToFile(std::string(printbuf), options.resultsfile);
 
     best->WriteToFile(options.decodedfile);
