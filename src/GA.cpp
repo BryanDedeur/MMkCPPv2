@@ -63,8 +63,8 @@ void GA::SetupOptions(int argc, char *argv[]){
             case 4: options.maxgens = std::strtol(argv[i], NULL, 10); break;
             case 5: options.numRuns = std::strtol(argv[i], NULL, 10); break;
             case 6: options.closedRouteVertex = std::strtol(argv[i], NULL, 10); break;
-            case 7: options.minimalOutput = argv[i] == "1"; break;
-            case 8: options.makeVisuals = argv[i] == "1"; break;
+            case 7: options.minimalOutput = string(argv[i]) == "1"; break;
+            case 8: options.makeVisuals = string(argv[i]) == "1"; break;
             default: break;
         }
     }
