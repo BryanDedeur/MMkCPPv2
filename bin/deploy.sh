@@ -1,18 +1,18 @@
 #!/bin/bash
 
-cd bin
-graph_directory=$(ls ../benchmarks/arc-routing/*.csv)
 ga_exe="./ga.exe"
 
-for graph in $graph_directory; do
-    "$ga_exe" $graph 5 2 1000 1000
-done
+graph_directory=$(ls ../benchmarks/benchmarks/gdb/*.dat)
+
+popSize=1000
+generations=500
+closedRouteVertex=0
+runs=30
+minimalOutput=0
+makeVisuals=0
 
 for graph in $graph_directory; do
-    "$ga_exe" $graph 5 5 1000 1000
+    for k in {2..10}; do
+        $ga_exe $graph $k $popSize $generations $runs $closedRouteVertex $minimalOutput $makeVisuals;
+    done
 done
-
-for graph in $graph_directory; do
-    "$ga_exe" $graph 5 1 1000 1000
-done
-
