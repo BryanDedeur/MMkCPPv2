@@ -222,8 +222,21 @@ Path* Graph::GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge) {
     return &cachedShortestPaths[vertex][verticesOnEdge->second];
 }
 
-int& Graph::GetEdgeCost(int& vertexA, int& vertexB) {
+int& Graph::GetEdgeCostFromVertices(int& vertexA, int& vertexB) {
     return adjacencyMatrix[vertexA][vertexB];
+}
+
+int& Graph::GetEdgeCost(int& edge) {
+    pair<int, int>* vertices = GetVerticesOnEdge(edge);
+    return adjacencyMatrix[vertices->first][vertices->second];
+}
+
+bool& Graph::EdgeContainsVertices(int& edge, int& vertexA, int& vertexB) {
+    pair<int, int> *verticesOnEdge = GetVerticesOnEdge(edge);
+    bool result = (vertexA == verticesOnEdge->first || vertexA == verticesOnEdge->second) &&
+            (vertexB == verticesOnEdge->first || vertexB == verticesOnEdge->second) &&
+            (vertexA != vertexB);
+    return result;
 }
 
 int& Graph::GetOppositeVertexOnEdge(int& vertex, int& edge) {

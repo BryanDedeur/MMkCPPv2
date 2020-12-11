@@ -7,7 +7,7 @@ graph_directory=$(ls ../benchmarks/benchmarks/gdb/*.dat)
 popSize=1000
 generations=500
 closedRouteVertex=0
-runs=30
+runs=1
 minimalOutput=0
 makeVisuals=0
 

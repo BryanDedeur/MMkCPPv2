@@ -61,16 +61,30 @@ void Individual::Swap(int &indexA, int &indexB) {
 void Individual::Evaluate() {
     Decode();
     fitness = 0;
-    double largestPathCost = 0;
+    double minPathCost = DBL_MAX;
+    double maxPathCost = 0;
     totalTravelDistance = 0;
+
     // calculate the distribution of travel among all robots
     for (int r = 0; r < options->numRobots; r++) {
         totalTravelDistance += decoding[r].cost;
-        if (largestPathCost < decoding[r].cost) {
-            largestPathCost = decoding[r].cost;
+        if (maxPathCost < decoding[r].cost) {
+            maxPathCost = decoding[r].cost;
+        }
+        if (minPathCost > decoding[r].cost) {
+            minPathCost = decoding[r].cost;
         }
     }
-    fitness = 1/largestPathCost; // Larger numbers get smaller
+
+//    double mean = totalTravelDistance / options->numRobots;
+//    double variance = 0;
+//    for (int r = 0; r < options->numRobots; r++) {
+//        variance += pow((decoding[r].cost - mean), 2) ;
+//    }
+//    variance = variance / (options->numRobots - 1);
+//    double sd = sqrt(variance);
+
+    fitness = 1/(maxPathCost); // Larger numbers get smaller
 }
 
 void Individual::WriteToFile(string filename) {
@@ -100,6 +114,84 @@ void Individual::UpdateRobotChromIndex() {
     }
 }
 
+void Individual::FastDecode() {
+    int r = -1;
+    int lastVertex = -1;
+    int lastIndex = -1;
+    bool findFirstVertexAndTravelLastEdge = false;
+    Path unassignedPath = Path(0);
+    pair<int, int> edgeVertices;
+    for (int i = 0; i < options->chromLength; i++) {
+        if (i == 0) {
+            lastIndex = options->chromLength - 1;
+        } else {
+            lastIndex = i - 1;
+        }
+        if (chromosome[lastIndex].isRobot && chromosome[i].isRobot) {
+            // robot | robot - no path
+//            r = chromosome[i].isRobot;
+//            decoding[r] = Path(0);
+        } else if (chromosome[lastIndex].isRobot && !chromosome[i].isRobot) {
+            // robot | edge - start of path
+            r = chromosome[lastIndex].value;
+            decoding[r] = Path(0);
+            findFirstVertexAndTravelLastEdge = true;
+        } else if (!chromosome[lastIndex].isRobot && chromosome[i].isRobot) {
+            // edge | robot - end of path
+            r = chromosome[i].value;
+            decoding[r] = Path(0);
+            if (findFirstVertexAndTravelLastEdge) {
+                findFirstVertexAndTravelLastEdge = false;
+                // just pick an random vertex
+                edgeVertices = *graph->GetVerticesOnEdge(chromosome[lastIndex].value);
+                // travel the edge
+                if (r == -1) {
+                    unassignedPath += *graph->GetShortestPathBetweenVertices(edgeVertices.first, edgeVertices.second);
+                } else {
+                    decoding[r] += *graph->GetShortestPathBetweenVertices(edgeVertices.first, edgeVertices.second);
+                }
+            } else {
+                // travel from last vertex to opposite on edge
+                if (r == -1) {
+                    unassignedPath += *graph->GetShortestPathBetweenVertices(lastVertex, graph->GetOppositeVertexOnEdge(lastVertex, chromosome[lastIndex].value));
+                } else {
+                    decoding[r] += *graph->GetShortestPathBetweenVertices(lastVertex, graph->GetOppositeVertexOnEdge(lastVertex, chromosome[lastIndex].value));
+                }
+            }
+        } else if (!chromosome[lastIndex].isRobot && !chromosome[i].isRobot) {
+            // edge | edge - connecting two edges
+            // find shortest path between edges
+            Path *bestPath = graph->GetShortestPathBetweenEdges(chromosome[lastIndex].value, chromosome[i].value);
+            //cout << *bestPath << endl;
+            if (findFirstVertexAndTravelLastEdge) {
+                findFirstVertexAndTravelLastEdge = false;
+                // find opposite vertex from the start of best path
+
+                // travel the edge
+                if (r == -1) {
+                    unassignedPath += *graph->GetShortestPathBetweenVertices(lastVertex, bestPath->path.front());
+                } else {
+                    decoding[r] += *graph->GetShortestPathBetweenVertices(lastVertex, bestPath->path.front());
+                }
+            }
+            // travel best path
+            if (r == -1) {
+                unassignedPath += *bestPath;
+            } else {
+                decoding[r] += *bestPath;
+            }
+            // track last visited vertex
+            lastVertex = bestPath->path.back();
+        }
+    }
+
+    decoding[r] += unassignedPath;
+    for (int i = 0; i < options->numRobots; i++) {
+        cout << "R" << i << ": " << decoding[i] << endl;
+
+    }
+}
+
 void Individual::Decode() {
     // make sure array is valid
     for (int r = 0; r < options->numRobots; r++) {
@@ -123,12 +215,12 @@ void Individual::Decode() {
                 if (decoding[r].path.empty()) {
                     // start travel from opposite vertex on from best path starting edge
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(bestPath->path.front(), chromosome[firstEdgeIndex].value);
-                    decoding[r].cost += graph->GetEdgeCost(oppositeVertex, bestPath->path.front());
+                    decoding[r].cost += graph->GetEdgeCostFromVertices(oppositeVertex, bestPath->path.front());
                     decoding[r].path.push_back(oppositeVertex);
                     decoding[r].path.push_back(bestPath->path.front());
                 } else { // traveled somewhere before
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
-                    decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
+                    decoding[r].cost += graph->GetEdgeCostFromVertices(decoding[r].path.back(), oppositeVertex);
                     decoding[r].path.push_back(oppositeVertex);
                 }
 
@@ -138,7 +230,7 @@ void Individual::Decode() {
                     // if not at the best connecting vertex, travel to that vertex
                     if (bestPath->path.back() != decoding[r].path.back()) {
                         int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
-                        decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
+                        decoding[r].cost += graph->GetEdgeCostFromVertices(decoding[r].path.back(), oppositeVertex);
                         decoding[r].path.push_back(oppositeVertex);
                     } else { // at the best connecting edge
                         // do nothing
@@ -161,7 +253,7 @@ void Individual::Decode() {
                 if (!decoding[r].path.empty()) {
                     // travel edge (should have arrived at the edge at this point)
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
-                    decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
+                    decoding[r].cost += graph->GetEdgeCostFromVertices(decoding[r].path.back(), oppositeVertex);
                     decoding[r].path.push_back(oppositeVertex);
                 } else { // randomly start somewhere and end on opposite vertex on edge
                     pair<int, int> *vertices = graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
@@ -171,7 +263,7 @@ void Individual::Decode() {
                         decoding[r].path.push_back(vertices->second);
                     }
                     int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
-                    decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
+                    decoding[r].cost += graph->GetEdgeCostFromVertices(decoding[r].path.back(), oppositeVertex);
                     decoding[r].path.push_back(oppositeVertex);
                 }
             }

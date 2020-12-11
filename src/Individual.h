@@ -60,6 +60,7 @@ public:
     void Mutate(double pm);
     void Swap(int &indexA, int &indexB);
     void Evaluate(); // Reasoning: seems like evaluation is better done from within the class for better access to data members
+    void FastDecode();
     void Decode();
     void WriteToFile(string filename); // There might be a better way of doing this
     void UpdateRobotChromIndex();

@@ -19,6 +19,9 @@ ostream& operator<<(ostream& os, const Path& path) {
     for (const int& itr : path.path) {
         os << itr << ' ';
     }
+    if (path.cost > 100) {
+        path.cost;
+    }
     os << "cost: " << path.cost;
     return os;
 }
@@ -26,8 +29,7 @@ ostream& operator<<(ostream& os, const Path& path) {
 Path& Path::operator=(Path other) { // Assignment operator copying struct
     this->path.clear();
     for (const int& itr : other.path) {
-        int it = itr;
-        this->path.push_back(it);
+        this->path.push_back(itr);
     }
     this->cost = other.cost;
     return *this;
@@ -36,15 +38,19 @@ Path& Path::operator=(Path other) { // Assignment operator copying struct
 // assignment operator override to help with combining paths together
 Path& Path::operator+=(const Path &rhsPath) {
     for (const int& itr : rhsPath.path) {
-        int it = itr;
         if (!this->path.empty()) {
-            if (it != this->path.back()) {
-                this->path.push_back(it);
+            if (!(itr == this->path.back())) {
+                this->path.push_back(itr);
             }
         } else {
-            this->path.push_back(it);
+            this->path.push_back(itr);
         }
     }
+
+    if (this->cost > 100 || rhsPath.cost > 100) {
+        this->cost = this->cost;
+    }
+
     this->cost += rhsPath.cost;
     return *this;
 }
