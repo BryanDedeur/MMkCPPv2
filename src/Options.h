@@ -1,7 +1,7 @@
 /*
  * @Project: MMkCPP v2
  * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
- * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Jonathan Peters
  * @Date: 10/18/20
  */
 
@@ -19,11 +19,16 @@ enum SelectorType {FP, CHC}; // proportional ranking, tournament, genitor/ stead
 enum CrossoverType {NoCross, PMX, OX, CX, EX};
 enum MutationType {NoMut, Swap, Invert, Slide};
 
+struct Base { };
+
 // Options
-typedef struct {
+typedef struct Options : Base {
     // in files
 	string infile;
-    string graphfile;
+    string graphfile = "../../../problem-instances/stacs-graphs/graph-raw.csv"; // directory must be relative to the executable
+    //string graphfile = "../../../benchmarks/gdb/gdb1.dat";
+
+    string graphName;
 
     // output files
     string decodedfile;
@@ -31,24 +36,26 @@ typedef struct {
     string travelfile;
     string resultsfile;
 
-    bool minimalOutput;
-    bool makeVisuals;
-    int closedRouteVertex;
+    bool minimalOutput = true;
+    bool makeVisuals = false;
+    int closedRouteVertex = -1;
 
-    string graphName;
+	long int randomSeed = time(NULL);
+	int numRuns = 1;
+	int popSize = 1000;
+	int chromLength; // this is automatically set by the graph
+	unsigned int maxgens = 1000;
 
-	long int randomSeed;
-	int numRuns;
-	int popSize;
-	int chromLength;
-	unsigned int maxgens;
+    int numRobots = 1;
 
-	float px;
-	float pm;
+	float px = 0.99;
+	float pm = 0.4;
 
-	SelectorType selector;
-	CrossoverType crossover;
-	MutationType mutator;
+	SelectorType selector = CHC;
+	CrossoverType crossover = OX;
+	MutationType mutator = Invert;
+
+    // Helper functions below
 	string GetSelectorStr() {
         switch(selector) {
             case CHC: return "chc";
@@ -72,8 +79,6 @@ typedef struct {
         }
 	}
 
-        // Unique for arc-routing
-    int numRobots;
 } Options;
 
 #endif /* OPTIONS_H_ */

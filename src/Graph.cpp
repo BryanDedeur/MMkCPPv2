@@ -1,7 +1,7 @@
 /*
  * @Project: MMkCPP v2
  * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
- * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Jonathan Peters
  * @Date: 10/18/20
  */
 

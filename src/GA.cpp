@@ -1,13 +1,12 @@
 /*
  * @Project: MMkCPP v2
  * @Description: Genetic algorithm to evaluate efficient routes for a robotic bridge inspection team
- * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Johnathan Peters
+ * @Collaborators: Sushil Louis, Bryan Dedeurwaerder, Jonathan Peters
  * @Date: 10/18/20
  */
 
 #include "GA.h"
 #include <iostream>
-#include <filesystem>
 namespace fs = experimental::filesystem;
 
 
@@ -35,26 +34,6 @@ GA::~GA() {
 
 
 void GA::SetupOptions(int argc, char *argv[]){
-	options.randomSeed = time(NULL);
-	options.popSize = 30;
-	options.maxgens = 45;
-	options.px = 0.99;
-	options.pm = 0.4; // This is set by the graph
-
-    options.selector = CHC;
-    options.crossover = OX;
-    options.mutator = Invert;
-
-    options.numRobots = 1;
-    options.numRuns = 1;
-
-    options.closedRouteVertex = -1;
-
-    options.graphfile = "../benchmarks/benchmarks/gdb/gdb1.dat";
-
-    options.minimalOutput = false;
-    options.makeVisuals = true;
-
     for (int i = 0; i < argc; ++i) {
         switch(i) {
             case 1: options.graphfile = argv[i]; break;
@@ -70,8 +49,6 @@ void GA::SetupOptions(int argc, char *argv[]){
     }
 
     SetGraph(options.graphfile);
-
-
 }
 
 void GA::SetGraph(string graphf) {

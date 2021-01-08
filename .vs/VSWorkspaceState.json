@@ -1,6 +1,13 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\out",
+    "\\problem-instances",
+    "\\problem-instances\\benchmarks",
+    "\\problem-instances\\custom-graphs",
+    "\\problem-instances\\stacs-graphs",
+    "\\shell-automation"
   ],
+  "SelectedNode": "\\shell-automation\\SetupParallelRuns.sh",
   "PreviewInSolutionExplorer": false
 }
