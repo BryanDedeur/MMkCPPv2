@@ -1,13 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\out",
-    "\\problem-instances",
-    "\\problem-instances\\benchmarks",
-    "\\problem-instances\\custom-graphs",
-    "\\problem-instances\\stacs-graphs",
-    "\\shell-automation"
+    "\\seed-files",
+    "\\shell-automation",
+    "\\shell-automation\\parallelization"
   ],
-  "SelectedNode": "\\shell-automation\\SetupParallelRuns.sh",
+  "SelectedNode": "\\.gitignore",
   "PreviewInSolutionExplorer": false
 }
