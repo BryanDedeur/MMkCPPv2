@@ -15,16 +15,13 @@ Arguments
 ./ga.exe [graph file] [num robots] [pop size] [num gens] [num runs] [closed route vertex] [minimal output] [make visuals]
 ```
 1. `[graph file]` the .csv or .dat graph. Must speficy the path to the file if not in same directory as ga.exe. Default is "../benchmarks/benchmarks/gdb/gdb1.dat"
-2. `[num robots]` the number of robots can be any number greater than or equal to 1 (k=...). Default is 1.
-3. `[pop size]` number of individuals. Must be an even number. Default is 30.
-4. `[num gens]` number of times to reproduce individuals. Can be any size. Default is 45.
-5. `[num runs]` how many times the ga will restart. The best individual will be held from any of the runs. Default is 1.
+2. `[seedFile]` the seed file
+3. `[num robots]` the number of robots can be any number greater than or equal to 1 (k=...). Default is 1.
+4. `[pop size]` number of individuals. Must be an even number. Default is 30.
+5. `[num gens]` number of times to reproduce individuals. Can be any size. Default is 45.
 6. `[closed route vertex]` starting and ending vertex for all robots. Use -1 for open routes. Default is -1.
 7. `[minimal output]` can be 1 or 0. Will show you more or less information about the GA as it runs. Default is false.
 8. `[make visuals]` can be 1 or 0. Will run the python visualizations after the GA is finished. Default is true.
-
-TODO `[seed file]` the file with a set of random seeds.
-
 
 ## Getting Started for Development
 
@@ -114,7 +111,10 @@ Working Environments:
   - Windows 10 x32 x64
   - Ubuntu 18, 20
  
-IDEs: [Jetbrains - Clion 2020](https://www.jetbrains.com/clion/)
+IDEs: 
+[Jetbrains - Clion 2020](https://www.jetbrains.com/clion/)
+[Visual Studio 2019](https://visualstudio.microsoft.com/)
+
 
 Unity Version: 
 
