@@ -14,7 +14,6 @@ using namespace std;
 int main(int argc, char *argv[]) {
 
     GA ga = GA(argc, argv);
-    cout << endl << "Starting GA on graph " << ga.options.graphName << " with " << ga.options.numRobots << " robots for " << ga.options.numRuns << " runs of " << ga.options.maxgens << " generations with population size " << ga.options.popSize << ": " << endl;
     for (int i = 1; i <= ga.options.numRuns; i++) {
         ga.Init();
         ga.Run();

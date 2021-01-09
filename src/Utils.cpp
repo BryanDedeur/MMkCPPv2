@@ -51,6 +51,26 @@ string ExtractFileFormat(string filePath) {
     return filePath;
 }
 
+vector<string> SplitFileByLines(string filePath) {
+    fstream readFile;
+    readFile.open(filePath, ios::in);
+
+    vector<string> lines = vector<string>();
+
+    if (!readFile.is_open()) {
+        AssertWithErrorMessage("Cannot locate file: " + filePath, readFile.is_open());
+    }
+    else {
+        string line = "";
+        while (getline(readFile, line, '\n')) {
+            lines.push_back(line);
+        }
+    }
+    readFile.close();
+
+    return lines;
+}
+
 int Flip(float prob){
 	return (rand() < prob*RAND_MAX ? 1 : 0);
 }

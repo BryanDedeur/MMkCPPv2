@@ -13,6 +13,7 @@
 #include "Options.h"
 #include "Graph.h"
 #include <time.h>
+#include <vector>
 
 class GA {
 

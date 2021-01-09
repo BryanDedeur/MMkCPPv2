@@ -25,10 +25,13 @@ struct Base { };
 typedef struct Options : Base {
     // in files
 	string infile;
-    string graphfile = "../../../problem-instances/stacs-graphs/graph-raw.csv"; // directory must be relative to the executable
+    string graphfile = "../problem-instances/stacs-graphs/graph-raw.csv"; // directory must be relative to the executable
     //string graphfile = "../../../benchmarks/gdb/gdb1.dat";
 
     string graphName;
+
+    string outputDir = "../../results/";
+
 
     // output files
     string decodedfile;
@@ -36,15 +39,18 @@ typedef struct Options : Base {
     string travelfile;
     string resultsfile;
 
-    bool minimalOutput = true;
+    bool minimalOutput = false;
     bool makeVisuals = false;
     int closedRouteVertex = -1;
 
-	long int randomSeed = time(NULL);
+    string seedsFile = "../seed-files/seeds.txt";
+    long int* seeds;
+    long int randomSeed = time(NULL);
+
 	int numRuns = 1;
-	int popSize = 1000;
+	int popSize = 10;
 	int chromLength; // this is automatically set by the graph
-	unsigned int maxgens = 1000;
+	unsigned int maxgens = 10;
 
     int numRobots = 1;
 

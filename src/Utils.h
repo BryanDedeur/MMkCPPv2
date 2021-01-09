@@ -13,13 +13,16 @@
 #include <fstream>
 #include <string>
 #include <assert.h>
+#include <sstream>
+#include <vector>
 
-using std::string;
+using namespace std;
 
-void ClearFile(std::string filename);
-void WriteBufToFile(std::string buf, std::string filename);
-std::string ExtractNameOfFile(std::string);
-std::string ExtractFileFormat(std::string);
+void ClearFile(string filename);
+void WriteBufToFile(string buf, string filename);
+string ExtractNameOfFile(string filePath);
+string ExtractFileFormat(string filePath);
+vector<string> SplitFileByLines(string filePath);
 float RandomFraction();
 int Flip(float prob);
 int IntInRange(int low, int high);

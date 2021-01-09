@@ -22,8 +22,18 @@ GA::GA(int argc, char *argv[]) : runCount(0), timeSeconds(0) {
     best->totalTravelDistance = 0;
     best->fitness = 0;
 
+
+
+    if (options.minimalOutput) {
+        cout.clear();
+        cout << "Starting GA on graph " << options.graphName << " with " << options.numRobots << " robots for " << options.numRuns << " runs of " << options.maxgens << " generations with population size " << options.popSize << endl;
+    }
+    else {
+        cout << endl << "Starting GA on graph " << options.graphName << " with " << options.numRobots << " robots for " << options.numRuns << " runs of " << options.maxgens << " generations with population size " << options.popSize << ": " << endl;
+    }
+
     if (options.minimalOutput)
-        cout.setstate(std::ios_base::failbit);
+        cout.setstate(ios_base::failbit);
 }
 
 GA::~GA() {
@@ -37,16 +47,27 @@ void GA::SetupOptions(int argc, char *argv[]){
     for (int i = 0; i < argc; ++i) {
         switch(i) {
             case 1: options.graphfile = argv[i]; break;
-            case 2: options.numRobots = std::strtol(argv[i], NULL, 10); break;
-            case 3: options.popSize = std::strtol(argv[i], NULL, 10); break;
-            case 4: options.maxgens = std::strtol(argv[i], NULL, 10); break;
-            case 5: options.numRuns = std::strtol(argv[i], NULL, 10); break;
-            case 6: options.closedRouteVertex = std::strtol(argv[i], NULL, 10); break;
+            case 2: options.seedsFile = argv[i]; break;
+            case 3: options.numRobots = strtol(argv[i], NULL, 10); break;
+            case 4: options.popSize = strtol(argv[i], NULL, 10); break;
+            case 5: options.maxgens = strtol(argv[i], NULL, 10); break;
+            case 6: options.closedRouteVertex = strtol(argv[i], NULL, 10); break;
             case 7: options.minimalOutput = string(argv[i]) == "1"; break;
             case 8: options.makeVisuals = string(argv[i]) == "1"; break;
             default: break;
         }
     }
+
+    vector<string> lines = SplitFileByLines(options.seedsFile);
+    options.seeds = new long int[lines.size()];
+
+    int i = 0;
+    for (string seedStr : lines) {
+        options.seeds[i] = stol(seedStr, NULL, 10);
+        i++;
+    }
+
+    options.numRuns = lines.size();
 
     SetGraph(options.graphfile);
 }
@@ -66,10 +87,10 @@ void GA::SetGraph(string graphf) {
             options.GetCrossoverStr() + "-" +
             options.GetMutatorStr();
 
-    options.decodedfile = "../results/route-" + options.graphName + "-" + GAParamsStr + ".tsv";
-    options.fitnessfile = "../results/fitness-" + options.graphName + "-" + GAParamsStr + ".tsv";
-    options.travelfile = "../results/travel-" + options.graphName + "-" + GAParamsStr + ".tsv";
-    options.resultsfile = "../results/results-" + GAParamsStr + ".tsv";
+    options.decodedfile = options.outputDir + "route-" + options.graphName + "-" + GAParamsStr + ".tsv";
+    options.fitnessfile = options.outputDir + options.graphName + "-" + GAParamsStr + ".tsv";
+    options.travelfile = options.outputDir + options.graphName + "-" + GAParamsStr + ".tsv";
+    options.resultsfile = options.outputDir + GAParamsStr + ".tsv";
 }
 
 void GA::Init(){
@@ -82,7 +103,7 @@ void GA::Init(){
         graph = new Graph(&options);
     }
 
-    options.randomSeed = time(NULL);
+    options.randomSeed = options.seeds[runCount];
     srand(options.randomSeed);
     parent = new Population(&options, graph);
 	child  = new Population(&options, graph);
@@ -93,6 +114,7 @@ void GA::Init(){
 
 void GA::Run(){
     clock_t clockin = clock();
+
     cout << runCount << ". Running GA on seed(" << options.randomSeed << "): [";
     for(unsigned long int i = 1; i < options.maxgens; i++){
         if (options.selector == SelectorType::CHC) {
@@ -133,11 +155,10 @@ void runCommand(string commandStr) {
 
 void GA::Report() {
     char printbuf[1024];
-    float percentAboveLowerBound = (best->totalTravelDistance/float(graph->sumEdges) - 1) * 100;
 
     // TODO include both best fitness and total travel cost
-    sprintf(printbuf, "%s \t %i \t %i \t %f \t %f \t %i \n ", options.graphName.c_str(), graph->sumEdges, best->totalTravelDistance, percentAboveLowerBound, timeSeconds, best->seed);
-    WriteBufToFile(std::string(printbuf), options.resultsfile);
+    sprintf(printbuf, "%s \t %i \t %i \t %i \t %i \t %f \t %i \n ", options.graphName.c_str(), graph->numEdges, graph->numVertices, graph->sumEdges, best->totalTravelDistance, timeSeconds, best->seed);
+    WriteBufToFile(string(printbuf), options.resultsfile);
 
     best->WriteToFile(options.decodedfile);
 
@@ -156,21 +177,7 @@ void GA::Report() {
     cout << "Done!" << endl;
     if (options.minimalOutput) {
         cout.clear();
-        for (int r = 0; r < options.numRobots; r++) {
-            cout << "R" + to_string(r) + " ";
-            int count = 0;
-            for (int &itr : best->decoding[r].path) {
-                if (count == 0) {
-                    cout << to_string(itr);
-                } else {
-                    cout << " " + to_string(itr);
-                }
-                count++;
-            }
-            if (r != options.numRobots - 1) {
-                cout << endl;
-            }
-        }
+        cout << "Finished " << options.graphName << " with " << options.numRobots << " robots for " << options.numRuns << " runs of " << options.maxgens << " generations with population size " << options.popSize << ": in " << timeSeconds << "s (" << (timeSeconds / runCount) << "s per run)" << endl;
     }
 }
 

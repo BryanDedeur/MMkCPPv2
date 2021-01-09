@@ -199,9 +199,7 @@ bool Population::ChromContains(Gene* arr, Gene &gene) {
 
 void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *c2) {
     //Get random index points
-//    cout << "ORDER CROSSOVER" << endl;
-//    cout << "p1: " << *p1;
-//    cout << "p2: " << *p2;
+
     int t1 = IntInRange(0, options->chromLength);
     int t2 = IntInRange(0, options->chromLength);
     do
@@ -215,7 +213,6 @@ void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *
         t1 = t2;
         t2 = temp;
     }
-//
 
     //Directly copy genes between index points, track copied values with arrays
     int len = options->chromLength;
@@ -233,6 +230,7 @@ void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *
         c2->chromosome[i] = p2->chromosome[i];
         arr2[i] = p2->chromosome[i];
     }
+
     //Copy remaining values from opposite parent
     int i1 = 0;	//<--To access spaces outside of index points
     int i2 = 0;
@@ -263,11 +261,6 @@ void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *
 
     c1->UpdateRobotChromIndex();
     c2->UpdateRobotChromIndex();
-
-//    cout << "t1: " << t1 << endl;	//<--TEMP for debugging
-//    cout << "t2: " << t2 << endl;	//<--TEMP for debugging
-//    cout << "c1: " << *c1;
-//    cout << "c2: " << *c2;
 }
 
 // --------------------------- Mutators ---------------------------
