@@ -6,6 +6,8 @@ cmake-build-release/*
 venv\*
 venv/*
 
+build/*
+
 results/*
 img/*
 
