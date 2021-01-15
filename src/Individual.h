@@ -61,7 +61,7 @@ public:
     void Swap(int &indexA, int &indexB);
     void Evaluate(); // Reasoning: seems like evaluation is better done from within the class for better access to data members
     void Decode();
-    void WriteToFile(string filename); // There might be a better way of doing this
+    void LogRoutes(string filename); // There might be a better way of doing this
     void UpdateRobotChromIndex();
     bool ChromContains(Gene* arr, Gene &val);
 

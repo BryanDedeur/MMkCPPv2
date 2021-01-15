@@ -73,23 +73,23 @@ void Individual::Evaluate() {
     fitness = 1/largestPathCost; // Larger numbers get smaller
 }
 
-void Individual::WriteToFile(string filename) {
+void Individual::LogRoutes(string filename) {
     ClearFile(filename);
-    string output = "";
+    std::stringstream ss;
     for (int r = 0; r < options->numRobots; r++) {
-        output = output + "R" + to_string(r) + " ";
+        ss << "R" + to_string(r) + " ";
         int count = 0;
         for (int &itr : decoding[r].path) {
             if (count == 0) {
-                output = output + to_string(itr);
+                ss << to_string(itr);
             } else {
-                output = output + " " + to_string(itr);
+                ss << " " + to_string(itr);
             }
             count++;
         }
-        output = output + "\n";
+        ss << endl;
     }
-    WriteBufToFile(output, filename);
+    WriteToFile(ss, filename);
 }
 
 void Individual::UpdateRobotChromIndex() {
