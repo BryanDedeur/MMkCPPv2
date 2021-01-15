@@ -19,7 +19,7 @@
 using namespace std;
 
 void ClearFile(string filename);
-void WriteBufToFile(string buf, string filename);
+void WriteToFile(stringstream &ss, string filename);
 string ExtractNameOfFile(string filePath);
 string ExtractFileFormat(string filePath);
 vector<string> SplitFileByLines(string filePath);

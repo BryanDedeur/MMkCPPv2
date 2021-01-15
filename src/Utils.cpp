@@ -14,13 +14,11 @@ void ClearFile(std::string filename) {
     ofs.close();
 }
 
-void WriteBufToFile(std::string buf, std::string filename){
-	std::ofstream ofs(filename, std::ofstream::app);
-	if(ofs.good()){
-		ofs << buf;
-	}
-	ofs.flush();
-	ofs.close();
+void WriteToFile(stringstream &ss, std::string filename){
+    std::ofstream outFile;
+    outFile.open(filename, ios::app);
+    outFile << ss.rdbuf();
+    outFile.close();
 }
 
 string ExtractNameOfFile(string filePath) {
