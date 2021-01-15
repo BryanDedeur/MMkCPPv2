@@ -67,12 +67,22 @@ void Population::Statistics(){
 }
 
 void Population::Report(unsigned long int gen){
-	char printbuf[1024];
-	sprintf(printbuf, "%4i \t %f \t %f \t %f \t %i \n ", (int)gen, 1/minFitness, 1/avgFitness, 1/maxFitness, options->randomSeed);
-	WriteBufToFile(std::string(printbuf), options->fitnessfile);
-    char printbuf2[1024];
-    sprintf(printbuf2, "%4i \t %i \t %i \t %i \t %i  \n ", (int)gen, minTravelDist, avgTravelDist, maxTravelDist, options->randomSeed);
-    WriteBufToFile(std::string(printbuf2), options->travelfile);
+
+    std::stringstream ss;
+    ss << (int)gen << "\t"
+        << 1 / minFitness << "\t"
+        << 1 / avgFitness << "\t"
+        << 1 / maxFitness << "\t"
+        << options->randomSeed << endl;
+	WriteToFile(ss, options->fitnessfile);
+
+    ss.clear();
+    ss << (int)gen << "\t"
+        << minTravelDist << "\t"
+        << avgTravelDist << "\t"
+        << maxTravelDist << "\t"
+        << options->randomSeed << endl;
+    WriteToFile(ss, options->travelfile);
 }
 
 void Population::StoreIfBest(Individual* ind) {
