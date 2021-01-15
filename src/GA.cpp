@@ -154,13 +154,23 @@ void runCommand(string commandStr) {
 }
 
 void GA::Report() {
-    char printbuf[1024];
 
-    // TODO include both best fitness and total travel cost
-    sprintf(printbuf, "%s \t %i \t %i \t %i \t %i \t %f \t %i \n ", options.graphName.c_str(), graph->numEdges, graph->numVertices, graph->sumEdges, best->totalTravelDistance, timeSeconds, best->seed);
-    WriteBufToFile(string(printbuf), options.resultsfile);
+    CPP chinesePostmanProblem = CPP();
+    chinesePostmanProblem.Solve(*graph);
+    
+    std::stringstream ss;
+    ss << options.graphName.c_str() << "\t"
+        << graph->numEdges << "\t" 
+        << graph->numVertices << "\t"
+        << chinesePostmanProblem.numOddVertices << "\t"
+        << chinesePostmanProblem.shortestPathDistance << "\t"
+        << graph->sumEdges << "\t"
+        << best->totalTravelDistance << "\t"
+        << timeSeconds << "\t"
+        << best->seed << endl;
+    WriteToFile(ss, options.resultsfile);
 
-    best->WriteToFile(options.decodedfile);
+    best->LogRoutes(options.decodedfile);
 
     cout << "Finished " << runCount << " runs in " << timeSeconds << "s (" << (timeSeconds / runCount) << "s per run)" << endl << endl;
 
