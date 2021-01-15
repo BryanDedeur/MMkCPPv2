@@ -38,6 +38,8 @@ class Graph {
         int& GetEdgeCost(int& vertexA, int& vertexB);
         int& GetOppositeVertexOnEdge(int& vertex, int& edge);
 
+        int& GetNumEdges(int& vertex);
+
         int numVertices;
         int numEdges;
         int sumEdges;

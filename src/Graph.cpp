@@ -117,7 +117,7 @@ void Graph::SetGraphFromFile(string file) {
                         break;
                     default:
                         if (tokens.size() > 7) {
-                            int v1 = std::stoi(tokens[2].erase(tokens[2].length() - 1, 1)) - 1;
+                            int v1 = std::stoi(tokens[2].erase(tokens[2].length() - 1, 1)) - 1; // minus 1 at the end for zero base indexing
                             int v2 = std::stoi(tokens[3].erase(tokens[3].length() - 1, 1)) - 1;
                             int cost = std::stoi(tokens[6]);
                             adjacencyMatrix[v1][v2] = cost;
@@ -235,6 +235,18 @@ int& Graph::GetOppositeVertexOnEdge(int& vertex, int& edge) {
     //cerr << "Trying to associate a vertex with an edge that is not related: (vertex: " << vertex << ", edge(" << edge << "): (" << verticesOnEdge->first << ", " << verticesOnEdge.second << "))" << endl;
     return v;
 }
+
+int& Graph::GetNumEdges(int& vertex) {
+    int numEdges = 0;
+    for (int v = 0; v < numVertices; v++) {
+        if (adjacencyMatrix[vertex][v] > 0) {
+            numEdges++;
+        }
+    }
+
+    return numEdges;
+}
+
 
 // utility function for dijkstras
 int Graph::MinDistance(int dist[], bool visited[])
