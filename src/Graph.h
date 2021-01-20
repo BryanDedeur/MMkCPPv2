@@ -38,15 +38,17 @@ class Graph {
         int& GetEdgeCost(int& vertexA, int& vertexB);
         int& GetOppositeVertexOnEdge(int& vertex, int& edge);
 
-        int& GetNumEdges(int& vertex);
+        int& GetEdgesConnectedToVertex(int& vertex);
 
         int numVertices;
         int numEdges;
         int sumEdges;
+
+        int adjacencyMatrix[MAX_VERTICES][MAX_VERTICES]; // for storing weighted graph
+
     private:
         void SetGraphFromFile(string file);
 
-        int adjacencyMatrix[MAX_VERTICES][MAX_VERTICES]; // for storing weighted graph
 
         void CalculateNumberOfEdges();
         Path cachedShortestPaths[MAX_VERTICES][MAX_VERTICES]; // for storing the path results from dijkstra's algorithm

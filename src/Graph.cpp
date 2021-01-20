@@ -29,9 +29,6 @@ Graph::Graph(Options* options) : cachedShortestPaths(), adjacencyMatrix(), numEd
 
     CalculateNumberOfEdges();
 
-    options->chromLength = numEdges + options->numRobots;
-    //options->pm = float(1)/float(options->chromLength);
-
     // pre cache everything so we can print it
     for (int i = 0; i < numVertices; i++) {
         Dijkstras(i);
@@ -52,10 +49,12 @@ ostream& operator<<(ostream& os, const Graph& graph) {
     os << "Graph: costs to get to any vertex" << endl;
     for (int i = 0; i < graph.numVertices; i++) {
         for (int j = 0; j < graph.numVertices; j++) {
-            if (j == 0)
-                os << "(" << i << "," << j << ")" << graph.cachedShortestPaths[i][j].cost;
-            else
-                os << "\t" << "(" << i << "," << j << ")"<< graph.cachedShortestPaths[i][j].cost;
+            if (j == graph.numVertices - 1) {
+                os << graph.adjacencyMatrix[i][j];
+            }
+            else {
+                os << graph.adjacencyMatrix[i][j] << ",";
+            }
         }
         os << endl;
     }
@@ -133,16 +132,18 @@ void Graph::SetGraphFromFile(string file) {
     }
     readFile.close();
 }
+
 void Graph::CalculateNumberOfEdges() {
     numEdges = 0;
     for (int i = 0; i < numVertices; i++) {
         for (int j = i; j < numVertices; j++) {
-            if (adjacencyMatrix[i][j] > 0 && i != j) {
+            if (adjacencyMatrix[i][j] > 0) {
                 numEdges ++;
                 sumEdges += adjacencyMatrix[i][j];
             }
         }
     }
+
 }
 
 pair<int, int>* Graph::GetVerticesOnEdge(int& edge) {
@@ -236,13 +237,15 @@ int& Graph::GetOppositeVertexOnEdge(int& vertex, int& edge) {
     return v;
 }
 
-int& Graph::GetNumEdges(int& vertex) {
+int& Graph::GetEdgesConnectedToVertex(int& vertex) {
     int numEdges = 0;
     for (int v = 0; v < numVertices; v++) {
         if (adjacencyMatrix[vertex][v] > 0) {
             numEdges++;
         }
     }
+
+    // TODO make this so it only returns a vector of vertex elements
 
     return numEdges;
 }
@@ -285,7 +288,7 @@ void Graph::Dijkstras(int startVertex) {
 
         for (int v = 0; v < numVertices; v++) {
             if (!visited[v]     // not visited
-                && -1 != adjacencyMatrix[nearestUnvisitedVertex][v] // edge exists
+                && 0 < adjacencyMatrix[nearestUnvisitedVertex][v] // edge exists
                 && dist[nearestUnvisitedVertex] != INT_MAX          // explored
                 && dist[nearestUnvisitedVertex] + adjacencyMatrix[nearestUnvisitedVertex][v] < dist[v]) {
 
