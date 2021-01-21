@@ -22,8 +22,6 @@ GA::GA(int argc, char *argv[]) : runCount(0), timeSeconds(0) {
     best->totalTravelDistance = 0;
     best->fitness = 0;
 
-
-
     if (options.minimalOutput) {
         cout.clear();
         cout << "Starting GA on graph " << options.graphName << " with " << options.numRobots << " robots for " << options.numRuns << " runs of " << options.maxgens << " generations with population size " << options.popSize << endl;
@@ -70,6 +68,7 @@ void GA::SetupOptions(int argc, char *argv[]){
     options.numRuns = lines.size();
 
     SetGraph(options.graphfile);
+
 }
 
 void GA::SetGraph(string graphf) {
@@ -77,6 +76,9 @@ void GA::SetGraph(string graphf) {
 
     options.graphName = ExtractNameOfFile(graphf);
     graph = new Graph(&options);
+    cout << *graph << endl;
+
+    options.chromLength = graph->numEdges + options.numRobots;
 
     // output file name
     string GAParamsStr =
