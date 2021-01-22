@@ -3,8 +3,8 @@
 ga_exe="./ga.exe"
 
 popSize=1000
-generations=1000
-closedRouteVertex=-1
+generations=500
+closedRouteVertex=0
 minimalOutput=1
 makeVisuals=0
 kValues=(1 2 5)
