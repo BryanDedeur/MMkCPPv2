@@ -26,7 +26,7 @@ struct Base { };
 typedef struct Options : Base {
     // in files
 	string infile;
-    string graphfile = "../problem-instances/benchmarks/gdb/gdb1.dat"; // directory must be relative to the executable
+    string graphfile = "../problem-instances/benchmarks/gdb/gdb23.dat"; // directory must be relative to the executable
     //string graphfile = "../problem-instances/custom-graphs/bryans/simple.csv"; // directory must be relative to the executable
 
     //string graphfile = "../../../benchmarks/gdb/gdb1.dat";
@@ -50,9 +50,9 @@ typedef struct Options : Base {
     long int randomSeed = time(NULL);
 
 	int numRuns = 1;
-	int popSize = 100;
+	int popSize = 1000;
 	int chromLength; // this is automatically set by the graph
-	unsigned int maxgens = 200;
+	unsigned int maxgens = 500;
 
     int numRobots = 1;
 

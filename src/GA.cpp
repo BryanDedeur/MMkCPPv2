@@ -76,7 +76,6 @@ void GA::SetGraph(string graphf) {
 
     options.graphName = ExtractNameOfFile(graphf);
     graph = new Graph(&options);
-    cout << *graph << endl;
 
     options.chromLength = graph->numEdges + options.numRobots;
 
@@ -89,10 +88,10 @@ void GA::SetGraph(string graphf) {
             options.GetCrossoverStr() + "-" +
             options.GetMutatorStr();
 
-    options.decodedfile = options.outputDir + "route-" + options.graphName + "-" + GAParamsStr + ".tsv";
-    options.fitnessfile = options.outputDir + options.graphName + "-" + GAParamsStr + ".tsv";
-    options.travelfile = options.outputDir + options.graphName + "-" + GAParamsStr + ".tsv";
-    options.resultsfile = options.outputDir + GAParamsStr + ".tsv";
+    options.decodedfile = options.outputDir + "decoded-route-" + options.graphName + "-" + GAParamsStr + ".tsv";
+    options.fitnessfile = options.outputDir + "fitness-" + options.graphName + "-" + GAParamsStr + ".tsv";
+    options.travelfile = options.outputDir + "sum-travel-" + options.graphName + "-" + GAParamsStr + ".tsv";
+    options.resultsfile = options.outputDir + "results-summary-" + GAParamsStr + ".tsv";
 }
 
 void GA::Init(){
