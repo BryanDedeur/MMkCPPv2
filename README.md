@@ -8,11 +8,11 @@ You can download the lastest working executable from here:
 
 Example
 ```
-./ga.exe ../benchmarks/gdb/gdb1.dat 2 1000 1000 5 3 0 1
+./ga.exe ../benchmarks/gdb/gdb1.dat ../seeds/seeds.txt 5 1000 500 -1 0 1
 ```
 Arguments
 ```
-./ga.exe [graph file] [num robots] [pop size] [num gens] [num runs] [closed route vertex] [minimal output] [make visuals]
+./ga.exe [graph file] [seedFile] [num robots] [pop size] [num gens] [closed route vertex] [minimal output] [make visuals]
 ```
 1. `[graph file]` the .csv or .dat graph. Must speficy the path to the file if not in same directory as ga.exe. Default is "../benchmarks/benchmarks/gdb/gdb1.dat"
 2. `[seedFile]` the seed file
@@ -98,28 +98,14 @@ Setup parrallelization will clone the executable of the GA into a folder for eac
    - To create the cmake-build-debug that clion recognizes
 4. Use the green build hammer button to "build" or press the play button to "build and run".
 
-#### Using GCC and Command Line Interface
-
-```
-cd src
-g++ -o ga *.cpp -I. -lm
-./ga
-``` 
-
-### Using CMake
-
-
-
-## Relevant papers
-
-
 ### Benchmark Datasets
 [Library of sample instances for the TSP in multiple formats.](http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/)  
 [Capacitated Arc Routing Problems (CARP) and Vehicle Routing Problems](https://logistik.bwl.uni-mainz.de/forschung/benchmarks/)
 
-## Documentation
+## Extra Notes
 
-### Full Cycle
+See my the graph visualizer repository to visualize the results.
+- https://github.com/BryanDedeur/Unity-Graphizer
 
 ## Meta
 Working Environments: 
