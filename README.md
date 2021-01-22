@@ -66,7 +66,22 @@ python3 -m pip install matplotlib
 ```
 If you are using a python environment then you just need to be sure to install the same packages into that invironment.
 
-### Compilation and Execution
+### Automation and IDEs
+
+#### Shell Automation 
+
+Shell automation is used to run the GA on mutiple problems and multiple seeds in parrallel and compile all the results together. To use the automation on Windows follow the steps below.
+
+1. Open Git Bash
+2. Ajust the run-ga.sh file with the ga parameters you desire
+2. Run the following commands
+
+```
+cd shell-automation
+souce setup-parallelization.sh
+```
+
+Setup parrallelization will clone the executable of the GA into a folder for each processer core and assign specific problems to each core. Then it will simotaneously run all the executables.
 
 #### [suggested!] Visual Studio 2017/2019 IDE
 
@@ -84,21 +99,6 @@ Use the Visual Studio Installer and click "Modify" on your perferred version of 
 Click Modify and wait until finished...
 
 Then open the project folder in Visual Studio, generate the cmake cache, select the run option "ga.exe", then you are ready to develop!
-
-#### Shell Automation 
-
-Shell automation is used to run the GA on mutiple problems and multiple seeds in parrallel and compile all the results together. To use the automation on Windows follow the steps below.
-
-1. Open Git Bash
-2. Ajust the run-ga.sh file with the ga parameters you desire
-2. Run the following commands
-
-```
-cd shell-automation
-souce setup-parallelization.sh
-```
-
-Setup parrallelization will clone the executable of the GA into a folder for each processer core and assign specific problems to each core. Then it will simotaneously run all the executables.
 
 #### Clion IDE using CMake
 
