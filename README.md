@@ -21,7 +21,7 @@ R9 5 4 3 5
 
 ## Latest Release
 
-You can download the lastest working executable from here: 
+You can download the lastest working executable from here: [Latest Release](https://github.com/BryanDedeur/MMkCPPv2/releases/tag/2.3.1)
 
 ### Running the program: 
 
@@ -46,14 +46,12 @@ Arguments
 
 ### Dependencies
 
-NOTE: These instructions are experimental and may not work
-
-A list of dependencies that must be installed prior to code execution
- - Python3.X
+A list of optional dependencies for the visualization and automation components:
+ - Python3.X (for visulization stuff)
    - Numpy
    - Scipy
    - MatPlot
- - Git Bash
+ - Git Bash (for automation parrallelization shell stuff)
 
 #### Windows 10
 
@@ -87,7 +85,6 @@ Click Modify and wait until finished...
 
 Then open the project folder in Visual Studio, generate the cmake cache, select the run option "ga.exe", then you are ready to develop!
 
-
 #### Shell Automation 
 
 Shell automation is used to run the GA on mutiple problems and multiple seeds in parrallel and compile all the results together. To use the automation on Windows follow the steps below.
@@ -118,12 +115,15 @@ Setup parrallelization will clone the executable of the GA into a folder for eac
 4. Use the green build hammer button to "build" or press the play button to "build and run".
 
 ### Benchmark Datasets
+
+The links below have many benchmarks instances that are readable by the GA.
+
 [Library of sample instances for the TSP in multiple formats.](http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/)  
 [Capacitated Arc Routing Problems (CARP) and Vehicle Routing Problems](https://logistik.bwl.uni-mainz.de/forschung/benchmarks/)
 
 ## Extra Notes
 
-See my the graph visualizer repository to visualize the results.
+See the graph visualizer repository to visualize the results produced by the GA.
 - https://github.com/BryanDedeur/Unity-Graphizer
 
 ## Meta
