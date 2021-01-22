@@ -78,7 +78,7 @@ Shell automation is used to run the GA on mutiple problems and multiple seeds in
 
 ```
 cd shell-automation
-souce setup-parallelization.sh
+source setup-parallelization.sh
 ```
 
 Setup parrallelization will clone the executable of the GA into a folder for each processer core and assign specific problems to each core. Then it will simotaneously run all the executables.
