@@ -1,5 +1,24 @@
 # Min Max k-Chinese Postman Problem (MMkCPP)
 
+A genetic algorithm that evenly distributes k number of robots closed or open routes accross any undirected graph. 
+
+Here is an example of the results produced for a custom graph with 10 robots.
+
+```
+R0 5 1 8 2 9 3 5  
+R1 5 0 7 1 5  
+R2 5 1 2 5  
+R3 5 0 1 5  
+R4 5 0 4 5  
+R5 5 1 7 0 5  
+R6 5 3 5  
+R7 5 2 3 5  
+R8 5 3 10 4 6 0 5  
+R9 5 4 3 5
+```
+
+![10 Robots distributed travel plans produced by the GA](img/10-robot-travel.png)
+
 ## Latest Release
 
 You can download the lastest working executable from here: 
