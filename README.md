@@ -47,27 +47,42 @@ python3 -m pip install numpy
 python3 -m pip install scipy
 python3 -m pip install matplotlib
 ```
-
-#### Linux
-
-In terminal, install the following packages
-```
-
-
-```
+If you are using a python environment then you just need to be sure to install the same packages into that invironment.
 
 ### Compilation and Execution
 
-#### Bash Script on Windows
+#### [suggested!] Visual Studio 2017/2019 IDE
+
+I highly recommend developing/building/debuging from Visual Studio. In order to get this project working you may need to ensure you have the proper CMake and C++ packages for Visual Studio.
+
+Use the Visual Studio Installer and click "Modify" on your perferred version of Visual Studio to add the following extensions:
+- Desktop Development with C++
+  - Installation Details
+    - Keep Default Options Checked
+    - Add C++ MFC for latest v142 build tools (x86 & x64)
+    - Add C++/CLI support for v142 build tools
+    - Add C++ Modules for v142 build tools
+    - Add C++ Clang tools for Windows
+    
+Click Modify and wait until finished...
+
+Then open the project folder in Visual Studio, generate the cmake cache, select the run option "ga.exe", then you are ready to develop!
+
+
+#### Shell Automation 
+
+Shell automation is used to run the GA on mutiple problems and multiple seeds in parrallel and compile all the results together. To use the automation on Windows follow the steps below.
 
 1. Open Git Bash
-2. Move to project directory with deploy.sh file
-3. Run the following commands
+2. Ajust the run-ga.sh file with the ga parameters you desire
+2. Run the following commands
 
 ```
-chmod +x deploy.sh
-./deploy.sh
+cd shell-automation
+souce setup-parallelization.sh
 ```
+
+Setup parrallelization will clone the executable of the GA into a folder for each processer core and assign specific problems to each core. Then it will simotaneously run all the executables.
 
 #### Clion IDE using CMake
 
