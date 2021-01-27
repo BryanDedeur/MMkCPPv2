@@ -29,6 +29,7 @@ public:
 	Population *child;
 	Options options;
 
+	vector<Individual> bestPerSeed;
 	Individual *best;
     void SetGraph(string graphfile);
     void SetupOptions(int argc, char*argv[]);

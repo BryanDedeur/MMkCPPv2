@@ -60,6 +60,7 @@ public:
     void Mutate(double pm);
     void Swap(int &indexA, int &indexB);
     void Evaluate(); // Reasoning: seems like evaluation is better done from within the class for better access to data members
+    bool CheckIfValidRoutes();
     void Decode();
     void LogRoutes(string filename); // There might be a better way of doing this
     void UpdateRobotChromIndex();

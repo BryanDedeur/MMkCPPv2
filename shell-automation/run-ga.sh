@@ -2,8 +2,8 @@
 
 ga_exe="./ga.exe"
 
-popSize=1000
-generations=500
+popSize=10
+generations=20
 closedRouteVertex=0
 minimalOutput=1
 makeVisuals=0

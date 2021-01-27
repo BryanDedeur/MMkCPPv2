@@ -30,13 +30,15 @@ void recursivelyMakeCombinations(vector<int> oddVertices, vector<Path> tempCombi
 }
 
 void CPP::Solve(Graph& graph) {
-	//// Find all the vertices with odd number of edges
-	//oddVertices = vector<int>();
-	////for (int v = 0; v < graph.numVertices; v++) {
-	////	if (!(graph.GetEdgesConnectedToVertex(v) % 2 == 0)) {
-	////		oddVertices.push_back(v);
-	////	}
-	////}
+	// Find all the vertices with odd number of edges
+	oddVertices = vector<int>();
+	for (int v = 0; v < graph.numVertices; v++) {
+		if (!(graph.GetEdgesConnectedToVertex(v) % 2 == 0)) {
+			oddVertices.push_back(v);
+		}
+	}
+	numOddVertices = oddVertices.size();
+
 
 	//// Find the shortest paths between all the odd edged vertices using dijkstras
 	//vector<Path> paths = vector<Path>();
@@ -71,5 +73,4 @@ void CPP::Solve(Graph& graph) {
 
 	////cout << "The CPP minimal cost is " << graph.sumEdges + sumOfPaths << " where the sum of edges is " << graph.sumEdges << endl;
 	//shortestPathDistance = graph.sumEdges + sumOfPaths;
-	//numOddVertices = oddVertices.size();
 }

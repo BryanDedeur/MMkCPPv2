@@ -124,9 +124,11 @@ void GA::Run(){
             parent->Generation(child);
             child->EvaluateMembers();
         }
+
 		if (child->bestIndividual->fitness > best->fitness) {
             *best = *child->bestIndividual;
 		}
+
         child->Statistics();
 		child->Report(i);
 
@@ -138,6 +140,10 @@ void GA::Run(){
 		    cout << ".";
 		}
 	}
+
+    bestPerSeed.push_back(*child->bestIndividual);
+
+
     double duration = double(clock() - clockin) / 1000;
     cout << "] in " << duration << "s" << endl;
     runCount += 1;
@@ -158,15 +164,27 @@ void GA::Report() {
 
     CPP chinesePostmanProblem = CPP();
     chinesePostmanProblem.Solve(*graph);
+
+    float averageBestPerSeed = 0; // aka mean
+    for (const Individual& itr : bestPerSeed) {
+        averageBestPerSeed += itr.totalTravelDistance / bestPerSeed.size();
+    }
+
+    float standardDeviationOfBest = 0;
+    for (int i = 0; i < bestPerSeed.size(); ++i)
+        standardDeviationOfBest += pow(bestPerSeed[i].totalTravelDistance - averageBestPerSeed, 2);
+    standardDeviationOfBest = sqrt(standardDeviationOfBest / bestPerSeed.size());
     
     std::stringstream ss;
+    // Name    Vertices    Edges   Num Odd Edges   Sum Edges   Travel Costs    
     ss << options.graphName.c_str() << "\t"
         << graph->numEdges << "\t" 
         << graph->numVertices << "\t"
         << chinesePostmanProblem.numOddVertices << "\t"
-        << chinesePostmanProblem.shortestPathDistance << "\t"
         << graph->sumEdges << "\t"
         << best->totalTravelDistance << "\t"
+        << averageBestPerSeed << "\t"
+        << standardDeviationOfBest << "\t"
         << timeSeconds << "\t"
         << best->seed << endl;
     WriteToFile(ss, options.resultsfile);
@@ -190,5 +208,7 @@ void GA::Report() {
         cout.clear();
         cout << "Finished " << options.graphName << " with " << options.numRobots << " robots for " << options.numRuns << " runs of " << options.maxgens << " generations with population size " << options.popSize << ": in " << timeSeconds << "s (" << (timeSeconds / runCount) << "s per run)" << endl;
     }
+
+    graph->OutputToFile(options.outputDir + options.graphName + ".txt");
 }
 

@@ -100,6 +100,24 @@ void Individual::UpdateRobotChromIndex() {
     }
 }
 
+bool Individual::CheckIfValidRoutes() {
+    for (int r = 0; r < options->numRobots; r++) {
+        int sumTravel = 0;
+        for (int i = 0; i < this->decoding[r].path.size() - 1; i++) {
+            // all vertices must be connected by an edge
+            if (!graph->IsValidEdge(this->decoding[r].path[i], this->decoding[r].path[i + 1])) {
+                return false;
+            }
+            sumTravel += graph->GetEdgeCost(this->decoding[r].path[i], this->decoding[r].path[i + 1]);
+        }
+        // sum of vertices must be valid
+        this->decoding[r].cost = sumTravel;
+    }
+    // TODO all edges must be explored
+    return true;
+}
+
+
 void Individual::Decode() {
     // make sure array is valid
     for (int r = 0; r < options->numRobots; r++) {
@@ -198,6 +216,9 @@ void Individual::Decode() {
                 //cout << "After: " << decoding[r] << endl;
             }
         }
+    }
+    if (!CheckIfValidRoutes()) {
+        cerr << "routes are invalid" << endl;
     }
 }
 

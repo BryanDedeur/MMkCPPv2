@@ -38,7 +38,10 @@ class Graph {
         int& GetEdgeCost(int& vertexA, int& vertexB);
         int& GetOppositeVertexOnEdge(int& vertex, int& edge);
 
+        bool IsValidEdge(int& startVertex, int& endVertex);
+
         int& GetEdgesConnectedToVertex(int& vertex);
+        void OutputToFile(string file);
 
         int numVertices;
         int numEdges;
@@ -49,8 +52,8 @@ class Graph {
     private:
         void SetGraphFromFile(string file);
 
-
         void CalculateNumberOfEdges();
+
         Path cachedShortestPaths[MAX_VERTICES][MAX_VERTICES]; // for storing the path results from dijkstra's algorithm
         Path cachedShortestPathBetweenEdges[MAX_EDGES][MAX_EDGES]; // for storing the shortest paths between two edges
         pair<int, int> cachedVerticesOnEdge[MAX_EDGES]; // for storing the association between edges and vertices

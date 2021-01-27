@@ -133,6 +133,20 @@ void Graph::SetGraphFromFile(string file) {
     readFile.close();
 }
 
+void Graph::OutputToFile(string file) {
+    stringstream ss;
+    ss << numVertices << endl;
+    ss << numEdges << endl;
+    for (int i = 0; i < numVertices; i++) {
+        for (int j = i; j < numVertices; j++) {
+            if (adjacencyMatrix[i][j] > 0) {
+                ss << i << " " << j << " " << adjacencyMatrix[i][j] << endl;
+            }
+        }
+    }
+    WriteToFile(ss, file);
+}
+
 void Graph::CalculateNumberOfEdges() {
     numEdges = 0;
     for (int i = 0; i < numVertices; i++) {
@@ -236,6 +250,11 @@ int& Graph::GetOppositeVertexOnEdge(int& vertex, int& edge) {
     //cerr << "Trying to associate a vertex with an edge that is not related: (vertex: " << vertex << ", edge(" << edge << "): (" << verticesOnEdge->first << ", " << verticesOnEdge.second << "))" << endl;
     return v;
 }
+
+bool Graph::IsValidEdge(int& startVertex, int& endVertex) {
+    return GetEdgeCost(startVertex, endVertex) > 0;
+}
+
 
 int& Graph::GetEdgesConnectedToVertex(int& vertex) {
     int numEdges = 0;
