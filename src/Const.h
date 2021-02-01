@@ -8,12 +8,12 @@
 #ifndef CONST_H_
 #define CONST_H_
 
-#define MAXPOP 2000
-#define MAX_CHROMLENGTH 200
+#define MAXPOP 600
+#define MAX_CHROMLENGTH 400
 
-#define MAX_NUM_ROBOTS 10
-#define MAX_VERTICES 100
+#define MAX_NUM_ROBOTS 20
+#define MAX_VERTICES 260
 #define NUM_VERTICES_PER_EDGE 2
-#define MAX_EDGES 200
+#define MAX_EDGES 380
 
 #endif /* CONST_H_ */

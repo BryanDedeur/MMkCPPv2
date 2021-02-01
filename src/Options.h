@@ -26,7 +26,7 @@ struct Base { };
 typedef struct Options : Base {
     // in files
 	string infile;
-    string graphfile = "../problem-instances/benchmarks/gdb/gdb1.dat"; // directory must be relative to the executable
+    string graphfile = "../problem-instances/benchmarks/egl-large/egl-g1-A.dat"; // directory must be relative to the executable
     //string graphfile = "../problem-instances/custom-graphs/bryans/simple.csv"; // directory must be relative to the executable
 
     //string graphfile = "../problem-instances/stacs-graphs/graph-raw.csv";;
@@ -45,14 +45,14 @@ typedef struct Options : Base {
     bool makeVisuals = false;
     int closedRouteVertex = 0;
 
-    string seedsFile = "../seed-files/3seeds.txt";
+    string seedsFile = "../seed-files/10seeds.txt";
     long int* seeds;
     long int randomSeed = time(NULL);
 
 	int numRuns = 1;
-	int popSize = 50;
+	int popSize = 200;
 	int chromLength; // this is automatically set by the graph
-	unsigned int maxgens = 125;
+	unsigned int maxgens = 400;
 
     int numRobots = 1;
 

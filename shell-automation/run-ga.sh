@@ -2,13 +2,13 @@
 
 ga_exe="./ga.exe"
 
-popSize=10
-generations=20
+popSize=200
+generations=400
 closedRouteVertex=0
 minimalOutput=1
 makeVisuals=0
-kValues=(1 2 5)
-seedsFile="seeds.txt"
+kValues=(1 2 5 10 20 40 100)
+seedsFile="10seeds.txt"
 
 # get the instances
 for graph in instances/*; do

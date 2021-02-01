@@ -92,6 +92,9 @@ void Graph::SetGraphFromFile(string file) {
                 }
                 pos = line.find('\n');
                 token = line.substr(0, pos);
+                if (token == "") {
+                    continue;
+                }
                 cost = stoi(token);
                 if (i != j && cost == 0) {
                     cost = -1;
@@ -112,12 +115,12 @@ void Graph::SetGraphFromFile(string file) {
                 tokens.push_back(line.substr(0, pos));
                 switch(count) {
                     case 2:
-                        numVertices = std::stoi(tokens[3]);
+                        numVertices = std::stoi(tokens[2]);
                         break;
                     default:
                         if (tokens.size() > 7) {
-                            int v1 = std::stoi(tokens[2].erase(tokens[2].length() - 1, 1)) - 1; // minus 1 at the end for zero base indexing
-                            int v2 = std::stoi(tokens[3].erase(tokens[3].length() - 1, 1)) - 1;
+                            int v1 = std::stoi(tokens[1].erase(tokens[1].length() - 1, 1)) - 1; // minus 1 at the end for zero base indexing
+                            int v2 = std::stoi(tokens[2].erase(tokens[2].length() - 1, 1)) - 1;
                             int cost = std::stoi(tokens[6]);
                             adjacencyMatrix[v1][v2] = cost;
                             adjacencyMatrix[v2][v1] = cost;
@@ -239,6 +242,22 @@ Path* Graph::GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge) {
 
 int& Graph::GetEdgeCost(int& vertexA, int& vertexB) {
     return adjacencyMatrix[vertexA][vertexB];
+}
+
+int& Graph::GetEdgeId(int& va, int& vb) {
+    int edgeId = 0;
+    for (int vertexA = 0; vertexA < numVertices; vertexA++) {
+        for (int vertexB = vertexA; vertexB < numVertices; vertexB++) {
+            // if weight is greater than 0 then valid edge
+            if (0 < adjacencyMatrix[vertexA][vertexB]) {
+                if ((va == vertexA && vb == vertexB) || (vb == vertexA && va == vertexB)) {
+                    return edgeId;
+                }
+                edgeId++;
+            }
+        }
+    }
+    return edgeId;
 }
 
 int& Graph::GetOppositeVertexOnEdge(int& vertex, int& edge) {

@@ -7,6 +7,7 @@
 
 #include "Individual.h"
 #include "Utils.h"
+#include <map>
 
 Individual::Individual(Options *opts, Graph *gph) {
     fitness = -1;
@@ -16,6 +17,7 @@ Individual::Individual(Options *opts, Graph *gph) {
     robotChromIndex = new int[opts->numRobots];
     decoding = new Path[opts->numRobots];
     totalTravelDistance = 0;
+    unassignedPath = Path(0);
 }
 
 Individual::~Individual() {
@@ -28,8 +30,8 @@ void Individual::Init(){
     // Initialize the chromosome with every possible edge and every possible robot
 	for(int i = 0; i < options->chromLength; i++) {
         chromosome[i].value = i;
-        if (i >= graph->numEdges) {
-            int robotID = i - graph->numEdges;
+        if (i >= this->graph->numEdges) {
+            int robotID = i - this->graph->numEdges;
             chromosome[i].value = robotID;
             chromosome[i].isRobot = true;
             robotChromIndex[robotID] = i;
@@ -60,10 +62,11 @@ void Individual::Swap(int &indexA, int &indexB) {
 
 void Individual::Evaluate() {
     Decode();
+    //cout << *this << endl;
     fitness = 0;
     double largestPathCost = 0;
-    totalTravelDistance = 0;
     // calculate the distribution of travel among all robots
+    totalTravelDistance = 0;
     for (int r = 0; r < options->numRobots; r++) {
         totalTravelDistance += decoding[r].cost;
         if (largestPathCost < decoding[r].cost) {
@@ -101,20 +104,48 @@ void Individual::UpdateRobotChromIndex() {
 }
 
 bool Individual::CheckIfValidRoutes() {
+    map<int, bool> allEdgesAccountedFor = map<int, bool>();
     for (int r = 0; r < options->numRobots; r++) {
         int sumTravel = 0;
         for (int i = 0; i < this->decoding[r].path.size() - 1; i++) {
+            if (this->decoding[r].path.size() <= 1) {
+                break;
+            }
             // all vertices must be connected by an edge
             if (!graph->IsValidEdge(this->decoding[r].path[i], this->decoding[r].path[i + 1])) {
+                cout << "invalid edge in route, no edge exists between these two vertices" << endl;
                 return false;
             }
             sumTravel += graph->GetEdgeCost(this->decoding[r].path[i], this->decoding[r].path[i + 1]);
+            int id = graph->GetEdgeId(this->decoding[r].path[i], this->decoding[r].path[i + 1]);
+            allEdgesAccountedFor.insert(std::pair<int, bool>(id, true));
         }
-        // sum of vertices must be valid
+        if (sumTravel != this->decoding[r].cost) {
+            //cout << "route has the wrong cost but was fixed here" << endl;
+            this->decoding[r].cost = sumTravel;
+            //return false;
+        }
+    }
+
+    for (int i = 0; i < graph->numEdges; i++) {
+        if (allEdgesAccountedFor.find(i) == allEdgesAccountedFor.end()) {
+            cout << "edge " << i << " is missing" << endl;
+        }
+    }
+    return true;
+}
+
+void Individual::FindTravelCosts() {
+    for (int r = 0; r < options->numRobots; r++) {
+        int sumTravel = 0;
+        for (int i = 0; i < this->decoding[r].path.size() - 1; i++) {
+            if (this->decoding[r].path.size() <= 1) {
+                break;
+            }
+            sumTravel += graph->GetEdgeCost(this->decoding[r].path[i], this->decoding[r].path[i + 1]);
+        }
         this->decoding[r].cost = sumTravel;
     }
-    // TODO all edges must be explored
-    return true;
 }
 
 
@@ -166,8 +197,8 @@ void Individual::Decode() {
                     if (decoding[r].path.back() == bestPath->path.front()) {
                         decoding[r].path.pop_back();
                     } else { // travel to best starting vertex
-//                        decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), bestPath.path.front());
-//                        decoding[r].path.push_back(bestPath.path.front());
+                        //decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), bestPath.path.front());
+                        //decoding[r].path.push_back(bestPath.path.front());
 //                        cout << decoding[r].path.back() << "->";
                     }
                     decoding[r] += *bestPath;
@@ -195,6 +226,7 @@ void Individual::Decode() {
             }
         }
     }
+
     // complete routes to some vertex
     if (options->closedRouteVertex != -1) {
         for (int r = 0; r < options->numRobots; r++) {
@@ -217,9 +249,8 @@ void Individual::Decode() {
             }
         }
     }
-    if (!CheckIfValidRoutes()) {
-        cerr << "routes are invalid" << endl;
-    }
+    CheckIfValidRoutes(); // for debugging
+    FindTravelCosts();
 }
 
 ostream& operator<<(ostream& os, const Individual& individual)
@@ -232,6 +263,11 @@ ostream& operator<<(ostream& os, const Individual& individual)
         }
     }
     os << "]" << endl;
+
+
+    for (int i = 0; i < individual.options->numRobots; i++) {
+        os << individual.decoding[i] << endl;
+    }
     return os;
 }
 

@@ -14,6 +14,7 @@ using namespace std;
 int main(int argc, char *argv[]) {
 
     GA ga = GA(argc, argv);
+    //cout << *ga.graph << endl;
     for (int i = 1; i <= ga.options.numRuns; i++) {
         ga.Init();
         ga.Run();

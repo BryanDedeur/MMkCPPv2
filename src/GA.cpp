@@ -167,8 +167,9 @@ void GA::Report() {
 
     float averageBestPerSeed = 0; // aka mean
     for (const Individual& itr : bestPerSeed) {
-        averageBestPerSeed += itr.totalTravelDistance / bestPerSeed.size();
+        averageBestPerSeed += itr.totalTravelDistance;
     }
+    averageBestPerSeed = averageBestPerSeed / bestPerSeed.size();
 
     float standardDeviationOfBest = 0;
     for (int i = 0; i < bestPerSeed.size(); ++i)
@@ -176,7 +177,7 @@ void GA::Report() {
     standardDeviationOfBest = sqrt(standardDeviationOfBest / bestPerSeed.size());
     
     std::stringstream ss;
-    // Name    Vertices    Edges   Num Odd Edges   Sum Edges   Travel Costs    
+    // Name, Edges, Vertices, Num Odd Vertices, Sum Edges Total, Travel Distance From Best Individual, Average Best Per Seed, Standard Deviation of Best, Time, Best Seed    
     ss << options.graphName.c_str() << "\t"
         << graph->numEdges << "\t" 
         << graph->numVertices << "\t"

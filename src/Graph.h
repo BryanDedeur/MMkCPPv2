@@ -36,6 +36,8 @@ class Graph {
         Path* GetShortestPathBetweenEdges(int& edgeA, int& edgeB);
         Path* GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge);
         int& GetEdgeCost(int& vertexA, int& vertexB);
+        int& GetEdgeId(int& vertexA, int& vertexB);
+
         int& GetOppositeVertexOnEdge(int& vertex, int& edge);
 
         bool IsValidEdge(int& startVertex, int& endVertex);
@@ -47,18 +49,19 @@ class Graph {
         int numEdges;
         int sumEdges;
 
-        int adjacencyMatrix[MAX_VERTICES][MAX_VERTICES]; // for storing weighted graph
 
     private:
-        void SetGraphFromFile(string file);
-
-        void CalculateNumberOfEdges();
+        int adjacencyMatrix[MAX_VERTICES][MAX_VERTICES]; // for storing weighted graph
+        int MinDistance(int dist[], bool sptSet[]);
 
         Path cachedShortestPaths[MAX_VERTICES][MAX_VERTICES]; // for storing the path results from dijkstra's algorithm
         Path cachedShortestPathBetweenEdges[MAX_EDGES][MAX_EDGES]; // for storing the shortest paths between two edges
         pair<int, int> cachedVerticesOnEdge[MAX_EDGES]; // for storing the association between edges and vertices
 
-        int MinDistance(int dist[], bool sptSet[]);
+        void SetGraphFromFile(string file);
+
+        void CalculateNumberOfEdges();
+
         void Dijkstras(int startVertex);
 
 };
