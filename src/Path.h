@@ -14,7 +14,7 @@ class Path {
 public:
 
     Path();
-    Path(int cst);
+    Path(float cst);
 
     friend ostream& operator<<(ostream& os, const Path& path);
 
@@ -24,8 +24,8 @@ public:
     Path& operator+=(const Path &rhsPath);
     Path& operator+(const Path &rhsPath);
 
-    vector<int> path; // vector because we don't know the size of the array
-    int cost; // total cost to travel path
+    vector<int> path; // vector because we don't know the size
+    float cost; // total cost to travel path
 };
 
 

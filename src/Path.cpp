@@ -7,11 +7,11 @@
 #include <climits>
 
 
-Path::Path() : path(), cost(INT_MAX) {
+Path::Path() : path(), cost(FLT_MAX) {
 
 } // default constructor THINGS WILL BREAK WITH DIJKSTRAS IF COST IS NOT INT_MAX
 
-Path::Path(int cst) : path() , cost(cst) {
+Path::Path(float cst) : path() , cost(cst) {
 
 } // path struct constructor
 

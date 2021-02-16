@@ -37,7 +37,7 @@ class Graph {
         Path* GetShortestPathBetweenVertices(const int& startVertex, const int& endVertex);
         Path* GetShortestPathBetweenEdges(int& edgeA, int& edgeB);
         Path* GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge);
-        int& GetEdgeCost(int& vertexA, int& vertexB);
+        float& GetEdgeCost(int& vertexA, int& vertexB);
         int& GetEdgeId(int& vertexA, int& vertexB);
 
         int& GetOppositeVertexOnEdge(int& vertex, int& edge);
@@ -49,12 +49,12 @@ class Graph {
 
         int numVertices;
         int numEdges;
-        int sumEdges;
+        float sumEdges;
 
 
     private:
-        int adjacencyMatrix[MAX_VERTICES][MAX_VERTICES]; // for storing weighted graph
-        int MinDistance(int dist[], bool sptSet[]);
+        float adjacencyMatrix[MAX_VERTICES][MAX_VERTICES]; // for storing weighted graph
+        int MinDistance(float dist[], bool sptSet[]);
 
         Path cachedShortestPaths[MAX_VERTICES][MAX_VERTICES]; // for storing the path results from dijkstra's algorithm
         Path cachedShortestPathBetweenEdges[MAX_EDGES][MAX_EDGES]; // for storing the shortest paths between two edges

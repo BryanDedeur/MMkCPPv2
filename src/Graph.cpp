@@ -61,7 +61,6 @@ ostream& operator<<(ostream& os, const Graph& graph) {
     return os;
 }
 
-
 void Graph::SetGraphFromFile(string file) {
     fstream readFile;
     readFile.open(file, ios::in );
@@ -111,8 +110,28 @@ void Graph::SetGraphFromFile(string file) {
                 if (count > 10) { // reading edges
                     vector<float> numbers = ExtractNumbers(line);
                     if (numbers.size() > 2) { // this is a edge not the last line in the file
-                        adjacencyMatrix[int(numbers[0]) - 1][int(numbers[1]) - 1] = numbers[2];
-                        adjacencyMatrix[int(numbers[1]) - 1][int(numbers[0]) - 1] = numbers[2];
+                        adjacencyMatrix[int(numbers[0]) - 1][int(numbers[1]) - 1] = float(numbers[2]);
+                        adjacencyMatrix[int(numbers[1]) - 1][int(numbers[0]) - 1] = float(numbers[2]);
+                        if (int(numbers[0]) > numVertices) {
+                            numVertices = int(numbers[0]);
+                        }
+                        if (int(numbers[1]) > numVertices) {
+                            numVertices = int(numbers[1]);
+                        }
+                    }
+                }
+            }
+        }
+        else if (fileFormat == ".txt") {
+            vector<string> lines = SplitFileByLines(file);
+            int count = 0;
+            for (string line : lines) {
+                count++;
+                if (count > 3) { // reading edges
+                    vector<float> numbers = ExtractNumbers(line);
+                    if (numbers.size() > 2) { // this is a edge not the last line in the file
+                        adjacencyMatrix[int(numbers[0]) - 1][int(numbers[1]) - 1] = float(numbers[2]);
+                        adjacencyMatrix[int(numbers[1]) - 1][int(numbers[0]) - 1] = float(numbers[2]);
                         if (int(numbers[0]) > numVertices) {
                             numVertices = int(numbers[0]);
                         }
@@ -180,7 +199,7 @@ pair<int, int>* Graph::GetVerticesOnEdge(int& edge) {
 Path* Graph::GetShortestPathBetweenVertices(const int& startVertex, const int& endVertex) {
     Path* path = nullptr;
     // check cache before running dijkstras
-    if (cachedShortestPaths[startVertex][0].cost == -1) { // start vertex has no existing path calculations
+    if (cachedShortestPaths[startVertex][0].cost < 0) { // start vertex has no existing path calculations
         Dijkstras(startVertex);
     }
 
@@ -189,6 +208,7 @@ Path* Graph::GetShortestPathBetweenVertices(const int& startVertex, const int& e
     return path;
 }
 
+// TODO return a tuple containing vertex to start from
 Path* Graph::GetShortestPathBetweenEdges(int& edgeA, int& edgeB) {
     Path* path = nullptr;
 
@@ -231,7 +251,7 @@ Path* Graph::GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge) {
     return &cachedShortestPaths[vertex][verticesOnEdge->second];
 }
 
-int& Graph::GetEdgeCost(int& vertexA, int& vertexB) {
+float& Graph::GetEdgeCost(int& vertexA, int& vertexB) {
     return adjacencyMatrix[vertexA][vertexB];
 }
 
@@ -281,10 +301,9 @@ int& Graph::GetEdgesConnectedToVertex(int& vertex) {
 
 
 // utility function for dijkstras
-int Graph::MinDistance(int dist[], bool visited[])
-{
+int Graph::MinDistance(float dist[], bool visited[]) {
     // Initialize min value
-    int min = INT_MAX, min_index;
+   int min = INT_MAX, min_index;
 
     for (int v = 0; v < numVertices; v++)
         if (visited[v] == false && dist[v] <= min)
@@ -296,12 +315,12 @@ int Graph::MinDistance(int dist[], bool visited[])
 // dijkstras in this implementation will not return anything because it will add the paths it finds to the cache
 void Graph::Dijkstras(int startVertex) {
 
-    int dist[MAX_VERTICES];
+    float dist[MAX_VERTICES];
     bool visited[MAX_VERTICES];
     vector<int> paths[MAX_VERTICES];
 
     for (int i = 0; i < numVertices; i++) {
-        dist[i] = INT_MAX;
+        dist[i] = FLT_MAX;
         visited[i] = false;
         paths[i].push_back(startVertex);
     }
@@ -318,7 +337,7 @@ void Graph::Dijkstras(int startVertex) {
         for (int v = 0; v < numVertices; v++) {
             if (!visited[v]     // not visited
                 && 0 < adjacencyMatrix[nearestUnvisitedVertex][v] // edge exists
-                && dist[nearestUnvisitedVertex] != INT_MAX          // explored
+                && dist[nearestUnvisitedVertex] != FLT_MAX          // explored
                 && dist[nearestUnvisitedVertex] + adjacencyMatrix[nearestUnvisitedVertex][v] < dist[v]) {
 
                 dist[v] = dist[nearestUnvisitedVertex] + adjacencyMatrix[nearestUnvisitedVertex][v];
