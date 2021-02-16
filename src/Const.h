@@ -8,7 +8,7 @@
 #ifndef CONST_H_
 #define CONST_H_
 
-#define MAXPOP 600
+#define MAXPOP 2000
 #define MAX_CHROMLENGTH 400
 
 #define MAX_NUM_ROBOTS 20

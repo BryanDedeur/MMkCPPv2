@@ -49,6 +49,31 @@ string ExtractFileFormat(string filePath) {
     return filePath;
 }
 
+vector<float> ExtractNumbers(string str)
+{
+    stringstream ss;
+
+    vector<float> numbers = vector<float>();
+
+    /* Storing the whole string into string stream */
+    ss << str;
+
+    /* Running loop till the end of the stream */
+    string temp;
+    float found;
+    while (!ss.eof()) {
+
+        /* extracting word by word from stream */
+        ss >> temp;
+
+        /* Checking the given word is integer or not */
+        if (stringstream(temp) >> found)
+            numbers.push_back(float(found));
+
+    }
+    return numbers;
+}
+
 vector<string> SplitFileByLines(string filePath) {
     fstream readFile;
     readFile.open(filePath, ios::in);

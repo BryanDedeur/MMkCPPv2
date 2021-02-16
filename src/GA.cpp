@@ -162,9 +162,6 @@ void runCommand(string commandStr) {
 
 void GA::Report() {
 
-    CPP chinesePostmanProblem = CPP();
-    chinesePostmanProblem.Solve(*graph);
-
     float averageBestPerSeed = 0; // aka mean
     for (const Individual& itr : bestPerSeed) {
         averageBestPerSeed += itr.totalTravelDistance;
@@ -181,7 +178,6 @@ void GA::Report() {
     ss << options.graphName.c_str() << "\t"
         << graph->numEdges << "\t" 
         << graph->numVertices << "\t"
-        << chinesePostmanProblem.numOddVertices << "\t"
         << graph->sumEdges << "\t"
         << best->totalTravelDistance << "\t"
         << averageBestPerSeed << "\t"

@@ -104,32 +104,23 @@ void Graph::SetGraphFromFile(string file) {
             }
             numVertices = i;
         } else if (fileFormat == ".dat") {
+            vector<string> lines = SplitFileByLines(file);
             int count = 0;
-            while(getline(readFile, line, '\n')) {
-                size_t pos = 0;
-                vector<string> tokens;
-                while((pos = line.find(' ')) != std::string::npos) {
-                    tokens.push_back(line.substr(0, pos));
-                    line.erase(0, pos + 1);
-                }
-                tokens.push_back(line.substr(0, pos));
-                switch(count) {
-                    case 2:
-                        numVertices = std::stoi(tokens[2]);
-                        break;
-                    default:
-                        if (tokens.size() > 7) {
-                            int v1 = std::stoi(tokens[1].erase(tokens[1].length() - 1, 1)) - 1; // minus 1 at the end for zero base indexing
-                            int v2 = std::stoi(tokens[2].erase(tokens[2].length() - 1, 1)) - 1;
-                            int cost = std::stoi(tokens[6]);
-                            adjacencyMatrix[v1][v2] = cost;
-                            adjacencyMatrix[v2][v1] = cost;
-                        } else { // last line
-                            // TODO last line of .dat file might be important
-                        }
-                        break;
-                }
+            for (string line : lines) {
                 count++;
+                if (count > 10) { // reading edges
+                    vector<float> numbers = ExtractNumbers(line);
+                    if (numbers.size() > 2) { // this is a edge not the last line in the file
+                        adjacencyMatrix[int(numbers[0]) - 1][int(numbers[1]) - 1] = numbers[2];
+                        adjacencyMatrix[int(numbers[1]) - 1][int(numbers[0]) - 1] = numbers[2];
+                        if (int(numbers[0]) > numVertices) {
+                            numVertices = int(numbers[0]);
+                        }
+                        if (int(numbers[1]) > numVertices) {
+                            numVertices = int(numbers[1]);
+                        }
+                    }
+                }
             }
         }
     }
@@ -152,6 +143,7 @@ void Graph::OutputToFile(string file) {
 
 void Graph::CalculateNumberOfEdges() {
     numEdges = 0;
+    sumEdges = 0;
     for (int i = 0; i < numVertices; i++) {
         for (int j = i; j < numVertices; j++) {
             if (adjacencyMatrix[i][j] > 0) {
@@ -160,7 +152,6 @@ void Graph::CalculateNumberOfEdges() {
             }
         }
     }
-
 }
 
 pair<int, int>* Graph::GetVerticesOnEdge(int& edge) {

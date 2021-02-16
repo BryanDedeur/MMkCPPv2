@@ -7,8 +7,8 @@ generations=400
 closedRouteVertex=0
 minimalOutput=1
 makeVisuals=0
-kValues=(1 2 5 10 20 40 100)
-seedsFile="10seeds.txt"
+kValues=(1 2 5)
+seedsFile="3seeds.txt"
 
 # get the instances
 for graph in instances/*; do

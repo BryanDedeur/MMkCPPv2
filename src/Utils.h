@@ -22,6 +22,7 @@ void ClearFile(string filename);
 void WriteToFile(stringstream &ss, string filename);
 string ExtractNameOfFile(string filePath);
 string ExtractFileFormat(string filePath);
+vector<float> ExtractNumbers(string str);
 vector<string> SplitFileByLines(string filePath);
 float RandomFraction();
 int Flip(float prob);
