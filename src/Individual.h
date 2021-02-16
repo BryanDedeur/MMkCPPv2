@@ -49,7 +49,7 @@ public:
 
 	Gene chromosome[MAX_CHROMLENGTH];
 	double fitness;
-	int totalTravelDistance;
+	double totalTravelDistance;
     Graph* graph;
     Options* options;
     Path* decoding; // one path per robot
