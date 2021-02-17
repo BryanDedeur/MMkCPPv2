@@ -7,7 +7,7 @@
  */
 
 #include <iostream>
-#include "GA.h"
+#include "ga/GA.h"
 
 using namespace std;
 

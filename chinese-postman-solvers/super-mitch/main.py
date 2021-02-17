@@ -18,8 +18,10 @@ from chinesepostman import eularian, network
 
 def setup_args():
     """ Setup argparse to take graph name argument. """
-    graphFile = sys.argv[1]
+    #graphFile = sys.argv[1]
     #graphFile = "problem-instances/benchmarks/bbcm/10A.dat"
+    graphFile = "problem-instances/bridge-generator2/B100.txt"
+
     return graphFile
 
 def convert_adj_to_edge_format(adj_mat):
@@ -39,7 +41,7 @@ def main():
     edges = None
     graph_name = setup_args() #"gdb8"#"instances/gdb1.dat" 
     print('Loading graph: {}'.format(graph_name))
-    adj = load_graph_dat_file(graph_name) #load_graph_dat_file(graph_name) # if using dat file or csv file need to specify the different method
+    adj = load_graph_txt_file(graph_name) #load_graph_dat_file(graph_name) # if using dat file or csv file need to specify the different method
     edges = convert_adj_to_edge_format(adj[0])
     #edges = getattr(data.data, graph_name)
 

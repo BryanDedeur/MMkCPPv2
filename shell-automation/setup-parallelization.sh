@@ -5,7 +5,7 @@
 executablePath="../build/ga.exe"
 gaShellScript="run-ga.sh"
 numCores=8
-instancesDir="../problem-instances/benchmarks/bbcm"
+instancesDir="../problem-instances/benchmarks/bbcm/a"
 seedsPath="../seed-files/3seeds.txt"
 
 # make array of all the problem instances
