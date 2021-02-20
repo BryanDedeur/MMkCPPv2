@@ -11,47 +11,55 @@
 
 #include "Options.h"
 #include "../graph/Graph.h"
-#include "Gene.h"
 
 #include <iostream>
 #include <string>
 #include <vector>
 
 class Individual {
-public:
-    Individual(Options *opts, Graph *graph);
-    virtual ~Individual();
+    public:
+        Individual(Options *opts, Graph *graph);
+        virtual ~Individual();
 
-	vector<Gene> chromosome;
-	double fitness;
-	double totalTravelDistance;
-    Graph* graph;
-    Options* options;
-    Path* decoding; // one path per robot
-    int* robotChromIndex; // for storing the starting index of every robot
-    long int seed;
+	    double fitness;
+	    double totalTravelDistance;
 
-    Path unassignedPath;
+        vector<int> chromosome;
+
+        vector<int> visitedEdgeCounts;
+        vector<int> robotChromStartIndex;
+
+        Graph* graph;
+        Options* options;
+
+        void GenerateRandomChromosome();
+        void AddEdgeToChromosome(int edgeId);
+        void AddEdgeToChromosome(int edgeId, int index);
+        void AddEdgeToChromosome(int edgeId, bool randomize);
+
+        void InjectMissingEdges();
+        void ConvertChromosomeToTour();
+        void DistributeTourBetweenRobots();
+
+        //void RepairTour(int& robot, int& startChromeIndex, int& endChromeIndex);
+
+        void Swap(int &indexA, int &indexB);
+        void Replace(int& index, int& edgeId);
+
+        void Evaluate(); 
+
+        void Decode();
+
+        void LogTours(string filename);
 
 
-    void Init();
-    void Mutate(double pm);
-    void Swap(int &indexA, int &indexB);
-    void Evaluate(); // Reasoning: seems like evaluation is better done from within the class for better access to data members
-    bool CheckIfValidRoutes();
-    void FindTravelCosts();
+        // new additions
+        Individual& operator=(Individual other);
+        // operator overrides
+        friend ostream& operator<<(ostream& os, const Individual& individual);
 
-    void Decode();
-    void LogRoutes(string filename); // There might be a better way of doing this
-    void UpdateRobotChromIndex();
-    bool ChromContains(Gene* arr, Gene &val);
-
-
-    // new additions
-    Individual& operator=(Individual other);
-    // operator overrides
-    friend ostream& operator<<(ostream& os, const Individual& individual);
-
+    private:
+        vector<Path> tours; // each robot contains its own edge tour
 };
 
 #endif /* INDIVIDUAL_H_ */

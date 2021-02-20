@@ -10,16 +10,14 @@
 using namespace std;
 
 // Graph Constructor
-Graph::Graph(string filename) : cachedShortestPaths(), adjacencyMatrix(), numEdges(0), numVertices(0), sumEdges(0) {
+Graph::Graph(string filename) : numEdges(0), numVertices(0), sumEdges(0) {
 
     SetGraphFromFile(filename);
-
     CacheExpensiveComputations();
 }
 
 Graph::~Graph() {
     //TODO auto generated destructor tab
-
 }
 
 ostream& operator<<(ostream& os, const Graph& graph) {
@@ -59,24 +57,22 @@ void Graph::AddEdgeToEdges(int& v1, int& v2, float cost) {
 }
 
 void Graph::SetGraphFromFile(string file) {
-    fstream readFile;
-    readFile.open(file, ios::in );
-
-    if (!readFile.is_open()) {
-        AssertWithErrorMessage("Cannot locate file: " + file, readFile.is_open());
-        return;
-    } else {
+    if (FileExists(file)) {
         string fileFormat = ExtractFileFormat(file);
 
         if (fileFormat == ".csv") {
             ReadCSVFormat(file);
-        } else if (fileFormat == ".dat") {
+        }
+        else if (fileFormat == ".dat") {
             ReadDATFormat(file);
-        } else if (fileFormat == ".txt") {
+        }
+        else if (fileFormat == ".txt") {
             ReadTXTFormat(file);
         }
     }
-    readFile.close();
+    
+    graphFile = file;
+    graphName = ExtractNameOfFile(file);
 }
 
 void Graph::ReadCSVFormat(string file) {
@@ -138,6 +134,50 @@ void Graph::ReadTXTFormat(string file) {
     }
 }
 
+void Graph::WriteCacheFile(string file) {
+    stringstream ss;
+    for (int v1 = 0; v1 < numVertices; v1++) {
+        for (int v2 = v1; v2 < numVertices; v2++) {
+            if (cachedShortestPaths[v1][v2]->GetCost() != 0) {
+                ss << -1 << " " << cachedShortestPaths[v1][v2]->GetCost() << " " << cachedShortestPaths[v1][v2]->vertexPath.size() << endl;
+                for (int x = 0; x < cachedShortestPaths[v1][v2]->vertexPath.size(); x++) {
+                    ss << cachedShortestPaths[v1][v2]->vertexPath[x] << " ";
+                }
+                ss << endl;
+            }
+        }
+    }
+    WriteToFile(ss, file);
+}
+
+void Graph::ReadCacheFile(string file) {
+    vector<string> lines = SplitFileByLines(file);
+    for (string line : lines) {
+        vector<float> numbers = ExtractNumbers(line);
+        if (numbers.size() > 0) { 
+            if (numbers[0] != -1) {
+                // numbers is a vertex list
+
+                int startv = int(numbers.front());
+                int endv = int(numbers.back());
+
+                cachedShortestPaths[startv][startv] = new Path(this, startv, startv);
+                cachedShortestPaths[endv][endv] = new Path(this, endv, endv);
+
+                cachedShortestPaths[startv][endv] = new Path(this, startv, startv);
+                cachedShortestPaths[endv][startv] = new Path(this, endv, endv);
+
+                for (int i = 1; i < numbers.size(); i++) {
+                    int v = int(numbers[i]);
+                    cachedShortestPaths[startv][endv]->InsertVertex(v);
+                    v = int(numbers[numbers.size() - 1 - i]);
+                    cachedShortestPaths[endv][startv]->InsertVertex(v);
+                }
+            }
+        }
+    }
+}
+
 void Graph::OutputToFile(string file) {
     stringstream ss;
     ss << numVertices << endl;
@@ -152,43 +192,54 @@ void Graph::OutputToFile(string file) {
     WriteToFile(ss, file);
 }
 
-pair<int, int>* Graph::GetVerticesOnEdge(int& edge) {
-    return &edges[edge].vpair;
-}
-
-
 Path* Graph::GetShortestPathBetweenVertices(const int& startVertex, const int& endVertex) {
-    return &cachedShortestPaths[startVertex][endVertex];
+    return cachedShortestPaths[startVertex][endVertex];
 }
 
 // TODO return a tuple containing vertex to start from
-Path* Graph::GetShortestPathBetweenEdges(int& edgeA, int& edgeB) {
-    return &cachedShortestPathBetweenEdges[edgeA][edgeB];
+Path* Graph::GetShortestPathBetweenEdges(Edge& edgeA, Edge& edgeB) {
+    return cachedShortestPathBetweenEdges[edgeA.id][edgeB.id];
 }
 
-Path* Graph::GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge) {
-    return &cachedShortestPathBetweenVerticesAndEdges[vertex][edge];
+Path* Graph::GetShortestPathBetweenVertexAndEdge(int& vertex, Edge& edge) {
+    return cachedShortestPathBetweenVerticesAndEdges[vertex][edge.id];
 }
 
+Edge Graph::GetEdge(int& id) {
+    return edges[id];
+}
+
+Edge Graph::GetEdge(int& va, int& vb) {
+    int edgeId = cachedVertexToEdgeID[va][vb];
+    return edges[edgeId];
+}
 
 float& Graph::GetEdgeCost(int& vertexA, int& vertexB) {
     return adjacencyMatrix[vertexA][vertexB];
 }
 
-int& Graph::GetEdgeId(int& va, int& vb) {
-    return cachedVertexToEdgeID[va][vb];
-}
-
-int& Graph::GetOppositeVertexOnEdge(int& vertex, int& edge) {
-    if (edges[edge].vpair.first == vertex) {
-        return edges[edge].vpair.second;
+int& Graph::GetOppositeVertexOnEdge(int& vertex, Edge& edge) {
+    if (edge.vpair.first == vertex) {
+        return edge.vpair.second;
     }
 
-    return edges[edge].vpair.first;
+    return edge.vpair.first;
 }
 
 bool Graph::IsValidEdge(int& startVertex, int& endVertex) {
-    return GetEdgeCost(startVertex, endVertex) > 0;
+    bool test = (adjacencyMatrix.at(startVertex).at(endVertex) > 0);
+    return (adjacencyMatrix.at(startVertex).at(endVertex) > 0);
+}
+
+bool Graph::EdgesAreConnectedByVertex(Edge& edgeA, Edge& edgeB) {
+    if (cachedNeighborEdges[edgeA.id][edgeB.id] == -1) {
+        return false;
+    }
+    return true;
+}
+
+int Graph::GetEdgesConnectingVertex(Edge& edgeA, Edge& edgeB) {
+    return cachedNeighborEdges[edgeA.id][edgeB.id];
 }
 
 // utility function for dijkstras
@@ -218,8 +269,7 @@ void Graph::ComputeDijkstras() {
         }
 
         dist[startVertex] = 0;
-        cachedShortestPaths[startVertex][startVertex] = Path(0);
-        cachedShortestPaths[startVertex][startVertex].path = paths[startVertex];
+        cachedShortestPaths[startVertex][startVertex] = new Path(this, startVertex, startVertex);
 
         for (int count = 0; count < numVertices - 1; count++) {
             int nearestUnvisitedVertex = MinDistance(dist, visited);
@@ -237,8 +287,10 @@ void Graph::ComputeDijkstras() {
                     paths[v] = paths[nearestUnvisitedVertex];
                     paths[v].push_back(v);
 
-                    cachedShortestPaths[startVertex][v] = Path(dist[v]);
-                    cachedShortestPaths[startVertex][v].path = paths[v];
+                    cachedShortestPaths[startVertex][v] = new Path(this);
+                    for (int i = 0; i < paths[v].size(); i++) {
+                        cachedShortestPaths[startVertex][v]->InsertVertex(paths[v][i]);
+                    }
                 }
             }
         }
@@ -248,21 +300,21 @@ void Graph::ComputeDijkstras() {
 void Graph::FindShortestPathsBetweenEdges() {
     for (int edgeA = 0; edgeA < numEdges; edgeA++) {
         for (int edgeB = 0; edgeB < numEdges; edgeB++) {
-            pair<int, int>* verticesOnEdgeA = GetVerticesOnEdge(edgeA);
-            pair<int, int>* verticesOnEdgeB = GetVerticesOnEdge(edgeB);
+            Edge a = GetEdge(edgeA);
+            Edge b = GetEdge(edgeB);
 
-            Path* bestPath = GetShortestPathBetweenVertices(verticesOnEdgeA->first, verticesOnEdgeB->first);
-            Path* tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->first, verticesOnEdgeB->second);
-            if (bestPath->cost > tempPath->cost)
+            Path* bestPath = GetShortestPathBetweenVertices(a.vertexA, b.vertexA);
+            Path* tempPath = GetShortestPathBetweenVertices(a.vertexA, b.vertexB);
+            if (bestPath->GetCost() > tempPath->GetCost())
                 bestPath = tempPath;
-            tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->second, verticesOnEdgeB->first);
-            if (bestPath->cost > tempPath->cost)
+            tempPath = GetShortestPathBetweenVertices(a.vertexB, b.vertexA);
+            if (bestPath->GetCost() > tempPath->GetCost())
                 bestPath = tempPath;
-            tempPath = GetShortestPathBetweenVertices(verticesOnEdgeA->second, verticesOnEdgeB->second);
-            if (bestPath->cost > tempPath->cost)
+            tempPath = GetShortestPathBetweenVertices(a.vertexB, b.vertexB);
+            if (bestPath->GetCost() > tempPath->GetCost())
                 bestPath = tempPath;
 
-            cachedShortestPathBetweenEdges[edgeA][edgeB] = *bestPath;
+            cachedShortestPathBetweenEdges[edgeA][edgeB] = bestPath;
         }
     }
 }
@@ -270,12 +322,12 @@ void Graph::FindShortestPathsBetweenEdges() {
 void Graph::FindShortestPathsBetweenVerticesAndEdges() {
     for (int vertex = 0; vertex < numVertices; vertex++) {
         for (int edge = 0; edge < numEdges; edge++) {
-            pair<int, int>* verticesOnEdge = GetVerticesOnEdge(edge);
-            if (cachedShortestPaths[vertex][verticesOnEdge->first].cost < cachedShortestPaths[vertex][verticesOnEdge->second].cost) {
-                cachedShortestPathBetweenVerticesAndEdges[vertex][edge] = cachedShortestPaths[vertex][verticesOnEdge->first];
+            Edge e = GetEdge(edge);
+            if (cachedShortestPaths[vertex][e.vertexA]->GetCost() < cachedShortestPaths[vertex][e.vertexB]->GetCost()) {
+                cachedShortestPathBetweenVerticesAndEdges[vertex][edge] = cachedShortestPaths[vertex][e.vertexA];
             }
             else {
-                cachedShortestPathBetweenVerticesAndEdges[vertex][edge] = cachedShortestPaths[vertex][verticesOnEdge->second];
+                cachedShortestPathBetweenVerticesAndEdges[vertex][edge] = cachedShortestPaths[vertex][e.vertexB];
             }
         }
     }
@@ -288,9 +340,42 @@ void Graph::FindAllVertexToEdgeIDs() {
     }
 }
 
+void Graph::FindAllNeighboringEdges() {
+    for (int edgeId = 0; edgeId < numEdges; edgeId++) {
+        for (int otherEdgeId = 0; otherEdgeId < numEdges; otherEdgeId++) {
+            if (edgeId != otherEdgeId) {
+                if (edges[edgeId].vertexA == edges[otherEdgeId].vertexA) {
+                    cachedNeighborEdges[edgeId][otherEdgeId] = edges[edgeId].vertexA;
+                }
+                else if (edges[edgeId].vertexA == edges[otherEdgeId].vertexB) {
+                    cachedNeighborEdges[edgeId][otherEdgeId] = edges[edgeId].vertexA;
+                }
+                else if (edges[edgeId].vertexB == edges[otherEdgeId].vertexA) {
+                    cachedNeighborEdges[edgeId][otherEdgeId] = edges[edgeId].vertexB;
+                }
+                else if (edges[edgeId].vertexB == edges[otherEdgeId].vertexB) {
+                    cachedNeighborEdges[edgeId][otherEdgeId] = edges[edgeId].vertexB;
+                }
+                else {
+                    cachedNeighborEdges[edgeId][otherEdgeId] = -1;
+                }
+            }
+        }
+    }
+}
+
 void Graph::CacheExpensiveComputations() {
-    // Compute dijkstras shortest paths for all vertices
-    ComputeDijkstras();
+    // Find all vertex edge associations
+    FindAllVertexToEdgeIDs();
+
+    string cacheFile = "../src/graph/cached/" + graphName + ".cache";
+    if (FileExists(cacheFile)) {
+        ReadCacheFile(cacheFile);
+    } else {
+        // Compute dijkstras shortest paths for all vertices
+        ComputeDijkstras();
+        WriteCacheFile(cacheFile);
+    }
 
     // Find shortest paths between all edges
     FindShortestPathsBetweenEdges();
@@ -298,8 +383,9 @@ void Graph::CacheExpensiveComputations() {
     // Find shortest paths between all vertices and edges
     FindShortestPathsBetweenVerticesAndEdges();
 
-    // Find all vertex edge associations
-    FindAllVertexToEdgeIDs();
+    // Find all neighboring edges for every edge
+    FindAllNeighboringEdges();
+
 }
 
 

@@ -16,7 +16,7 @@ add_executable(ga
         "src/ga/GA.cpp"             "src/ga/GA.h"
         "src/ga/Population.cpp"     "src/ga/Population.h"
         "src/ga/Individual.cpp"     "src/ga/Individual.h"
-        "src/ga/Gene.cpp"           "src/ga/Gene.h"
+                   
 
         "src/graph/Graph.cpp"       "src/graph/Graph.h"
         "src/graph/Path.cpp"        "src/graph/Path.h" 
@@ -26,4 +26,4 @@ add_executable(ga
             
         "src/ga/Options.h"
 
-  "src/graph/Edge.h" "src/graph/Edge.cpp")
+  "src/graph/Edge.h" "src/graph/Edge.cpp" )

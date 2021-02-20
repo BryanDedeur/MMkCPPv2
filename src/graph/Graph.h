@@ -30,17 +30,20 @@ class Graph {
         // operator overrides
         friend ostream& operator<<(ostream& os, const Graph& graph);
 
-        pair<int, int>* GetVerticesOnEdge(int& edgeA); // always returns two vertices
-
         Path* GetShortestPathBetweenVertices(const int& startVertex, const int& endVertex);
-        Path* GetShortestPathBetweenEdges(int& edgeA, int& edgeB);
-        Path* GetShortestPathBetweenVertexAndEdge(int& vertex, int& edge);
-        float& GetEdgeCost(int& vertexA, int& vertexB);
-        int& GetEdgeId(int& vertexA, int& vertexB);
+        Path* GetShortestPathBetweenEdges(Edge& edgeA, Edge& edgeB);
+        Path* GetShortestPathBetweenVertexAndEdge(int& vertex, Edge& edge);
 
-        int& GetOppositeVertexOnEdge(int& vertex, int& edge);
+        Edge GetEdge(int& id);
+        Edge GetEdge(int& vertexA, int& vertexB);
+
+        float& GetEdgeCost(int& vertexA, int& vertexB);
+
+        int& GetOppositeVertexOnEdge(int& vertex, Edge& edge);
+        int GetEdgesConnectingVertex(Edge& edgeA, Edge& edgeB);
 
         bool IsValidEdge(int& startVertex, int& endVertex);
+        bool EdgesAreConnectedByVertex(Edge& edgeA, Edge& edgeB);
 
         void OutputToFile(string file);
 
@@ -48,13 +51,17 @@ class Graph {
         void AddEdgeToEdges(int& v1, int& v2, float cost);
 
     private:
+        string graphFile;
+        string graphName;
+
         map<int, map<int, float>> adjacencyMatrix;
         map<int, Edge> edges;
 
-        map<int, map<int, Path>> cachedShortestPaths;
-        map<int, map<int, Path>> cachedShortestPathBetweenEdges;
-        map<int, map<int, Path>> cachedShortestPathBetweenVerticesAndEdges;
+        map<int, map<int, Path*>> cachedShortestPaths;
+        map<int, map<int, Path*>> cachedShortestPathBetweenEdges;
+        map<int, map<int, Path*>> cachedShortestPathBetweenVerticesAndEdges;
         map<int, map<int, int>> cachedVertexToEdgeID;
+        map<int, map<int, int>> cachedNeighborEdges;
 
 
         // file reading
@@ -63,12 +70,16 @@ class Graph {
         void ReadDATFormat(string file);
         void ReadTXTFormat(string file);
 
+        void WriteCacheFile(string file);
+        void ReadCacheFile(string file);
+
         float MinDistance(vector<float> dist, vector<bool> visited);
         void ComputeDijkstras();
 
         void FindShortestPathsBetweenEdges();
         void FindShortestPathsBetweenVerticesAndEdges();
         void FindAllVertexToEdgeIDs();
+        void FindAllNeighboringEdges();
 
         void CacheExpensiveComputations();
 

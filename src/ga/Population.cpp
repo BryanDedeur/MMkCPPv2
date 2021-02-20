@@ -17,7 +17,7 @@ Population::Population(Options* opts, Graph *gph) {
 
     for (int i = 0; i < options->popSize * 2; i++){
         members.push_back(new Individual(options, gph));
-        members[i]->Init();
+        members[i]->GenerateRandomChromosome();
     }
     bestIndividual = members[0];
     graph = gph;
@@ -184,120 +184,120 @@ int Population::ProportionalSelector(){
 }
 
 void Population::PMX(Individual *p1, Individual *p2, Individual *c1, Individual *c2) {
-    // TODO make sure PMX boundary is correct or is it fixed
-    int lowerBound = rand() % (options->chromLength - 1) + 1;
-    int upperBound = (rand() % (options->chromLength - lowerBound + 1)) + (lowerBound); // TODO double check this
-    
-    if (lowerBound >= upperBound || lowerBound < 0 || upperBound >= options->chromLength) {
-       // cerr << "NO" << endl;
-    }
-    // TODO implement
+    //// TODO make sure PMX boundary is correct or is it fixed
+    //int lowerBound = rand() % (options->chromLength - 1) + 1;
+    //int upperBound = (rand() % (options->chromLength - lowerBound + 1)) + (lowerBound); // TODO double check this
+    //
+    //if (lowerBound >= upperBound || lowerBound < 0 || upperBound >= options->chromLength) {
+    //   // cerr << "NO" << endl;
+    //}
+    //// TODO implement
 }
 
-bool Population::ChromContains(Gene* arr, Gene &gene) {
-    for(int i = 0; i < options->chromLength; i++)
-    {
-        if(arr[i] == gene)
-        {
-            return true;
-        }
-    }
-    return false;
-}
+//bool Population::ChromContains(Gene* arr, Gene &gene) {
+//    for(int i = 0; i < options->chromLength; i++)
+//    {
+//        if(arr[i] == gene)
+//        {
+//            return true;
+//        }
+//    }
+//    return false;
+//}
 
 void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *c2) {
     //Get random index points
 
-    int t1 = IntInRange(0, options->chromLength);
-    int t2 = IntInRange(0, options->chromLength);
-    do
-    {
-        t2 = IntInRange(0, options->chromLength);
-    }while(t2 == t1);
+    //int t1 = IntInRange(0, options->chromLength);
+    //int t2 = IntInRange(0, options->chromLength);
+    //do
+    //{
+    //    t2 = IntInRange(0, options->chromLength);
+    //}while(t2 == t1);
 
-    if(t1 > t2)
-    {
-        int temp = t1;
-        t1 = t2;
-        t2 = temp;
-    }
+    //if(t1 > t2)
+    //{
+    //    int temp = t1;
+    //    t1 = t2;
+    //    t2 = temp;
+    //}
 
-    //Directly copy genes between index points, track copied values with arrays
-    int len = options->chromLength;
-    Gene* arr1 = new Gene[options->chromLength];
-    Gene* arr2 = new Gene[options->chromLength];
-    for (int i = 0; i < options->chromLength; i++) {
-        arr1[i].value = -1;
-        arr2[i].value = -1;
-    }
+    ////Directly copy genes between index points, track copied values with arrays
+    //int len = options->chromLength;
+    //Gene* arr1 = new Gene[options->chromLength];
+    //Gene* arr2 = new Gene[options->chromLength];
+    //for (int i = 0; i < options->chromLength; i++) {
+    //    arr1[i].value = -1;
+    //    arr2[i].value = -1;
+    //}
 
-    for(int i = t1; i <= t2; i++)
-    {
-        c1->chromosome[i] = p1->chromosome[i];
-        arr1[i] = p1->chromosome[i];
-        c2->chromosome[i] = p2->chromosome[i];
-        arr2[i] = p2->chromosome[i];
-    }
+    //for(int i = t1; i <= t2; i++)
+    //{
+    //    c1->chromosome[i] = p1->chromosome[i];
+    //    arr1[i] = p1->chromosome[i];
+    //    c2->chromosome[i] = p2->chromosome[i];
+    //    arr2[i] = p2->chromosome[i];
+    //}
 
-    //Copy remaining values from opposite parent
-    int i1 = 0;	//<--To access spaces outside of index points
-    int i2 = 0;
-    for(int i = 0; i < options->chromLength; i++)
-    {
-        //Skip spaces already copied to
-        if(i1 == t1)
-        {
-            i1 = t2 + 1;
-        }
-        if(i2 == t1)
-        {
-            i2 = t2 + 1;
-        }
-        if(!ChromContains(arr1, p2->chromosome[i]))
-        {
-            c1->chromosome[i1] = p2->chromosome[i];
-            i1++;
-        }
-        if(!ChromContains(arr2, p1->chromosome[i]))
-        {
-            c2->chromosome[i2] = p1->chromosome[i];
-            i2++;
-        }
-    }
-    delete arr1;
-    delete arr2;
+    ////Copy remaining values from opposite parent
+    //int i1 = 0;	//<--To access spaces outside of index points
+    //int i2 = 0;
+    //for(int i = 0; i < options->chromLength; i++)
+    //{
+    //    //Skip spaces already copied to
+    //    if(i1 == t1)
+    //    {
+    //        i1 = t2 + 1;
+    //    }
+    //    if(i2 == t1)
+    //    {
+    //        i2 = t2 + 1;
+    //    }
+    //    if(!ChromContains(arr1, p2->chromosome[i]))
+    //    {
+    //        c1->chromosome[i1] = p2->chromosome[i];
+    //        i1++;
+    //    }
+    //    if(!ChromContains(arr2, p1->chromosome[i]))
+    //    {
+    //        c2->chromosome[i2] = p1->chromosome[i];
+    //        i2++;
+    //    }
+    //}
+    //delete arr1;
+    //delete arr2;
 
-    c1->UpdateRobotChromIndex();
-    c2->UpdateRobotChromIndex();
+    //c1->UpdateRobotChromIndex();
+    //c2->UpdateRobotChromIndex();
 }
 
 // --------------------------- Mutators ---------------------------
 
 void Population::SwapMutate(Individual *ind) {
-    for(int i = 0; i < options->chromLength; i++){
-        if(Flip(options->pm)) {
-            int pos2 = rand() % options->chromLength;
-            ind->Swap(i, pos2);
-        }
-    }
+    //for(int i = 0; i < options->chromLength; i++){
+    //    if(Flip(options->pm)) {
+    //        int pos2 = rand() % options->chromLength;
+    //        ind->Swap(i, pos2);
+    //    }
+    //}
 }
 
 void Population::InvertMutate(Individual *ind) {
 
-    if(Flip(options->pm)) {
-        // pick two locations
-        int lowerBound = rand() % options->chromLength;
-        int upperBound = rand() % options->chromLength;
-        int l = min(upperBound, lowerBound), r = max(upperBound, lowerBound);
-        int diff = r - l;
+    //if(Flip(options->pm)) {
+    //    // pick two locations
+    //    int lowerBound = rand() % options->chromLength;
+    //    int upperBound = rand() % options->chromLength;
+    //    int l = min(upperBound, lowerBound), r = max(upperBound, lowerBound);
+    //    int diff = r - l;
 
-        // swap everything inbetween
-        //cout << "before mutation: " << *ind << " left/right: " << l << "/" << r << endl;
-        for (; l < r; l++, r--) {
-            ind->Swap(l, r);
-        }
-        //cout << "after mutation: " << *ind << endl << endl;
-    }
+    //    // swap everything inbetween
+    //    //cout << "before mutation: " << *ind << " left/right: " << l << "/" << r << endl;
+    //    for (; l < r; l++, r--) {
+    //        ind->Swap(l, r);
+    //    }
+    //    //cout << "after mutation: " << *ind << endl << endl;
+    //}
 
 }
 

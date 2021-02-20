@@ -18,6 +18,7 @@
 
 using namespace std;
 
+bool FileExists(string& filename);
 void ClearFile(string filename);
 void WriteToFile(stringstream &ss, string filename);
 string ExtractNameOfFile(string filePath);

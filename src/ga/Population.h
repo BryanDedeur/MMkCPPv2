@@ -35,7 +35,6 @@ public:
     void Init();
 
     // helpers
-    bool ChromContains(Gene* arr, Gene &gene);
 
     void EvaluateMembers();
 	void Generation(Population *child);

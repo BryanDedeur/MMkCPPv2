@@ -8,6 +8,17 @@
 
 #include "Utils.h"
 
+bool FileExists(std::string& name) {
+    if (FILE* file = fopen(name.c_str(), "r")) {
+        fclose(file);
+        return true;
+    }
+    else {
+        cerr << "Cannot locate file: " << name << endl;
+        return false;
+    }
+}
+
 void ClearFile(std::string filename) {
     std::ofstream ofs;
     ofs.open(filename, std::ofstream::out | std::ofstream::trunc);

@@ -5,27 +5,52 @@
 #ifndef GA_PATH_H
 #define GA_PATH_H
 
+#include "Edge.h"
 #include <ostream>
 #include <vector>
+
 using std::vector;
 using std::ostream;
 
+class Graph; // forward declaration
+
 class Path {
-public:
+    public:
+        Path();
+        Path(Graph* graph);
+        Path(Graph* gph, int& vertexStart);
+        Path(Graph* graph, int& vertexStart, int& vertexEnd);
+        Path(Graph* graph, Edge& edgeStart, Edge& edgeEnd);
+        Path(Graph* gph, Edge& edgeStart);
+        Path(Graph* graph, Edge& edgeStart, int& startVertex);
 
-    Path();
-    Path(float cst);
+        void Reset();
 
-    friend ostream& operator<<(ostream& os, const Path& path);
+        vector<int> vertexPath;
+        vector<Edge> edgePath;
 
-    Path& operator=(Path other);
+        void InsertVertex(int& vertexId);
+        void AddVertex(int& vertexId);
+        void AddEdge(Edge &edgeId);
 
-    // assignment operator override to help with combining paths together
-    Path& operator+=(const Path &rhsPath);
-    Path& operator+(const Path &rhsPath);
+        vector<Edge> GetEdgePath();
+        vector<int> GetVertexPath();
 
-    vector<int> path; // vector because we don't know the size
-    float cost; // total cost to travel path
+        const float GetCost();
+
+
+        friend ostream& operator<<(ostream& os, const Path& path);
+
+        Path& operator=(Path other);
+
+        // assignment operator override to help with combining paths together
+        Path& operator+=(const Path &rhsPath);
+        Path& operator+(const Path &rhsPath);
+
+    private:
+        Graph* graph;
+        float cost; // total cost to travel the path
+
 };
 
 

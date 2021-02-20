@@ -77,8 +77,6 @@ void GA::SetGraph(string graphf) {
     options.graphName = ExtractNameOfFile(graphf);
     graph = new Graph(options.graphfile);
 
-    options.chromLength = graph->numEdges + options.numRobots;
-
     // output file name
     string GAParamsStr =
             to_string(options.numRobots) + "R-" +
@@ -98,7 +96,7 @@ void GA::Init(){
     AssertWithErrorMessage("Population size is not even", options.popSize % 2 == 0);
     AssertWithErrorMessage("Number of runs should be at least 1", options.numRuns > 0);
     AssertWithErrorMessage("Number of robots should be at least 1", options.numRobots > 0);
-    AssertWithErrorMessage("Closed route start vertex is out of bounds", options.closedRouteVertex < options.chromLength);
+    //AssertWithErrorMessage("Closed route start vertex is out of bounds", options.closedRouteVertex < options.chromLength);
 
     if (graph == nullptr) {
         SetGraph(options.graphfile);
@@ -162,50 +160,50 @@ void runCommand(string commandStr) {
 
 void GA::Report() {
 
-    float averageBestPerSeed = 0; // aka mean
-    for (const Individual& itr : bestPerSeed) {
-        averageBestPerSeed += itr.totalTravelDistance;
-    }
-    averageBestPerSeed = averageBestPerSeed / bestPerSeed.size();
+    //float averageBestPerSeed = 0; // aka mean
+    //for (const Individual& itr : bestPerSeed) {
+    //    averageBestPerSeed += itr.totalTravelDistance;
+    //}
+    //averageBestPerSeed = averageBestPerSeed / bestPerSeed.size();
 
-    float standardDeviationOfBest = 0;
-    for (int i = 0; i < bestPerSeed.size(); ++i)
-        standardDeviationOfBest += pow(bestPerSeed[i].totalTravelDistance - averageBestPerSeed, 2);
-    standardDeviationOfBest = sqrt(standardDeviationOfBest / bestPerSeed.size());
-    
-    std::stringstream ss;
-    // Name, Edges, Vertices, Num Odd Vertices, Sum Edges Total, Travel Distance From Best Individual, Average Best Per Seed, Standard Deviation of Best, Time, Best Seed    
-    ss << options.graphName.c_str() << "\t"
-        << graph->numEdges << "\t" 
-        << graph->numVertices << "\t"
-        << graph->sumEdges << "\t"
-        << best->totalTravelDistance << "\t"
-        << averageBestPerSeed << "\t"
-        << standardDeviationOfBest << "\t"
-        << timeSeconds << "\t"
-        << best->seed << endl; // TODO output routes to file also!
-    WriteToFile(ss, options.resultsfile);
+    //float standardDeviationOfBest = 0;
+    //for (int i = 0; i < bestPerSeed.size(); ++i)
+    //    standardDeviationOfBest += pow(bestPerSeed[i].totalTravelDistance - averageBestPerSeed, 2);
+    //standardDeviationOfBest = sqrt(standardDeviationOfBest / bestPerSeed.size());
+    //
+    //std::stringstream ss;
+    //// Name, Edges, Vertices, Num Odd Vertices, Sum Edges Total, Travel Distance From Best Individual, Average Best Per Seed, Standard Deviation of Best, Time, Best Seed    
+    //ss << options.graphName.c_str() << "\t"
+    //    << graph->numEdges << "\t" 
+    //    << graph->numVertices << "\t"
+    //    << graph->sumEdges << "\t"
+    //    << best->totalTravelDistance << "\t"
+    //    << averageBestPerSeed << "\t"
+    //    << standardDeviationOfBest << "\t"
+    //    << timeSeconds << "\t"
+    //    << best->seed << endl; // TODO output routes to file also!
+    //WriteToFile(ss, options.resultsfile);
 
-    best->LogRoutes(options.decodedfile);
+    //best->LogRoutes(options.decodedfile);
 
-    cout << "Finished " << runCount << " runs in " << timeSeconds << "s (" << (timeSeconds / runCount) << "s per run)" << endl << endl;
+    //cout << "Finished " << runCount << " runs in " << timeSeconds << "s (" << (timeSeconds / runCount) << "s per run)" << endl << endl;
 
-    cout << "Best result written to: " << options.decodedfile << endl;
+    //cout << "Best result written to: " << options.decodedfile << endl;
 
-    if (options.makeVisuals) {
-        cout << "Creating visuals... ";
-        runCommand("python3 ../visualizations/TravelPlot.py " + options.travelfile + " " + options.graphfile);
-        runCommand("python3 ../visualizations/FitnessPlot.py " + options.fitnessfile + " " + options.graphfile);
-        runCommand("python3 ../visualizations/GraphTravelPlans.py " + options.decodedfile + " " + options.graphfile);
-        runCommand("python3 ../visualizations/GraphTravelOverlap.py " + options.decodedfile + " " + options.graphfile);
-    }
+    //if (options.makeVisuals) {
+    //    cout << "Creating visuals... ";
+    //    runCommand("python3 ../visualizations/TravelPlot.py " + options.travelfile + " " + options.graphfile);
+    //    runCommand("python3 ../visualizations/FitnessPlot.py " + options.fitnessfile + " " + options.graphfile);
+    //    runCommand("python3 ../visualizations/GraphTravelPlans.py " + options.decodedfile + " " + options.graphfile);
+    //    runCommand("python3 ../visualizations/GraphTravelOverlap.py " + options.decodedfile + " " + options.graphfile);
+    //}
 
-    cout << "Done!" << endl;
-    if (options.minimalOutput) {
-        cout.clear();
-        cout << "Finished " << options.graphName << " with " << options.numRobots << " robots for " << options.numRuns << " runs of " << options.maxgens << " generations with population size " << options.popSize << ": in " << timeSeconds << "s (" << (timeSeconds / runCount) << "s per run)" << endl;
-    }
+    //cout << "Done!" << endl;
+    //if (options.minimalOutput) {
+    //    cout.clear();
+    //    cout << "Finished " << options.graphName << " with " << options.numRobots << " robots for " << options.numRuns << " runs of " << options.maxgens << " generations with population size " << options.popSize << ": in " << timeSeconds << "s (" << (timeSeconds / runCount) << "s per run)" << endl;
+    //}
 
-    //graph->OutputToFile(options.outputDir + options.graphName + ".txt");
+    ////graph->OutputToFile(options.outputDir + options.graphName + ".txt");
 }
 
