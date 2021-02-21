@@ -111,7 +111,7 @@ void Population::Generation(Population *child) {
 }
 
 bool CompareFitness(Individual *a, Individual *b) {
-    return (a->fitness > b->fitness);
+    return (a->fitness < b->fitness);
 }
 
 void Population::CHCGeneration(Population *child) {
@@ -136,10 +136,10 @@ void Population::CHCGeneration(Population *child) {
     // Halve the population
     for (int i = options->popSize; i < doublePopSize; i++) {
         members[i]->Evaluate();
-        StoreIfBest(members[i]);
     }
 
     sort(members.begin(), members.end(), CompareFitness);
+    StoreIfBest(members[0]);
 
     for (int i = 0; i < options->popSize; i++) {
         child->members[i] = members[i];
@@ -150,8 +150,8 @@ void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, 
     // Crossover
     if(Flip(options->px)){ // if prob, then cross/exchange bits
         switch(options->crossover) {
-            case CrossoverType::OX:
-                OX(p1, p2, c1, c2); break;
+        case CrossoverType::OnePoint: OnePoint(p1, p2, c1, c2); break;
+            case CrossoverType::OX: OX(p1, p2, c1, c2); break;
             case CrossoverType::PMX: PMX(p1, p2, c1, c2); break;
             case CrossoverType::NoCross: break;
             default: break;
@@ -171,6 +171,7 @@ void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, 
     }
 }
 
+
 int Population::ProportionalSelector(){
 	int i = -1;
 	float sum = 0;
@@ -181,6 +182,36 @@ int Population::ProportionalSelector(){
 	} while (sum < limit && i < options->popSize-1 );
 
 	return i;
+}
+
+// --------------------------- Crossovers ---------------------------
+
+void Population::OnePoint(Individual* p1, Individual* p2, Individual* c1, Individual* c2) {
+    int p1Index = rand() % p1->chromosome.size();
+    int p2Index = rand() % p2->chromosome.size();
+
+    int c1Size = p1Index + (p2->chromosome.size() - p2Index);
+    int c2Size = p2Index + (p1->chromosome.size() - p1Index);
+
+    c1->ResizeChromosome(c1Size);
+    c2->ResizeChromosome(c2Size);
+
+    int largerChromeSize = max(p1->chromosome.size(), p2->chromosome.size());
+    for (int i = 0; i < largerChromeSize; i++) {
+        if (i < p1Index) {
+            c1->SetGeneAtPosition(p1->chromosome[i], i);
+        } else if (i < p2->chromosome.size() && i > p2Index) {
+            int tempIndex = (i - p2Index) + p1Index;
+            c1->SetGeneAtPosition(p2->chromosome[i], tempIndex);
+        }
+
+        if (i < p2Index) {
+            c2->SetGeneAtPosition(p2->chromosome[i], i);
+        } else if (i < p1->chromosome.size() && i > p1Index) {
+            int tempIndex = (i - p1Index) + p2Index;
+            c2->SetGeneAtPosition(p1->chromosome[i], tempIndex);
+        }
+    }
 }
 
 void Population::PMX(Individual *p1, Individual *p2, Individual *c1, Individual *c2) {

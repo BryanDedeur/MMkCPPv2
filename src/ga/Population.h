@@ -52,7 +52,7 @@ public:
 
     // Crossovers
     //	void TwoPoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
-    //	void OnePoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
+    void OnePoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
     void PMX(Individual *p1, Individual *p2, Individual *c1, Individual *c2); // Permutation crossover
     void OX(Individual *p1, Individual *p2, Individual *c1, Individual *c2); // Ordered crossover (heterogeneous recombination)
 

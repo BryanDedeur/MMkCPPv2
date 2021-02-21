@@ -47,10 +47,46 @@ void Individual::GenerateRandomChromosome() {
 	}
 }
 
+// sets the gene 
+void Individual::SetGeneAtPosition(int& value, int& position) {
+    chromosome[position] = value;
+}
+
+void Individual::ResizeChromosome(int& newSize) {
+    if (chromosome.size() < newSize) {
+        for (int i = (newSize - chromosome.size()) - 1; i > -1; i--) {
+            chromosome.push_back(0);
+        }
+    }
+    else if (chromosome.size() > newSize) {
+        for (int i = (chromosome.size() - newSize) - 1; i > -1; i--) {
+            chromosome.pop_back();
+        }
+    }
+}
+
+// checks to make sure every edge is traveled at least once
+bool Individual::SanityCheckPassed() {
+    vector<int> edgeCounter;
+    for (int i = 0; i < graph->numEdges; i++) {
+        edgeCounter.push_back(0);
+    }
+
+    for (int i = 0; i < chromosome.size(); i++) {
+        edgeCounter[chromosome[i]]++;
+    }
+
+    for (int i = 0; i < graph->numEdges; i++) {
+        if (edgeCounter[i] == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // adds a new edge to the chromosome
 void Individual::AddEdgeToChromosome(int edgeId) {
     chromosome.push_back(edgeId);
-    visitedEdgeCounts[edgeId]++;
     totalTravelDistance += graph->GetEdge(edgeId).cost;
 }
 
@@ -63,7 +99,6 @@ void Individual::AddEdgeToChromosome(int edgeId, int index) {
     else {
         chromosome.insert(chromosome.begin() + index, edgeId);
     }
-    visitedEdgeCounts[edgeId]++;
 }
 
 // adds a new edge to the chromosome
@@ -71,11 +106,31 @@ void Individual::AddEdgeToChromosome(int edgeId, bool randomize) {
     AddEdgeToChromosome(edgeId, int(rand() % chromosome.size()));
 }
 
+void Individual::InjectMissingEdges() {
+    int i = 0;
+    // reset counters
+    for (i = 0; i < visitedEdgeCounts.size(); i++) {
+        visitedEdgeCounts[i] = 0;
+    }
+
+    // count occurances
+    for (i = 0; i < chromosome.size(); i++) {
+        visitedEdgeCounts[chromosome[i]]++;
+    }
+
+    // inject missing
+    for (i = 0; i < visitedEdgeCounts.size(); i++) {
+        if (visitedEdgeCounts[i] == 0) {
+            AddEdgeToChromosome(i, true);
+        }
+    }
+}
+
 // adds edges to chromosome so the tour is fully connected. Every edge leads to a connected edge (decoding in a way)
 void Individual::ConvertChromosomeToTour() {
     // Make path using dijkstras
     Path tempPath = Path(graph);    
-    for (int geneIndex = 0; geneIndex < chromosome.size() - 1; geneIndex++) {
+    for (int geneIndex = 0; geneIndex < chromosome.size(); geneIndex++) {
         tempPath.AddEdge(graph->GetEdge(chromosome[geneIndex]));
     }
 
@@ -92,6 +147,7 @@ void Individual::ConvertChromosomeToTour() {
         chromSize++;
         totalTravelDistance += tempPath.edgePath[i].cost;
     }
+
     // remove left over stuff from previous chromosome
     for (int i = chromSize; i < chromosome.size(); i++) {
         chromosome.pop_back();
@@ -162,14 +218,6 @@ void Individual::Swap(int& indexA, int& indexB) {
     int temp = chromosome[indexA];
     chromosome[indexA] = chromosome[indexB];
     chromosome[indexB] = temp;
-}
-
-void Individual::InjectMissingEdges() {
-    for (int i = 0; i < visitedEdgeCounts.size(); i++) {
-        if (visitedEdgeCounts[i] == 0) {
-            AddEdgeToChromosome(i, true);
-        }
-    }
 }
 
 void Individual::Evaluate() {

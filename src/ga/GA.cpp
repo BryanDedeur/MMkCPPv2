@@ -123,7 +123,7 @@ void GA::Run(){
             child->EvaluateMembers();
         }
 
-		if (child->bestIndividual->fitness > best->fitness) {
+		if (child->bestIndividual->fitness < best->fitness) {
             *best = *child->bestIndividual;
 		}
 
@@ -140,7 +140,6 @@ void GA::Run(){
 	}
 
     bestPerSeed.push_back(*child->bestIndividual);
-
 
     double duration = double(clock() - clockin) / 1000;
     cout << "] in " << duration << "s" << endl;

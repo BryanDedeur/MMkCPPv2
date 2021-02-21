@@ -121,7 +121,7 @@ void Path::AddVertex(int& vertex) {
         HandleFirstVertexOneEdge(vertex);
     } else if (vertexPath.size() == 1 && edgePath.size() == 0) {
         HandleSecondVertexNoEdges(vertex);
-    } else if (vertexPath.size() == 1 && edgePath.size() == 1) {
+    } else if (vertexPath.size() > 0 && edgePath.size() > 0) {
         HandleAllOtherVertexCases(vertex);
     }
 }

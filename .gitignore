@@ -6,6 +6,8 @@ cmake-build-release/*
 venv\*
 venv/*
 
+src/graph/cached/*
+
 shell-automation/parallelization/*
 
 build/*

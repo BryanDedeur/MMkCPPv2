@@ -33,6 +33,10 @@ class Individual {
         Options* options;
 
         void GenerateRandomChromosome();
+        void SetGeneAtPosition(int& value, int& position);
+        void ResizeChromosome(int& newSize);
+        bool SanityCheckPassed();
+
         void AddEdgeToChromosome(int edgeId);
         void AddEdgeToChromosome(int edgeId, int index);
         void AddEdgeToChromosome(int edgeId, bool randomize);
@@ -44,7 +48,6 @@ class Individual {
         float GetFurthestTravelingRobotTourLength();
 
         void Swap(int &indexA, int &indexB);
-        void Replace(int& index, int& edgeId);
 
         void Evaluate(); 
 

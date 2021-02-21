@@ -229,8 +229,12 @@ int& Graph::GetOppositeVertexOnEdge(int& vertex, Edge& edge) {
 }
 
 bool Graph::IsValidEdge(int& startVertex, int& endVertex) {
-    bool test = (adjacencyMatrix.at(startVertex).at(endVertex) > 0);
-    return (adjacencyMatrix.at(startVertex).at(endVertex) > 0);
+    if (adjacencyMatrix.find(startVertex) != adjacencyMatrix.end()) {
+        if (adjacencyMatrix[startVertex].find(endVertex) != adjacencyMatrix[startVertex].end()) {
+            return (adjacencyMatrix.at(startVertex).at(endVertex) > 0);
+        }
+    }
+    return false;
 }
 
 bool Graph::EdgesAreConnectedByVertex(Edge& edgeA, Edge& edgeB) {
