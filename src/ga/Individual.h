@@ -40,15 +40,13 @@ class Individual {
         void InjectMissingEdges();
         void ConvertChromosomeToTour();
         void DistributeTourBetweenRobots();
-
-        //void RepairTour(int& robot, int& startChromeIndex, int& endChromeIndex);
+        void ConvertRobotToursToChromosome();
+        float GetFurthestTravelingRobotTourLength();
 
         void Swap(int &indexA, int &indexB);
         void Replace(int& index, int& edgeId);
 
         void Evaluate(); 
-
-        void Decode();
 
         void LogTours(string filename);
 

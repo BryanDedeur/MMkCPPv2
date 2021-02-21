@@ -50,9 +50,9 @@ typedef struct Options : Base {
     long int randomSeed = time(NULL);
 
 	int numRuns = 1;
-	int popSize = 500;
+	int popSize = 20;
 	//int chromLength; // this is automatically set by the graph
-	unsigned int maxgens = 1000;
+	unsigned int maxgens = 40;
 
     int numRobots = 1;
 

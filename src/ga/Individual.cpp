@@ -79,8 +79,9 @@ void Individual::ConvertChromosomeToTour() {
         tempPath.AddEdge(graph->GetEdge(chromosome[geneIndex]));
     }
 
-    totalTravelDistance = 0;
     // Shove path back into chromosome
+    int chromSize = 0;
+    totalTravelDistance = 0;
     for (int i = 0; i < tempPath.edgePath.size(); i++) {
         if (i < chromosome.size()) {
             chromosome[i] = tempPath.edgePath[i].id;
@@ -88,7 +89,12 @@ void Individual::ConvertChromosomeToTour() {
         else {
             chromosome.push_back(tempPath.edgePath[i].id);
         }
+        chromSize++;
         totalTravelDistance += tempPath.edgePath[i].cost;
+    }
+    // remove left over stuff from previous chromosome
+    for (int i = chromSize; i < chromosome.size(); i++) {
+        chromosome.pop_back();
     }
 }
 
@@ -118,6 +124,38 @@ void Individual::DistributeTourBetweenRobots() {
     }
 }
 
+void Individual::ConvertRobotToursToChromosome() {
+    totalTravelDistance = 0;
+    int chromSize = 0;
+    for (int r = 0; r < options->numRobots; r++) {
+        for (int i = 0; i < tours[r].edgePath.size(); i++) {
+            if (i < chromosome.size()) {
+                chromosome[i] = tours[r].edgePath[i].id;
+            }
+            else {
+                chromosome.push_back(tours[r].edgePath[i].id);
+            }
+            chromSize++;
+            totalTravelDistance += tours[r].edgePath[i].cost;
+        }
+    }
+    // remove left over stuff from previous chromosome
+    for (int i = chromSize; i < chromosome.size(); i++) {
+        chromosome.pop_back();
+    }
+}
+
+float Individual::GetFurthestTravelingRobotTourLength() {
+    Path* best = &tours[0];
+    for (int r = 0; r < options->numRobots; r++) {
+        if (best->GetCost() < tours[r].GetCost()) {
+            best = &tours[r];
+        }
+        tours[r].SanityCheckPass();
+    }
+    return best->GetCost();
+}
+
 
 // swaps two chromosome indexes, preserves edges
 void Individual::Swap(int& indexA, int& indexB) {
@@ -138,20 +176,9 @@ void Individual::Evaluate() {
     InjectMissingEdges();
     ConvertChromosomeToTour();
     DistributeTourBetweenRobots();
+    ConvertRobotToursToChromosome();
 
-    //Decode();
-    ////cout << *this << endl;
-    //fitness = 0;
-    //double largestPathCost = 0;
-    //// calculate the distribution of travel among all robots
-    //totalTravelDistance = 0;
-    //for (int r = 0; r < options->numRobots; r++) {
-    //    totalTravelDistance += decoding[r].cost;
-    //    if (largestPathCost < decoding[r].cost) {
-    //        largestPathCost = decoding[r].cost;
-    //    }
-    //}
-    //fitness = 1/largestPathCost; // Larger numbers get smaller
+    fitness = GetFurthestTravelingRobotTourLength();
 }
 
 void Individual::LogTours(string filename) {
@@ -171,165 +198,6 @@ void Individual::LogTours(string filename) {
     //    ss << endl;
     //}
     //WriteToFile(ss, filename);
-}
-
-//void Individual::UpdateRobotChromIndex() {
-//    for (int i = 0; i < options->chromLength; i++) {
-//        if (chromosome[i].isRobot) {
-//            robotChromIndex[chromosome[i].value] = i;
-//        }
-//    }
-//}
-
-//bool Individual::CheckIfValidRoutes() {
-//    map<int, bool> allEdgesAccountedFor = map<int, bool>();
-//    for (int r = 0; r < options->numRobots; r++) {
-//        int sumTravel = 0;
-//        for (int i = 0; i < this->decoding[r].path.size() - 1; i++) {
-//            if (this->decoding[r].path.size() <= 1) {
-//                break;
-//            }
-//            // all vertices must be connected by an edge
-//            if (!graph->IsValidEdge(this->decoding[r].path[i], this->decoding[r].path[i + 1])) {
-//                cout << "invalid edge in route, no edge exists between these two vertices" << endl;
-//                return false;
-//            }
-//            sumTravel += graph->GetEdgeCost(this->decoding[r].path[i], this->decoding[r].path[i + 1]);
-//            int id = graph->GetEdgeId(this->decoding[r].path[i], this->decoding[r].path[i + 1]);
-//            allEdgesAccountedFor.insert(std::pair<int, bool>(id, true));
-//        }
-//        if (sumTravel != this->decoding[r].cost) {
-//            //cout << "route has the wrong cost but was fixed here" << endl;
-//            this->decoding[r].cost = sumTravel;
-//            //return false;
-//        }
-//    }
-//
-//    for (int i = 0; i < graph->numEdges; i++) {
-//        if (allEdgesAccountedFor.find(i) == allEdgesAccountedFor.end()) {
-//            cout << "edge " << i << " is missing" << endl;
-//        }
-//    }
-//    return true;
-//}
-
-//void Individual::FindTravelCosts() {
-//    for (int r = 0; r < options->numRobots; r++) {
-//        int sumTravel = 0;
-//        for (int i = 0; i < this->decoding[r].path.size() - 1; i++) {
-//            if (this->decoding[r].path.size() <= 1) {
-//                break;
-//            }
-//            sumTravel += graph->GetEdgeCost(this->decoding[r].path[i], this->decoding[r].path[i + 1]);
-//        }
-//        this->decoding[r].cost = sumTravel;
-//    }
-//}
-
-
-void Individual::Decode() {
-//    // make sure array is valid
-//    for (int r = 0; r < options->numRobots; r++) {
-//        decoding[r] = Path(0);
-//        for (int i = 0; i < options->chromLength; i++) {
-//            // to account for cyclic encoding
-//            int firstEdgeIndex = (i + 1 + robotChromIndex[r]) % options->chromLength; // [R0, 0, 1
-//            int secondEdgeIndex = (i + 2 + robotChromIndex[r]) % options->chromLength;
-//            // no more edges to account for, this could happen with random encoding
-//            if (chromosome[firstEdgeIndex].isRobot) {
-//                break;
-//            }
-//            pair<int, int> *vertices = graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
-//            // if two edges exist
-//            if (!chromosome[secondEdgeIndex].isRobot) {
-//                pair<int, int> firstEdgeVertices = *graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
-//                pair<int, int> secondEdgeVertices = *graph->GetVerticesOnEdge(chromosome[secondEdgeIndex].value);
-//                Path *bestPath = graph->GetShortestPathBetweenEdges(chromosome[firstEdgeIndex].value, chromosome[secondEdgeIndex].value);
-//                // Travel current edge
-//                // if first travel
-//                if (decoding[r].path.empty()) {
-//                    // start travel from opposite vertex on from best path starting edge
-//                    int oppositeVertex = graph->GetOppositeVertexOnEdge(bestPath->path.front(), chromosome[firstEdgeIndex].value);
-//                    decoding[r].cost += graph->GetEdgeCost(oppositeVertex, bestPath->path.front());
-//                    decoding[r].path.push_back(oppositeVertex);
-//                    decoding[r].path.push_back(bestPath->path.front());
-//                } else { // traveled somewhere before
-//                    int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
-//                    decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
-//                    decoding[r].path.push_back(oppositeVertex);
-//                }
-//
-//                // Travel to next edge (but dont travel the edge)
-//                // edges are connected
-//                if (bestPath->path.size() == 1) {
-//                    // if not at the best connecting vertex, travel to that vertex
-//                    if (bestPath->path.back() != decoding[r].path.back()) {
-//                        int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
-//                        decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
-//                        decoding[r].path.push_back(oppositeVertex);
-//                    } else { // at the best connecting edge
-//                        // do nothing
-//                    }
-//                } else { // edges are not connected
-//                    // if already at bestpath start vertex
-//                    if (decoding[r].path.back() == bestPath->path.front()) {
-//                        decoding[r].path.pop_back();
-//                    } else { // travel to best starting vertex
-//                        //decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), bestPath.path.front());
-//                        //decoding[r].path.push_back(bestPath.path.front());
-////                        cout << decoding[r].path.back() << "->";
-//                    }
-//                    decoding[r] += *bestPath;
-//                }
-//
-//            } else { // one edge exists
-//
-//                // if already traveled somewhere
-//                if (!decoding[r].path.empty()) {
-//                    // travel edge (should have arrived at the edge at this point)
-//                    int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
-//                    decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
-//                    decoding[r].path.push_back(oppositeVertex);
-//                } else { // randomly start somewhere and end on opposite vertex on edge
-//                    pair<int, int> *vertices = graph->GetVerticesOnEdge(chromosome[firstEdgeIndex].value);
-//                    if (rand() % 2 == 0) {
-//                        decoding[r].path.push_back(vertices->first);
-//                    } else {
-//                        decoding[r].path.push_back(vertices->second);
-//                    }
-//                    int oppositeVertex = graph->GetOppositeVertexOnEdge(decoding[r].path.back(), chromosome[firstEdgeIndex].value);
-//                    decoding[r].cost += graph->GetEdgeCost(decoding[r].path.back(), oppositeVertex);
-//                    decoding[r].path.push_back(oppositeVertex);
-//                }
-//            }
-//        }
-//    }
-//
-//    // complete routes to some vertex
-//    if (options->closedRouteVertex != -1) {
-//        for (int r = 0; r < options->numRobots; r++) {
-//            if (!decoding[r].path.empty()) {
-//                int vstart = options->closedRouteVertex;
-//                int vstart2 = decoding[r].path.front();
-//                int vend = decoding[r].path.back();
-//
-//                Path* startVertexToStartRoute = graph->GetShortestPathBetweenVertices(vstart, vstart2);
-//                Path* endRouteToEndVertex = graph->GetShortestPathBetweenVertices(vend, vstart);
-//                //cout << "Before: " << decoding[r] << endl;
-//
-//                Path temp = decoding[r];
-//                decoding[r] = Path(0);
-//
-//                decoding[r] += *startVertexToStartRoute;
-//                decoding[r] += temp;
-//                decoding[r] += *endRouteToEndVertex;
-//                //cout << "After: " << decoding[r] << endl;
-//            }
-//        }
-//    }
-//
-//    //CheckIfValidRoutes(); // for debugging
-//    FindTravelCosts();
 }
 
 ostream& operator<<(ostream& os, const Individual& individual)

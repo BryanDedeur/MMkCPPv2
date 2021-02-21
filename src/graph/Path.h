@@ -29,6 +29,8 @@ class Path {
         vector<int> vertexPath;
         vector<Edge> edgePath;
 
+        bool SanityCheckPass();
+
         void InsertVertex(int& vertexId);
         void AddVertex(int& vertexId);
         void AddEdge(Edge &edgeId);
@@ -37,7 +39,6 @@ class Path {
         vector<int> GetVertexPath();
 
         const float GetCost();
-
 
         friend ostream& operator<<(ostream& os, const Path& path);
 
@@ -48,6 +49,21 @@ class Path {
         Path& operator+(const Path &rhsPath);
 
     private:
+
+        void InjectShortestPathToVertex(int& vertex, Path& path);
+
+        void HandleFirstVertexNoEdges(int& vertex);
+        void HandleFirstVertexOneEdge(int& vertex);
+        void HandleSecondVertexNoEdges(int& vertex);
+        void HandleAllOtherVertexCases(int& vertex);
+
+        void InjectShortestPathToEdge(Edge& edge, Path &path);
+
+        void HandleFirstEdgeNoStartingVertex(Edge& edge);
+        void HandleFirstEdgeWithStartingVertex(Edge& edge);
+        void HandleSecondEdgeNoStartingVertex(Edge& edge);
+        void HandleAllOtherEdgeCases(Edge& edge);
+
         Graph* graph;
         float cost; // total cost to travel the path
 

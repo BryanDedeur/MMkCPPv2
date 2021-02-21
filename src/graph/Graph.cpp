@@ -173,6 +173,8 @@ void Graph::ReadCacheFile(string file) {
                     v = int(numbers[numbers.size() - 1 - i]);
                     cachedShortestPaths[endv][startv]->InsertVertex(v);
                 }
+                cachedShortestPaths[startv][endv]->SanityCheckPass();
+                cachedShortestPaths[endv][startv]->SanityCheckPass();
             }
         }
     }

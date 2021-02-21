@@ -84,7 +84,7 @@ void Population::Report(unsigned long int gen){
 }
 
 void Population::StoreIfBest(Individual* ind) {
-    if (ind->fitness > bestIndividual->fitness) {
+    if (ind->fitness < bestIndividual->fitness) {
         bestIndividual = ind;
     }
 }
