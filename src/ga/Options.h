@@ -50,14 +50,14 @@ typedef struct Options : Base {
     long int randomSeed = time(NULL);
 
 	int numRuns = 1;
-	int popSize = 200;
+	int popSize = 100;
 	//int chromLength; // this is automatically set by the graph
-	unsigned int maxgens = 400;
+	unsigned int maxgens = 200;
 
-    int numRobots = 1;
+    int numRobots = 2;
 
 	float px = 0.99;
-	float pm = 0.4;
+	float pm = 0.01;
 
 	SelectorType selector = CHC;
 	CrossoverType crossover = OnePoint;

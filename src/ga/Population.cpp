@@ -305,31 +305,26 @@ void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *
 // --------------------------- Mutators ---------------------------
 
 void Population::SwapMutate(Individual *ind) {
-    //for(int i = 0; i < options->chromLength; i++){
-    //    if(Flip(options->pm)) {
-    //        int pos2 = rand() % options->chromLength;
-    //        ind->Swap(i, pos2);
-    //    }
-    //}
+    for(int i = 0; i < ind->chromosome.size(); i++){
+        if(Flip(options->pm)) {
+            int pos2 = rand() % ind->chromosome.size();
+            ind->Swap(i, pos2);
+        }
+    }
 }
 
 void Population::InvertMutate(Individual *ind) {
+    if(Flip(options->pm)) {
+        int lowerBound = rand() % ind->chromosome.size();
+        int upperBound = rand() % ind->chromosome.size();
+        int l = min(upperBound, lowerBound), r = max(upperBound, lowerBound);
+        int diff = r - l;
 
-    //if(Flip(options->pm)) {
-    //    // pick two locations
-    //    int lowerBound = rand() % options->chromLength;
-    //    int upperBound = rand() % options->chromLength;
-    //    int l = min(upperBound, lowerBound), r = max(upperBound, lowerBound);
-    //    int diff = r - l;
-
-    //    // swap everything inbetween
-    //    //cout << "before mutation: " << *ind << " left/right: " << l << "/" << r << endl;
-    //    for (; l < r; l++, r--) {
-    //        ind->Swap(l, r);
-    //    }
-    //    //cout << "after mutation: " << *ind << endl << endl;
-    //}
-
+        // swap everything inbetween
+        for (; l < r; l++, r--) {
+            ind->Swap(l, r);
+        }
+    }
 }
 
 

@@ -207,7 +207,7 @@ float Individual::GetFurthestTravelingRobotTourLength() {
         if (best->GetCost() < tours[r].GetCost()) {
             best = &tours[r];
         }
-        tours[r].SanityCheckPass();
+        //tours[r].SanityCheckPass();
     }
     return best->GetCost();
 }
