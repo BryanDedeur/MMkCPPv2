@@ -12,3 +12,11 @@ Edge::Edge(int identifier, int vA, int vB, float cst) : id(identifier), vertexA(
 	vpair = std::pair<int, int>(vA, vB);
 } 
 
+Edge& Edge::operator=(Edge other) { // Assignment operator copying struct
+	this->cost = other.cost;
+	this->id = other.id;
+	this->vertexA = other.vertexA;
+	this->vertexB = other.vertexB;
+	this->vpair = other.vpair;
+    return *this;
+}

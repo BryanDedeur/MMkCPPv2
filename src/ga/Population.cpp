@@ -5,19 +5,21 @@
  * @Date: 10/18/20
  */
 
+#include "GA.h"
 #include "Population.h"
 #include "../Utils.h"
 
 #include <iostream>
 
-Population::Population(Options* opts, Graph *gph) {
+Population::Population(Options* opts, Graph *gph, GA* ga) {
     options = opts;
     avgFitness = minFitness = maxFitness = sumFitness = -1;
     avgTravelDist = minTravelDist = maxTravelDist = sumTravelDist = -1;
 
     for (int i = 0; i < options->popSize * 2; i++){
-        members.push_back(new Individual(options, gph));
-        members[i]->GenerateRandomChromosome();
+        members.push_back(new Individual(options, gph, ga));
+        members[i]->GenerateChromosomeFromCPP();
+        members[i]->Evaluate();
     }
     bestIndividual = members[0];
     graph = gph;
@@ -68,9 +70,9 @@ void Population::Report(unsigned long int gen){
 
     std::stringstream ss;
     ss << (int)gen << "\t"
-        << 1 / minFitness << "\t"
-        << 1 / avgFitness << "\t"
-        << 1 / maxFitness << "\t"
+        << minFitness << "\t"
+        << avgFitness << "\t"
+        << maxFitness << "\t"
         << options->randomSeed << endl;
 	WriteToFile(ss, options->fitnessfile);
 
@@ -84,7 +86,7 @@ void Population::Report(unsigned long int gen){
 }
 
 void Population::StoreIfBest(Individual* ind) {
-    if (ind->fitness < bestIndividual->fitness) {
+    if (ind->totalTravelDistance < bestIndividual->totalTravelDistance) {
         bestIndividual = ind;
     }
 }

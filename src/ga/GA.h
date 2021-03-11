@@ -11,7 +11,7 @@
 #include "Population.h"
 #include "Options.h"
 #include "../graph/Graph.h"
-#include "../graph/CPP.h"
+#include "../cpp/CPP.h"
 
 #include <time.h>
 #include <vector>
@@ -30,6 +30,8 @@ public:
 	Population *parent;
 	Population *child;
 	Options options;
+
+	CPP* cpp;
 
 	vector<Individual> bestPerSeed;
 	Individual *best;

@@ -5,14 +5,17 @@
  * @Date: 10/18/20
  */
 
+#include "GA.h"
 #include "Individual.h"
 #include "../Utils.h"
 #include <map>
 
-Individual::Individual(Options* opts, Graph* gph) {
+Individual::Individual(Options* opts, Graph* gph, GA* theGA) {
     fitness = -1;
     graph = gph;
     options = opts;
+    ga = theGA;
+    seed = opts->randomSeed;
 
     totalTravelDistance = 0;
 
@@ -31,13 +34,22 @@ Individual::~Individual() {
 
 }
 
+void Individual::GenerateChromosomeFromCPP() {
+    for (int e = 0; e < ga->cpp->solution->edgePath.size(); e++) {
+        AddEdgeToChromosome(ga->cpp->solution->edgePath[e].id);
+    }
+
+    //// scramble ga a little bit
+    //int index = rand() % chromosome.size();
+    //int otherIndex = rand() % chromosome.size();
+    //Swap(index, otherIndex);
+}
+
 // generates a random chromosome containing all edges in the graph
 void Individual::GenerateRandomChromosome() {
     // add all the edges in the graph to a random robot tour
-    int robot = rand() % options->numRobots;
     for (int e = 0; e < graph->numEdges; e++) {
         AddEdgeToChromosome(e);
-        robot = rand() % options->numRobots;
     }
 
 	// swap every edge with a random edge
@@ -45,6 +57,18 @@ void Individual::GenerateRandomChromosome() {
 	    int otherIndex = rand() % chromosome.size();
         Swap(geneIndex, otherIndex);
 	}
+}
+
+// generates a random chromosome containing all edges in the graph
+void Individual::GenerateRandomWalkChromosome() {
+    for (; chromosome.size() < graph->numEdges;) {
+        int start = rand() % graph->numEdges;
+        int end = rand() % graph->numEdges;
+        Path* path = graph->GetShortestPathBetweenEdges(graph->GetEdge(start), graph->GetEdge(end));
+        for (int i = 0; i < path->edgePath.size(); i++) {
+            chromosome.push_back(path->edgePath[i].id);
+        }
+    }
 }
 
 // sets the gene 
@@ -227,25 +251,30 @@ void Individual::Evaluate() {
     ConvertRobotToursToChromosome();
 
     fitness = GetFurthestTravelingRobotTourLength();
+    //fitness = totalTravelDistance;
 }
 
-void Individual::LogTours(string filename) {
-    //ClearFile(filename);
-    //std::stringstream ss;
-    //for (int r = 0; r < options->numRobots; r++) {
-    //    ss << "R" + to_string(r) + " ";
-    //    int count = 0;
-    //    for (int &itr : decoding[r].path) {
-    //        if (count == 0) {
-    //            ss << to_string(itr);
-    //        } else {
-    //            ss << " " + to_string(itr);
-    //        }
-    //        count++;
-    //    }
-    //    ss << endl;
-    //}
-    //WriteToFile(ss, filename);
+string Individual::TourToString() {
+    string route = "{";
+    for (int r = 0; r < options->numRobots; r++) {
+        route += "{";
+        for (int i = 0; i < tours[r].edgePath.size(); i++) {
+            if (i == tours[r].edgePath.size() - 1) {
+                route += to_string(tours[r].edgePath[i].id);
+            }
+            else {
+                route += to_string(tours[r].edgePath[i].id) + ", ";
+            }
+        }
+        if (r == options->numRobots - 1) {
+            route += "}";
+        }
+        else {
+            route += "}, ";
+        }
+    }
+    route += "}";
+    return route;
 }
 
 ostream& operator<<(ostream& os, const Individual& individual)
@@ -267,16 +296,17 @@ ostream& operator<<(ostream& os, const Individual& individual)
 }
 
 Individual& Individual::operator=(Individual other){
-    //if (this != &other) {
-    //    for (int i = 0; i < options->chromLength; i++) {
-    //        if (i < options->numRobots) {
-    //            this->decoding[i] = other.decoding[i];
-    //        }
-    //        this->chromosome[i] = other.chromosome[i];
-    //    }
-    //    this->fitness = other.fitness;
-    //    this->totalTravelDistance = other.totalTravelDistance;
-    //    this->seed = other.seed;
-    //}
+    if (this != &other) {
+        this->graph = other.graph;
+        this->chromosome = other.chromosome;
+        this->visitedEdgeCounts = other.visitedEdgeCounts;
+        this->robotChromStartIndex = other.robotChromStartIndex;
+        for (int i = 0; i < other.tours.size(); i++) {
+            this->tours[i] = other.tours[i];
+        }
+        this->fitness = other.fitness;
+        this->totalTravelDistance = other.totalTravelDistance;
+        this->seed = other.seed;
+    }
     return *this;
 }

@@ -29,7 +29,7 @@ def convert_adj_to_edge_format(adj_mat, graph):
 
 graph = nx.Graph()
 graph_name = setup_args()
-adj = load_graph_dat_file(graph_name) #load_graph_dat_file(graph_name) # if using dat file or csv file need to specify the different method
+adj = load_graph_txt_file(graph_name) #load_graph_dat_file(graph_name) # if using dat file or csv file need to specify the different method
 graph = convert_adj_to_edge_format(adj[0], graph)
 
 # ------------------------------------------ INSPECT GRAPH ----------------------------------------------- #
@@ -233,7 +233,7 @@ for i in range(len(vertexRoute)):
     if i == len(vertexRoute) - 1:
         routeFormatted += str(vertexRoute[i])
     else:
-        routeFormatted += str(vertexRoute[i]) + ','
+        routeFormatted += str(vertexRoute[i]) + ', '
 
 with open('andrew-brook-cpp-solutions.txt', 'a') as fo:
     fo.write(graph_name + "\t" 

@@ -239,12 +239,10 @@ ostream& operator<<(ostream& os, const Path& path) {
 }
 
 Path& Path::operator=(Path other) { // Assignment operator copying struct
-    //this->vertexPath.clear();
-    //for (const int& itr : other.vertexPath) {
-    //    int it = itr;
-    //    this->vertexPath.push_back(it);
-    //}
-    //this->cost = other.cost;
+    this->vertexPath = other.vertexPath;
+    this->edgePath = other.edgePath;
+    this->cost = other.cost;
+    this->graph = other.graph;
     return *this;
 }
 

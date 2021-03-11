@@ -17,7 +17,33 @@ def load_fitness_file(fname):
   f.close()
   return matrix
 
-def load_graph_file(fname):
+
+
+def extract_numbers(a_string):
+    a_string=re.sub(r"(?!(?<=\d)\.(?=\d))[^0-9 ]"," ",a_string)
+    a_string = a_string.replace("\n", " ")
+    numbers = []
+    for word in a_string.split():
+        try:
+            float(word)
+            numbers.append(word)
+        except ValueError:
+            continue
+    return numbers
+
+def parse_dat_coordinate(line):
+    v1 = None
+    v2 = None
+    cost = None
+
+    tokens = extract_numbers(line)
+    v1 = int(tokens[0])
+    v2 = int(tokens[1])
+    cost = float(tokens[2])
+
+    return v1, v2, cost
+
+def load_graph_csv_file(fname):
   f = open(fname, 'r')
   matrix = []
   for line in f:
@@ -27,26 +53,6 @@ def load_graph_file(fname):
     matrix.append(arr)
   f.close()
   return matrix
-
-def extract_numbers(a_string):
-    a_string=re.sub(r"(?!(?<=\d)\.(?=\d))[^0-9 ]"," ",a_string)
-    numbers = []
-    for word in a_string.split():
-       if word.isdigit():
-          numbers.append(int(word))
-    return numbers
-
-def parse_dat_coordinate(line):
-    v1 = None
-    v2 = None
-    cost = None
-
-    tokens = extract_numbers(line)
-    v1 = tokens[0]
-    v2 = tokens[1]
-    cost = float(tokens[2])
-
-    return v1, v2, cost
 
 def load_graph_dat_file(fname):
     f = open(fname, 'r')
@@ -67,6 +73,32 @@ def load_graph_dat_file(fname):
 
     sumEdges = 0
     for i in range(10, numEdges + 10):
+        v1, v2, cost = parse_dat_coordinate(lines[i])
+        sumEdges += cost
+        matrix[v1 - 1][v2 - 1] = cost
+        matrix[v2 - 1][v1 - 1] = cost
+
+    return matrix, graphName, sumEdges
+
+def load_graph_txt_file(fname):
+    f = open(fname, 'r')
+    lines = []
+    for line in f:
+        lines.append(line)
+    f.close()
+
+    graphName = ""
+    numVertices = int(extract_numbers(lines[0])[0])
+    numEdges = int(extract_numbers(lines[1])[0])
+
+    matrix = []
+    for x in range(numVertices):
+        matrix.append([])
+        for y in range(numVertices):
+            matrix[x].append(0)
+
+    sumEdges = 0
+    for i in range(3, numEdges + 3):
         v1, v2, cost = parse_dat_coordinate(lines[i])
         sumEdges += cost
         matrix[v1 - 1][v2 - 1] = cost

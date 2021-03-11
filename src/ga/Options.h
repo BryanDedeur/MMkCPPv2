@@ -26,9 +26,9 @@ struct Base { };
 typedef struct Options : Base {
     // in files
 	string infile;
-    //string graphfile = "../problem-instances/bridge-generator2/B100.txt"; // directory must be relative to the executable
+    string graphfile = "../problem-instances/bridge-generator2/B100.txt"; // directory must be relative to the executable
     //string graphfile = "../problem-instances/custom-graphs/bryans/simple.csv"; // directory must be relative to the executable
-    string graphfile = "../problem-instances/benchmarks/gdb/gdb1.dat";
+    //string graphfile = "../problem-instances/benchmarks/gdb/gdb1.dat";
     //string graphfile = "../problem-instances/stacs-graphs/graph-raw.csv";;
 
     string graphName;
@@ -50,11 +50,11 @@ typedef struct Options : Base {
     long int randomSeed = time(NULL);
 
 	int numRuns = 1;
-	int popSize = 100;
+	int popSize = 200;
 	//int chromLength; // this is automatically set by the graph
-	unsigned int maxgens = 200;
+	unsigned int maxgens = 400;
 
-    int numRobots = 2;
+    int numRobots = 1;
 
 	float px = 0.99;
 	float pm = 0.01;

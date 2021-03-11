@@ -50,9 +50,10 @@ class Graph {
         void AddEdgeToAdjMatrix(int& v1, int& v2, float cost);
         void AddEdgeToEdges(int& v1, int& v2, float cost);
 
+        string graphName;
+
     private:
         string graphFile;
-        string graphName;
 
         map<int, map<int, float>> adjacencyMatrix;
         map<int, Edge> edges;

@@ -20,10 +20,9 @@ add_executable(ga
 
         "src/graph/Graph.cpp"       "src/graph/Graph.h"
         "src/graph/Path.cpp"        "src/graph/Path.h" 
-        "src/graph/CPP.cpp"         "src/graph/CPP.h"
 
         "src/Utils.cpp"             "src/Utils.h"
             
         "src/ga/Options.h"
 
-  "src/graph/Edge.h" "src/graph/Edge.cpp" )
+  "src/graph/Edge.h" "src/graph/Edge.cpp"  "src/cpp/CPP.h" "src/cpp/CPP.cpp")

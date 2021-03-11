@@ -16,13 +16,16 @@
 #include <string>
 #include <vector>
 
+class GA;
+
 class Individual {
     public:
-        Individual(Options *opts, Graph *graph);
+        Individual(Options *opts, Graph *graph, GA* ga);
         virtual ~Individual();
 
 	    double fitness;
 	    double totalTravelDistance;
+        int seed;
 
         vector<int> chromosome;
 
@@ -32,7 +35,10 @@ class Individual {
         Graph* graph;
         Options* options;
 
+        void GenerateChromosomeFromCPP();
         void GenerateRandomChromosome();
+        void GenerateRandomWalkChromosome();
+
         void SetGeneAtPosition(int& value, int& position);
         void ResizeChromosome(int& newSize);
         bool SanityCheckPassed();
@@ -50,17 +56,16 @@ class Individual {
         void Swap(int &indexA, int &indexB);
 
         void Evaluate(); 
-
-        void LogTours(string filename);
-
+        string TourToString();
 
         // new additions
         Individual& operator=(Individual other);
         // operator overrides
         friend ostream& operator<<(ostream& os, const Individual& individual);
+        vector<Path> tours; // each robot contains its own edge tour
 
     private:
-        vector<Path> tours; // each robot contains its own edge tour
+        GA* ga;
 };
 
 #endif /* INDIVIDUAL_H_ */

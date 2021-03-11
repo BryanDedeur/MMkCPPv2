@@ -21,6 +21,7 @@ class Edge {
 		float cost;
 
 		std::pair<int, int> vpair;
+		Edge& operator=(Edge other);
 };
 
 

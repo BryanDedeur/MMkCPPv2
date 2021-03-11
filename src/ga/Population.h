@@ -18,9 +18,11 @@
 
 using std::sort;
 
+class GA;
+
 class Population {
 public:
-	Population(Options* options, Graph *graph);
+	Population(Options* options, Graph *graph, GA* ga);
 	virtual ~Population();
 	//------------------------
 
