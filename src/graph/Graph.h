@@ -26,6 +26,8 @@ class Graph {
         int numVertices;
         int numEdges;
         float sumEdges;
+        int largestNumEdgesConnectedToAnyVertex;
+
 
         // operator overrides
         friend ostream& operator<<(ostream& os, const Graph& graph);
@@ -45,6 +47,8 @@ class Graph {
         bool IsValidEdge(int& startVertex, int& endVertex);
         bool EdgesAreConnectedByVertex(Edge& edgeA, Edge& edgeB);
 
+        vector<Edge*> GetEdgesConnectedToVertex(int& vertex);
+
         void OutputToFile(string file);
 
         void AddEdgeToAdjMatrix(int& v1, int& v2, float cost);
@@ -63,6 +67,7 @@ class Graph {
         map<int, map<int, Path*>> cachedShortestPathBetweenVerticesAndEdges;
         map<int, map<int, int>> cachedVertexToEdgeID;
         map<int, map<int, int>> cachedNeighborEdges;
+        map<int, vector<Edge*>> cachedVertexEdges;
 
 
         // file reading
@@ -81,6 +86,7 @@ class Graph {
         void FindShortestPathsBetweenVerticesAndEdges();
         void FindAllVertexToEdgeIDs();
         void FindAllNeighboringEdges();
+        void FindVertexEdges();
 
         void CacheExpensiveComputations();
 

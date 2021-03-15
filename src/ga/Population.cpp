@@ -16,12 +16,16 @@ Population::Population(Options* opts, Graph *gph, GA* ga) {
     avgFitness = minFitness = maxFitness = sumFitness = -1;
     avgTravelDist = minTravelDist = maxTravelDist = sumTravelDist = -1;
 
+    bestIndividual = new Individual(options, gph, ga);
+    bestIndividual->fitness = FLT_MAX;
     for (int i = 0; i < options->popSize * 2; i++){
         members.push_back(new Individual(options, gph, ga));
-        members[i]->GenerateChromosomeFromCPP();
+        members[i]->GenerateRandomChromosome();
         members[i]->Evaluate();
+        if (members[i]->fitness < bestIndividual->fitness) {
+            bestIndividual = members[i];
+        }
     }
-    bestIndividual = members[0];
     graph = gph;
 }
 

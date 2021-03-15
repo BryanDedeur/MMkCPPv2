@@ -34,41 +34,29 @@ Individual::~Individual() {
 
 }
 
-void Individual::GenerateChromosomeFromCPP() {
-    for (int e = 0; e < ga->cpp->solution->edgePath.size(); e++) {
-        AddEdgeToChromosome(ga->cpp->solution->edgePath[e].id);
+// adds a new edge to the chromosome
+void Individual::AddGeneToChromosome(int value, int index) {
+    if (!(index < chromosome.size())) {
+        while (index >= chromosome.size()) {
+            chromosome.push_back(0);
+        }
     }
 
-    //// scramble ga a little bit
-    //int index = rand() % chromosome.size();
-    //int otherIndex = rand() % chromosome.size();
-    //Swap(index, otherIndex);
+    chromosome[index] = value;
 }
 
 // generates a random chromosome containing all edges in the graph
 void Individual::GenerateRandomChromosome() {
-    // add all the edges in the graph to a random robot tour
     for (int e = 0; e < graph->numEdges; e++) {
-        AddEdgeToChromosome(e);
+        AddGeneToChromosome(rand() % graph->largestNumEdgesConnectedToAnyVertex, e);
     }
-
-	// swap every edge with a random edge
-	for (int geneIndex = 0; geneIndex < chromosome.size(); geneIndex++) {
-	    int otherIndex = rand() % chromosome.size();
-        Swap(geneIndex, otherIndex);
-	}
 }
 
-// generates a random chromosome containing all edges in the graph
-void Individual::GenerateRandomWalkChromosome() {
-    for (; chromosome.size() < graph->numEdges;) {
-        int start = rand() % graph->numEdges;
-        int end = rand() % graph->numEdges;
-        Path* path = graph->GetShortestPathBetweenEdges(graph->GetEdge(start), graph->GetEdge(end));
-        for (int i = 0; i < path->edgePath.size(); i++) {
-            chromosome.push_back(path->edgePath[i].id);
-        }
-    }
+// swaps two chromosome indexes, preserves edges
+void Individual::Swap(int& indexA, int& indexB) {
+    int temp = chromosome[indexA];
+    chromosome[indexA] = chromosome[indexB];
+    chromosome[indexB] = temp;
 }
 
 // sets the gene 
@@ -108,150 +96,138 @@ bool Individual::SanityCheckPassed() {
     return true;
 }
 
-// adds a new edge to the chromosome
-void Individual::AddEdgeToChromosome(int edgeId) {
-    chromosome.push_back(edgeId);
-    totalTravelDistance += graph->GetEdge(edgeId).cost;
+int Individual::DetermineNextNodeForSubtour(Path& cycle, int decision, map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges){
+    if (visitedVerticesWithUnvistedEdges[cycle.vertexPath.back()].size() == 0) {
+        return -1;
+    }
+    int localDecision = decision - ((decision / visitedVerticesWithUnvistedEdges[cycle.vertexPath.back()].size()) * visitedVerticesWithUnvistedEdges[cycle.vertexPath.back()].size());
+    Edge* currentEdge = visitedVerticesWithUnvistedEdges[cycle.vertexPath.back()][localDecision];
+    int nextVertex = graph->GetOppositeVertexOnEdge(cycle.vertexPath.back(), *currentEdge);
+    return nextVertex; 
 }
 
-// adds a new edge to the chromosome
-void Individual::AddEdgeToChromosome(int edgeId, int index) {
-    // this is really slow, consider speeding this up somehow
-    if (index >= chromosome.size()) {
-        AddEdgeToChromosome(edgeId);
+int& Individual::FindVisitedNodeWithUnvisitedEdges(map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges) {
+    int value = -1;
+    for (int i = 0; i < visitedVerticesWithUnvistedEdges.size(); i++) {
+        if (visitedVerticesWithUnvistedEdges[i].size() > 0) {
+            return i;
+        }
+    }
+    return value;
+}
+
+int& Individual::FindUnvisitedNodeWithUnvisitedEdges(map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges) {
+    int value = -1;
+    for (int i = 0; i < graph->numVertices; i++) {
+        if (visitedVerticesWithUnvistedEdges.find(i) != visitedVerticesWithUnvistedEdges.end()) {
+            return i;
+        }
+    }
+    return value;
+}
+
+int& Individual::FindNextSubTourStartNode(map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges) {
+    int nextNode = FindVisitedNodeWithUnvisitedEdges(visitedVerticesWithUnvistedEdges);
+    if (nextNode == -1) {
+        nextNode = FindUnvisitedNodeWithUnvisitedEdges(visitedVerticesWithUnvistedEdges);
+    }
+    return nextNode;
+}
+
+void Individual::UntrackEdgeFromNode(int node, Edge& edge, map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges) {
+    for (int j = 0; j < visitedVerticesWithUnvistedEdges[node].size(); j++) {
+        if (visitedVerticesWithUnvistedEdges[node][j]->id == edge.id) {
+            visitedVerticesWithUnvistedEdges[node].erase(visitedVerticesWithUnvistedEdges[node].begin() + j);
+            break;
+        }
+    }
+}
+
+void Individual::AdjustEdgeTracking(int node, int previousNode, map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges) {
+    // if node has been visited already
+    if (visitedVerticesWithUnvistedEdges.find(node) != visitedVerticesWithUnvistedEdges.end()) {
+        if (previousNode != -1) {
+            Edge edge = graph->GetEdge(node, previousNode);
+            UntrackEdgeFromNode(node, edge, visitedVerticesWithUnvistedEdges);
+            UntrackEdgeFromNode(previousNode, edge, visitedVerticesWithUnvistedEdges);
+        }
     }
     else {
-        chromosome.insert(chromosome.begin() + index, edgeId);
-    }
-}
-
-// adds a new edge to the chromosome
-void Individual::AddEdgeToChromosome(int edgeId, bool randomize) {
-    AddEdgeToChromosome(edgeId, int(rand() % chromosome.size()));
-}
-
-void Individual::InjectMissingEdges() {
-    int i = 0;
-    // reset counters
-    for (i = 0; i < visitedEdgeCounts.size(); i++) {
-        visitedEdgeCounts[i] = 0;
-    }
-
-    // count occurances
-    for (i = 0; i < chromosome.size(); i++) {
-        visitedEdgeCounts[chromosome[i]]++;
-    }
-
-    // inject missing
-    for (i = 0; i < visitedEdgeCounts.size(); i++) {
-        if (visitedEdgeCounts[i] == 0) {
-            AddEdgeToChromosome(i, true);
+        // if node has not been visited already
+        visitedVerticesWithUnvistedEdges[node] = graph->GetEdgesConnectedToVertex(node);
+        if (previousNode != -1) {
+            Edge edge = graph->GetEdge(node, previousNode);
+            UntrackEdgeFromNode(node, edge, visitedVerticesWithUnvistedEdges);
+            UntrackEdgeFromNode(previousNode, edge, visitedVerticesWithUnvistedEdges);
         }
     }
 }
 
-// adds edges to chromosome so the tour is fully connected. Every edge leads to a connected edge (decoding in a way)
-void Individual::ConvertChromosomeToTour() {
-    // Make path using dijkstras
-    Path tempPath = Path(graph);    
-    for (int geneIndex = 0; geneIndex < chromosome.size(); geneIndex++) {
-        tempPath.AddEdge(graph->GetEdge(chromosome[geneIndex]));
-    }
-
-    // Shove path back into chromosome
-    int chromSize = 0;
-    totalTravelDistance = 0;
-    for (int i = 0; i < tempPath.edgePath.size(); i++) {
-        if (i < chromosome.size()) {
-            chromosome[i] = tempPath.edgePath[i].id;
-        }
-        else {
-            chromosome.push_back(tempPath.edgePath[i].id);
-        }
-        chromSize++;
-        totalTravelDistance += tempPath.edgePath[i].cost;
-    }
-
-    // remove left over stuff from previous chromosome
-    for (int i = chromSize; i < chromosome.size(); i++) {
-        chromosome.pop_back();
-    }
+void Individual::StartNewTour(map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges) {
+    // start new tour
+    subTours.push_back(Path(graph));
+    int nextVertex = FindNextSubTourStartNode(visitedVerticesWithUnvistedEdges);
+    subTours.back().AddVertex(nextVertex);
+    AdjustEdgeTracking(subTours.back().vertexPath.back(), -1, visitedVerticesWithUnvistedEdges);
 }
 
-void Individual::DistributeTourBetweenRobots() {
-    float splitTourLength = totalTravelDistance / options->numRobots;
+bool Individual::NodeProgressesForward(int node) {
+    return node != -1;
+}
 
-    int i = 0; // index is outside the for loop so we can start at the last visited gene in the chromosome
-    for (int r = 0; r < options->numRobots; r++) {
-        tours[r].Reset();
+bool Individual::SubTourIsCircle(Path& subTour) {
+    return subTour.vertexPath.front() == subTour.vertexPath.back();
+}
 
-        // add starting vertex
-        tours[r].AddVertex(options->closedRouteVertex);
+void Individual::ConvertChromosomeToSubTours() {
+    map<int, vector<Edge*>> visitedVerticesWithUnvistedEdges;
 
-        // add edges from chromosome until cost exceeds the split between robots
-        float tempEdgeCost = 0;
-        for (; i < chromosome.size(); i++) {
-            if (tempEdgeCost > splitTourLength && r < options->numRobots - 1) {
-                break;
-            } else {
-                tours[r].AddEdge(graph->GetEdge(chromosome[i]));
-                tempEdgeCost += graph->GetEdge(chromosome[i]).cost;
+    subTours.push_back(Path(graph));
+    subTours.back().AddVertex(options->closedRouteVertex); // usually just zero
+    AdjustEdgeTracking(subTours.back().vertexPath.back(), -1, visitedVerticesWithUnvistedEdges);
+
+    for (int i = 0; i < chromosome.size(); i++) {
+        int nextNode = DetermineNextNodeForSubtour(subTours.back(), chromosome[i], visitedVerticesWithUnvistedEdges);
+
+        if (NodeProgressesForward(nextNode)) { // next node != -1
+            // add node to sub tour
+            AdjustEdgeTracking(nextNode, subTours.back().vertexPath.back(), visitedVerticesWithUnvistedEdges);
+            subTours.back().AddVertex(nextNode);
+
+            if (SubTourIsCircle(subTours.back())) {
+                StartNewTour(visitedVerticesWithUnvistedEdges);
             }
         }
-
-        // add ending vertex
-        tours[r].AddVertex(options->closedRouteVertex);
-    }
-}
-
-void Individual::ConvertRobotToursToChromosome() {
-    totalTravelDistance = 0;
-    int chromSize = 0;
-    for (int r = 0; r < options->numRobots; r++) {
-        for (int i = 0; i < tours[r].edgePath.size(); i++) {
-            if (i < chromosome.size()) {
-                chromosome[i] = tours[r].edgePath[i].id;
-            }
-            else {
-                chromosome.push_back(tours[r].edgePath[i].id);
-            }
-            chromSize++;
-            totalTravelDistance += tours[r].edgePath[i].cost;
+        else { // we hit a dead end
+            StartNewTour(visitedVerticesWithUnvistedEdges);
+            nextNode = DetermineNextNodeForSubtour(subTours.back(), chromosome[i], visitedVerticesWithUnvistedEdges);
+            AdjustEdgeTracking(nextNode, subTours.back().vertexPath.back(), visitedVerticesWithUnvistedEdges);
+            subTours.back().AddVertex(nextNode);
         }
     }
-    // remove left over stuff from previous chromosome
-    for (int i = chromSize; i < chromosome.size(); i++) {
-        chromosome.pop_back();
-    }
 }
 
-float Individual::GetFurthestTravelingRobotTourLength() {
-    Path* best = &tours[0];
-    for (int r = 0; r < options->numRobots; r++) {
-        if (best->GetCost() < tours[r].GetCost()) {
-            best = &tours[r];
+void Individual::ConvertSubToursToTours() {
+    tours[0] = Path(graph);
+    for (int i = 0; i < subTours.size(); i++) {
+        for (int j = 0; j < subTours[i].vertexPath.size(); j++) {
+            tours[0].AddVertex(subTours[i].vertexPath[j]);
         }
-        //tours[r].SanityCheckPass();
     }
-    return best->GetCost();
-}
-
-
-// swaps two chromosome indexes, preserves edges
-void Individual::Swap(int& indexA, int& indexB) {
-    int temp = chromosome[indexA];
-    chromosome[indexA] = chromosome[indexB];
-    chromosome[indexB] = temp;
+    tours[0].AddVertex(options->closedRouteVertex);
 }
 
 void Individual::Evaluate() {
-    InjectMissingEdges();
-    ConvertChromosomeToTour();
-    DistributeTourBetweenRobots();
-    ConvertRobotToursToChromosome();
+    ConvertChromosomeToSubTours();
+    ConvertSubToursToTours();
 
-    fitness = GetFurthestTravelingRobotTourLength();
-    //fitness = totalTravelDistance;
+    int i = 0;
+    //InjectMissingEdges();
+    //ConvertChromosomeToTour();
+    //DistributeTourBetweenRobots();
+    //ConvertRobotToursToChromosome();
+
+    fitness = tours[0].GetCost();
 }
 
 string Individual::TourToString() {

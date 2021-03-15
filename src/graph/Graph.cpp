@@ -10,7 +10,7 @@
 using namespace std;
 
 // Graph Constructor
-Graph::Graph(string filename) : numEdges(0), numVertices(0), sumEdges(0) {
+Graph::Graph(string filename) : numEdges(0), numVertices(0), sumEdges(0), largestNumEdgesConnectedToAnyVertex(0) {
 
     SetGraphFromFile(filename);
     CacheExpensiveComputations();
@@ -79,19 +79,17 @@ void Graph::ReadCSVFormat(string file) {
     vector<string> lines = SplitFileByLines(file);
     int v1 = 0;
     for (string line : lines) {
-        int v2 = 0;
         vector<float> numbers = ExtractNumbers(line);
+        int v2 = 0;
         for (float number : numbers) {
-            if (v2 > v1) { // ignore everything on other side of diagonal
-                float cost = float(number);
+            float cost = float(number);
+            if (cost > 0 && v2 > v1) {
                 AddEdgeToAdjMatrix(v1, v2, cost);
-                if (cost > 0) {
-                    AddEdgeToEdges(v1, v2, cost);
-                }
+                AddEdgeToEdges(v1, v2, cost);
             }
-
             v2++;
         }
+        
         v1++;
     }
 }
@@ -244,6 +242,10 @@ bool Graph::EdgesAreConnectedByVertex(Edge& edgeA, Edge& edgeB) {
     return true;
 }
 
+vector<Edge*> Graph::GetEdgesConnectedToVertex(int& vertex) {
+    return cachedVertexEdges[vertex];
+}
+
 int Graph::GetEdgesConnectingVertex(Edge& edgeA, Edge& edgeB) {
     return cachedNeighborEdges[edgeA.id][edgeB.id];
 }
@@ -370,6 +372,19 @@ void Graph::FindAllNeighboringEdges() {
     }
 }
 
+void Graph::FindVertexEdges() {
+    for (int vertex = 0; vertex < numVertices; vertex++) {
+        for (int edge = 0; edge < numEdges; edge++) {
+            if (edges[edge].vertexA == vertex || edges[edge].vertexB == vertex) {
+                cachedVertexEdges[vertex].push_back(&edges[edge]);
+            }
+        }
+        if (cachedVertexEdges[vertex].size() > largestNumEdgesConnectedToAnyVertex) {
+            largestNumEdgesConnectedToAnyVertex = cachedVertexEdges[vertex].size();
+        }
+    }
+}
+
 void Graph::CacheExpensiveComputations() {
     // Find all vertex edge associations
     FindAllVertexToEdgeIDs();
@@ -391,6 +406,8 @@ void Graph::CacheExpensiveComputations() {
 
     // Find all neighboring edges for every edge
     FindAllNeighboringEdges();
+
+    FindVertexEdges();
 
 }
 

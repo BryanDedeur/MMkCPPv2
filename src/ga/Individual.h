@@ -35,25 +35,28 @@ class Individual {
         Graph* graph;
         Options* options;
 
-        void GenerateChromosomeFromCPP();
+        void AddGeneToChromosome(int value, int index);
+
         void GenerateRandomChromosome();
-        void GenerateRandomWalkChromosome();
+
+        void Swap(int& indexA, int& indexB);
 
         void SetGeneAtPosition(int& value, int& position);
         void ResizeChromosome(int& newSize);
         bool SanityCheckPassed();
 
-        void AddEdgeToChromosome(int edgeId);
-        void AddEdgeToChromosome(int edgeId, int index);
-        void AddEdgeToChromosome(int edgeId, bool randomize);
+        int& FindNextSubTourStartNode(map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges);
+        int& FindVisitedNodeWithUnvisitedEdges(map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges);
+        int& FindUnvisitedNodeWithUnvisitedEdges(map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges);
+        void UntrackEdgeFromNode(int node, Edge& edge, map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges);
+        int DetermineNextNodeForSubtour(Path& cycle, int decision, map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges);
+        void AdjustEdgeTracking(int node, int previousNode, map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges);
+        bool SubTourIsCircle(Path& subTour);
+        void StartNewTour(map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges);
+        bool NodeProgressesForward(int node);
 
-        void InjectMissingEdges();
-        void ConvertChromosomeToTour();
-        void DistributeTourBetweenRobots();
-        void ConvertRobotToursToChromosome();
-        float GetFurthestTravelingRobotTourLength();
-
-        void Swap(int &indexA, int &indexB);
+        void ConvertChromosomeToSubTours();
+        void ConvertSubToursToTours();
 
         void Evaluate(); 
         string TourToString();
@@ -64,8 +67,13 @@ class Individual {
         friend ostream& operator<<(ostream& os, const Individual& individual);
         vector<Path> tours; // each robot contains its own edge tour
 
+        vector<Path> subTours;
+
+
     private:
         GA* ga;
+
+
 };
 
 #endif /* INDIVIDUAL_H_ */
