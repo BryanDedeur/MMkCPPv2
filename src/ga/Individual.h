@@ -15,6 +15,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <list>
+#include <iterator>
 
 class GA;
 
@@ -26,6 +28,7 @@ class Individual {
 	    double fitness;
 	    double totalTravelDistance;
         int seed;
+        int numCircles;
 
         vector<int> chromosome;
 
@@ -55,8 +58,11 @@ class Individual {
         void StartNewTour(map<int, vector<Edge*>>& visitedVerticesWithUnvistedEdges);
         bool NodeProgressesForward(int node);
 
+        void IntegrateSubTourIntoTour(list<int>& tempTour, Path& subTour, bool lastTour);
+
         void ConvertChromosomeToSubTours();
-        void ConvertSubToursToTours();
+        void RecursivelyCombineSubTours(int subTourId, vector<bool>& toursTraveled);
+        void RepairEulerianCombinedTour();
 
         void Evaluate(); 
         string TourToString();
@@ -72,7 +78,7 @@ class Individual {
 
     private:
         GA* ga;
-
+        list<int> eulerianCombinedTour;
 
 };
 

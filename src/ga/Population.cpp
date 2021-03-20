@@ -53,6 +53,10 @@ void Population::Statistics(){
     sumTravelDist = 0;
     minTravelDist = members[0]->totalTravelDistance;
     maxTravelDist = members[0]->totalTravelDistance;
+    sumNumCircles = 0;
+    minNumCircles = members[0]->numCircles;
+    maxNumCircles = members[0]->numCircles;
+
 	for (int i = 0; i < options->popSize; i++){
 		sumFitness += members[i]->fitness;
 		if (minFitness > members[i]->fitness)
@@ -65,32 +69,36 @@ void Population::Statistics(){
             minTravelDist = members[i]->totalTravelDistance;
         if (maxTravelDist < members[i]->totalTravelDistance)
             maxTravelDist = members[i]->totalTravelDistance;
+
+        sumNumCircles += members[i]->numCircles;
+        if (minNumCircles > members[i]->numCircles)
+            minNumCircles = members[i]->numCircles;
+        if (maxNumCircles < members[i]->numCircles)
+            maxNumCircles = members[i]->numCircles;
 	}
-	avgFitness = sumFitness/options->popSize;
-    avgTravelDist = sumTravelDist/options->popSize;
+	avgFitness = sumFitness / options->popSize;
+    avgTravelDist = sumTravelDist / options->popSize;
+    avgNumCircles = sumNumCircles / options->popSize;
 }
 
 void Population::Report(unsigned long int gen){
-
     std::stringstream ss;
     ss << (int)gen << "\t"
         << minFitness << "\t"
         << avgFitness << "\t"
         << maxFitness << "\t"
-        << options->randomSeed << endl;
-	WriteToFile(ss, options->fitnessfile);
-
-    ss.clear();
-    ss << (int)gen << "\t"
         << minTravelDist << "\t"
         << avgTravelDist << "\t"
         << maxTravelDist << "\t"
+        << minNumCircles << "\t"
+        << avgNumCircles << "\t"
+        << maxNumCircles << "\t"
         << options->randomSeed << endl;
-    WriteToFile(ss, options->travelfile);
+	WriteToFile(ss, options->fitnessfile);
 }
 
 void Population::StoreIfBest(Individual* ind) {
-    if (ind->totalTravelDistance < bestIndividual->totalTravelDistance) {
+    if (ind->fitness < bestIndividual->fitness) {
         bestIndividual = ind;
     }
 }
@@ -156,7 +164,8 @@ void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, 
     // Crossover
     if(Flip(options->px)){ // if prob, then cross/exchange bits
         switch(options->crossover) {
-        case CrossoverType::OnePoint: OnePoint(p1, p2, c1, c2); break;
+            case CrossoverType::OnePoint: OnePoint(p1, p2, c1, c2); break;
+            case CrossoverType::TwoPoint: TwoPoint(p1, p2, c1, c2); break;
             case CrossoverType::OX: OX(p1, p2, c1, c2); break;
             case CrossoverType::PMX: PMX(p1, p2, c1, c2); break;
             case CrossoverType::NoCross: break;
@@ -172,6 +181,9 @@ void Population::XoverAndMutate(Individual *p1, Individual *p2, Individual *c1, 
         case MutationType::Swap:
             SwapMutate(c1);
             SwapMutate(c2); break;
+        case MutationType::Uniform:
+            UniformMutate(c1);
+            UniformMutate(c2); break;
         case MutationType::NoMut: break;
         default: break;
     }
@@ -220,6 +232,10 @@ void Population::OnePoint(Individual* p1, Individual* p2, Individual* c1, Indivi
     }
 }
 
+void Population::TwoPoint(Individual* p1, Individual* p2, Individual* c1, Individual* c2) {
+
+}
+
 void Population::PMX(Individual *p1, Individual *p2, Individual *c1, Individual *c2) {
     //// TODO make sure PMX boundary is correct or is it fixed
     //int lowerBound = rand() % (options->chromLength - 1) + 1;
@@ -231,25 +247,13 @@ void Population::PMX(Individual *p1, Individual *p2, Individual *c1, Individual 
     //// TODO implement
 }
 
-//bool Population::ChromContains(Gene* arr, Gene &gene) {
-//    for(int i = 0; i < options->chromLength; i++)
-//    {
-//        if(arr[i] == gene)
-//        {
-//            return true;
-//        }
-//    }
-//    return false;
-//}
-
 void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *c2) {
-    //Get random index points
-
-    //int t1 = IntInRange(0, options->chromLength);
-    //int t2 = IntInRange(0, options->chromLength);
+    ////Get random index points
+    //int t1 = IntInRange(0, graph->numEdges);
+    //int t2 = IntInRange(0, graph->numEdges);
     //do
     //{
-    //    t2 = IntInRange(0, options->chromLength);
+    //    t2 = IntInRange(0, graph->numEdges);
     //}while(t2 == t1);
 
     //if(t1 > t2)
@@ -260,10 +264,10 @@ void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *
     //}
 
     ////Directly copy genes between index points, track copied values with arrays
-    //int len = options->chromLength;
-    //Gene* arr1 = new Gene[options->chromLength];
-    //Gene* arr2 = new Gene[options->chromLength];
-    //for (int i = 0; i < options->chromLength; i++) {
+    //int len = graph->numEdges;
+    //Gene* arr1 = new Gene[graph->numEdges];
+    //Gene* arr2 = new Gene[graph->numEdges];
+    //for (int i = 0; i < graph->numEdges; i++) {
     //    arr1[i].value = -1;
     //    arr2[i].value = -1;
     //}
@@ -279,7 +283,7 @@ void Population::OX(Individual *p1, Individual *p2, Individual *c1, Individual *
     ////Copy remaining values from opposite parent
     //int i1 = 0;	//<--To access spaces outside of index points
     //int i2 = 0;
-    //for(int i = 0; i < options->chromLength; i++)
+    //for(int i = 0; i < graph->numEdges; i++)
     //{
     //    //Skip spaces already copied to
     //    if(i1 == t1)
@@ -329,6 +333,14 @@ void Population::InvertMutate(Individual *ind) {
         // swap everything inbetween
         for (; l < r; l++, r--) {
             ind->Swap(l, r);
+        }
+    }
+}
+
+void Population::UniformMutate(Individual* ind) {
+    for (int i = 0; i < ind->chromosome.size(); i++) {
+        if (Flip(options->pm)) {
+            ind->chromosome[i] = rand() % graph->largestNumEdgesConnectedToAnyVertex;
         }
     }
 }

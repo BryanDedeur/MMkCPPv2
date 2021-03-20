@@ -2,12 +2,12 @@
 
 ga_exe="./ga.exe"
 
-popSize=200
-generations=400
+popSize=100
+generations=200
 closedRouteVertex=0
 minimalOutput=1
 makeVisuals=0
-kValues=(1 2 5)
+kValues=(1)
 seedsFile="3seeds.txt"
 
 # get the instances

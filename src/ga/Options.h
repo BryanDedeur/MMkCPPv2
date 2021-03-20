@@ -17,8 +17,8 @@ using std::string;
 
 // Definitions (if you add to this you need to update the get...str functions in options
 enum SelectorType {FP, CHC}; // proportional ranking, tournament, genitor/ steady state
-enum CrossoverType {NoCross, OnePoint, PMX, OX, CX, EX};
-enum MutationType {NoMut, Swap, Invert, Slide};
+enum CrossoverType {NoCross, OnePoint, TwoPoint, PMX, OX, CX, EX};
+enum MutationType {NoMut, Swap, Invert, Slide, Uniform};
 
 struct Base { };
 
@@ -27,8 +27,8 @@ typedef struct Options : Base {
     // in files
 	string infile;
     //string graphfile = "../problem-instances/bridge-generator2/B100.txt"; // directory must be relative to the executable
-    //string graphfile = "../problem-instances/custom-graphs/bryans/simple.csv"; // directory must be relative to the executable
-    string graphfile = "../problem-instances/benchmarks/gdb/gdb17.dat";
+    //string graphfile = "../problem-instances/custom-graphs/bryans/pacman.csv"; // directory must be relative to the executable
+    string graphfile = "../problem-instances/benchmarks/gdb/gdb1.dat";
     //string graphfile = "../problem-instances/stacs-graphs/graph-raw.csv";;
 
     string graphName;
@@ -50,9 +50,9 @@ typedef struct Options : Base {
     long int randomSeed = time(NULL);
 
 	int numRuns = 1;
-	int popSize = 100;
+	int popSize = 10;
 	//int chromLength; // this is automatically set by the graph
-	unsigned int maxgens = 200;
+	unsigned int maxgens = 20;
 
     int numRobots = 1;
 
@@ -60,8 +60,8 @@ typedef struct Options : Base {
 	float pm = 0;
 
 	SelectorType selector = CHC;
-	CrossoverType crossover = OnePoint;
-	MutationType mutator = Invert;
+	CrossoverType crossover = TwoPoint;
+	MutationType mutator = Uniform;
 
     // Helper functions below
 	string GetSelectorStr() {
@@ -75,6 +75,7 @@ typedef struct Options : Base {
         switch(crossover) {
             case OX: return "ox";
             case PMX: return "pmx";
+            case TwoPoint: return "twopoint";
             default: return "";
         }
     }
@@ -83,6 +84,7 @@ typedef struct Options : Base {
             case Swap: return "swap";
             case Invert: return "inv";
             case Slide: return "sld";
+            case Uniform: return "uniform";
             default: return "";
         }
 	}

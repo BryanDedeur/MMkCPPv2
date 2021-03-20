@@ -10,7 +10,7 @@
 using namespace std;
 
 // Graph Constructor
-Graph::Graph(string filename) : numEdges(0), numVertices(0), sumEdges(0), largestNumEdgesConnectedToAnyVertex(0) {
+Graph::Graph(string filename) : numEdges(0), numVertices(0), sumEdges(0), numOddEdgeVertices(0), largestNumEdgesConnectedToAnyVertex(0) {
 
     SetGraphFromFile(filename);
     CacheExpensiveComputations();
@@ -373,6 +373,7 @@ void Graph::FindAllNeighboringEdges() {
 }
 
 void Graph::FindVertexEdges() {
+    numOddEdgeVertices = 0;
     for (int vertex = 0; vertex < numVertices; vertex++) {
         for (int edge = 0; edge < numEdges; edge++) {
             if (edges[edge].vertexA == vertex || edges[edge].vertexB == vertex) {
@@ -381,6 +382,9 @@ void Graph::FindVertexEdges() {
         }
         if (cachedVertexEdges[vertex].size() > largestNumEdgesConnectedToAnyVertex) {
             largestNumEdgesConnectedToAnyVertex = cachedVertexEdges[vertex].size();
+        }
+        if (cachedVertexEdges[vertex].size() % 2 != 0) {
+            numOddEdgeVertices++;
         }
     }
 }

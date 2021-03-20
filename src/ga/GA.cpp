@@ -15,8 +15,6 @@ GA::GA(int argc, char *argv[]) : runCount(0), timeSeconds(0), cpp(nullptr), grap
 
 	// if the file already exists clear it (EXCEPT the results file)
     ClearFile(options.fitnessfile);
-    ClearFile(options.travelfile);
-    ClearFile(options.decodedfile);
 
     best = new Individual(&options, graph, this);
     best->totalTravelDistance = 0;
@@ -181,7 +179,9 @@ void GA::Report() {
     ss << options.graphName.c_str() << "\t"
         << graph->numEdges << "\t" 
         << graph->numVertices << "\t"
+        << graph->numOddEdgeVertices << "\t"
         << graph->sumEdges << "\t"
+        << best->numCircles << "\t"
         << best->totalTravelDistance << "\t"
         << averageBestPerSeed << "\t"
         << standardDeviationOfBest << "\t"

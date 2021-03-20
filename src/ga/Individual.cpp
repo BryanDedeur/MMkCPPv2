@@ -84,8 +84,8 @@ bool Individual::SanityCheckPassed() {
         edgeCounter.push_back(0);
     }
 
-    for (int i = 0; i < chromosome.size(); i++) {
-        edgeCounter[chromosome[i]]++;
+    for (int i = 0; i < tours[0].edgePath.size(); i++) {
+        edgeCounter[tours[0].edgePath[i].id]++;
     }
 
     for (int i = 0; i < graph->numEdges; i++) {
@@ -179,7 +179,38 @@ bool Individual::SubTourIsCircle(Path& subTour) {
     return subTour.vertexPath.front() == subTour.vertexPath.back();
 }
 
+void Individual::IntegrateSubTourIntoTour(list<int>& tempTour, Path& subTour, bool lastTour) {
+    if (tempTour.size() == 0) {
+        for (int i = 0; i < subTour.vertexPath.size(); i++) {
+            tempTour.push_back(subTour.vertexPath[i]);
+        }
+        return;
+    }
+    else {
+        // find start vertex in tempTour
+        list<int>::reverse_iterator rit;
+        for (rit = tempTour.rbegin(); rit != tempTour.rend(); ++rit) {
+            if (*rit == subTour.vertexPath.front()) {
+                for (int i = 0; i < subTour.vertexPath.size(); ++i) {
+                    list<int>::reverse_iterator rit2 = rit;
+                    rit2++;
+                    tempTour.insert(rit2.base(), subTour.vertexPath[i]);
+                }
+                // if incomplete sub tour return to start vertex to continue previous sub tour
+                if ((subTour.vertexPath.back() != subTour.vertexPath.front()) && lastTour) {
+                    tempTour.insert(rit.base(), subTour.vertexPath.front());
+                }
+                return;
+            }
+        }
+    }
+}
+
 void Individual::ConvertChromosomeToSubTours() {
+    //eulerianCombinedTour.clear();
+    numCircles = 0;
+    subTours.clear();
+
     map<int, vector<Edge*>> visitedVerticesWithUnvistedEdges;
 
     subTours.push_back(Path(graph));
@@ -195,10 +226,16 @@ void Individual::ConvertChromosomeToSubTours() {
             subTours.back().AddVertex(nextNode);
 
             if (SubTourIsCircle(subTours.back())) {
+                //IntegrateSubTourIntoTour(eulerianCombinedTour, subTours.back(), false);
+                numCircles++;
                 StartNewTour(visitedVerticesWithUnvistedEdges);
+            }
+            else if (i == chromosome.size() - 1) { // we hit a dead end at the end of the chromosome
+                //IntegrateSubTourIntoTour(eulerianCombinedTour, subTours.back(), true);
             }
         }
         else { // we hit a dead end
+            //IntegrateSubTourIntoTour(eulerianCombinedTour, subTours.back(), false);
             StartNewTour(visitedVerticesWithUnvistedEdges);
             nextNode = DetermineNextNodeForSubtour(subTours.back(), chromosome[i], visitedVerticesWithUnvistedEdges);
             AdjustEdgeTracking(nextNode, subTours.back().vertexPath.back(), visitedVerticesWithUnvistedEdges);
@@ -207,27 +244,63 @@ void Individual::ConvertChromosomeToSubTours() {
     }
 }
 
-void Individual::ConvertSubToursToTours() {
-    tours[0] = Path(graph);
-    for (int i = 0; i < subTours.size(); i++) {
-        for (int j = 0; j < subTours[i].vertexPath.size(); j++) {
-            tours[0].AddVertex(subTours[i].vertexPath[j]);
-        }
-    }
-    tours[0].AddVertex(options->closedRouteVertex);
+void Individual::RepairEulerianCombinedTour() {
+
+    //tours[0] = Path(graph);
+    //list<int>::iterator it;
+    //for (it = eulerianCombinedTour.begin(); it != eulerianCombinedTour.end(); ++it) {
+    //    tours[0].AddVertex(*it);
+    //}
+    //tours[0].AddVertex(options->closedRouteVertex);
 }
+
+void Individual::RecursivelyCombineSubTours(int subTourId, vector<bool> &toursTraveled) {
+    //tours[0] = Path(graph);
+    toursTraveled[subTourId] = true;
+    for (int i = 0; i < subTours[subTourId].vertexPath.size(); ++i) {
+        for (int j = 0; j < subTours.size(); ++j) {
+            if (!toursTraveled[j]) {
+                if ((subTours[subTourId].vertexPath[i] == subTours[j].vertexPath.front())) {
+                    RecursivelyCombineSubTours(j, toursTraveled);
+                }
+            }
+        }
+        tours[0].AddVertex(subTours[subTourId].vertexPath[i]);
+    }
+
+    if (subTours[subTourId].vertexPath.back() != subTours[subTourId].vertexPath.front()) {
+        tours[0].AddVertex(subTours[subTourId].vertexPath.front());
+    }
+    //// point the non circle subtour back to the start vertex
+    //if (subTourId < subTours.size() - 1) {
+
+    //}
+}
+
+
 
 void Individual::Evaluate() {
     ConvertChromosomeToSubTours();
-    ConvertSubToursToTours();
+    tours[0] = Path(graph);
 
-    int i = 0;
+    vector<bool> toursTraveled;
+    for (int i = 0; i < subTours.size(); i++) {
+        toursTraveled.push_back(false);
+    }
+    RecursivelyCombineSubTours(0, toursTraveled);
+    //RepairEulerianCombinedTour();
+
     //InjectMissingEdges();
     //ConvertChromosomeToTour();
     //DistributeTourBetweenRobots();
     //ConvertRobotToursToChromosome();
 
     fitness = tours[0].GetCost();
+    totalTravelDistance = fitness;
+
+    if (!SanityCheckPassed()) {
+        int i = 0;
+    }
 }
 
 string Individual::TourToString() {
@@ -283,6 +356,7 @@ Individual& Individual::operator=(Individual other){
         this->fitness = other.fitness;
         this->totalTravelDistance = other.totalTravelDistance;
         this->seed = other.seed;
+        this->numCircles = other.numCircles;
     }
     return *this;
 }

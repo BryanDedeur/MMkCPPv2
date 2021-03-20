@@ -31,6 +31,8 @@ public:
 
     double avgFitness, minFitness, maxFitness, sumFitness;
     double avgTravelDist, minTravelDist, maxTravelDist, sumTravelDist;
+    double avgNumCircles, minNumCircles, maxNumCircles, sumNumCircles;
+
     Graph* graph;
     Individual* bestIndividual;
 
@@ -55,6 +57,7 @@ public:
     // Crossovers
     //	void TwoPoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
     void OnePoint(Individual *p1, Individual *p2, Individual *c1, Individual *c2);
+    void TwoPoint(Individual* p1, Individual* p2, Individual* c1, Individual* c2);
     void PMX(Individual *p1, Individual *p2, Individual *c1, Individual *c2); // Permutation crossover
     void OX(Individual *p1, Individual *p2, Individual *c1, Individual *c2); // Ordered crossover (heterogeneous recombination)
 
@@ -62,6 +65,7 @@ public:
 	// mutator is inside of individual class
 	void SwapMutate(Individual *i); // Two point swap mutation
     void InvertMutate(Individual *ind);
+    void UniformMutate(Individual* ind);
 };
 
 #endif /* POPULATION_H_ */

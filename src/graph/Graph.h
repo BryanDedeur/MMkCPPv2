@@ -24,6 +24,7 @@ class Graph {
         virtual ~Graph();
 
         int numVertices;
+        int numOddEdgeVertices;
         int numEdges;
         float sumEdges;
         int largestNumEdgesConnectedToAnyVertex;

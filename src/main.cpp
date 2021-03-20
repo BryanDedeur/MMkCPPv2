@@ -25,12 +25,13 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < ga.best->tours.size(); i++) {
         cout << "Best tour " << i << ": ";
-        if (ga.best->tours[i].SanityCheckPass()) {
+        if (ga.best->SanityCheckPassed()) {
             cout << "Valid! ";
             cout << "cost: " << ga.best->tours[i].GetCost();
         }
         else {
-            cout << "Invalid :(" << endl;
+            cout << "Invalid:" << endl;
+            cout << "cost: " << ga.best->tours[i].GetCost();
         }
     }
 
