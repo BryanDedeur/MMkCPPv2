@@ -105,8 +105,14 @@ void GA::Init(){
         cpp = new CPP(graph);
     }
 
+    // set random seed
     options.randomSeed = options.seeds[runCount];
     srand(options.randomSeed);
+
+    // set probability of mutation
+    options.pm = ((float) 1 / (float) graph->numEdges);
+    //options.pm = 0.4;
+
     parent = new Population(&options, graph, this);
 	child  = new Population(&options, graph, this);
 	parent->Init(); // evaluates, stats, and reports on initial population
@@ -137,9 +143,9 @@ void GA::Run(){
 		parent = child;
 		child = tmp;
 
-		if (i % (options.maxgens / 20) == 0) {
-		    cout << ".";
-		}
+		//if (i % (options.maxgens / 20) == 0) {
+		//    cout << ".";
+		//}
 	}
 
     bestPerSeed.push_back(*child->bestIndividual);

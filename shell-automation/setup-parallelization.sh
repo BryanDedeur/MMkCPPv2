@@ -5,7 +5,7 @@
 executablePath="../build/ga.exe"
 gaShellScript="run-ga.sh"
 numCores=8
-instancesDir="../problem-instances/benchmarks/gdb"
+instancesDir="../problem-instances/bridge-generator2/"
 seedsPath="../seed-files/3seeds.txt"
 
 # make array of all the problem instances

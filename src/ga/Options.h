@@ -26,9 +26,9 @@ struct Base { };
 typedef struct Options : Base {
     // in files
 	string infile;
-    //string graphfile = "../problem-instances/bridge-generator2/B100.txt"; // directory must be relative to the executable
+    string graphfile = "../problem-instances/bridge-generator2/B100.txt"; // directory must be relative to the executable
     //string graphfile = "../problem-instances/custom-graphs/bryans/pacman.csv"; // directory must be relative to the executable
-    string graphfile = "../problem-instances/benchmarks/gdb/gdb1.dat";
+    //string graphfile = "../problem-instances/benchmarks/gdb/gdb1.dat";
     //string graphfile = "../problem-instances/stacs-graphs/graph-raw.csv";;
 
     string graphName;
@@ -48,19 +48,19 @@ typedef struct Options : Base {
     string seedsFile = "../seed-files/3seeds.txt";
     long int* seeds;
     long int randomSeed = time(NULL);
-
+     
 	int numRuns = 1;
-	int popSize = 10;
+	int popSize = 200;
 	//int chromLength; // this is automatically set by the graph
-	unsigned int maxgens = 20;
+	unsigned int maxgens = 2 * popSize;
 
     int numRobots = 1;
 
-	float px = 0;
+	float px = 0.99;
 	float pm = 0;
 
 	SelectorType selector = CHC;
-	CrossoverType crossover = TwoPoint;
+	CrossoverType crossover = OnePoint;
 	MutationType mutator = Uniform;
 
     // Helper functions below
@@ -75,6 +75,7 @@ typedef struct Options : Base {
         switch(crossover) {
             case OX: return "ox";
             case PMX: return "pmx";
+            case OnePoint: return "onepoint";
             case TwoPoint: return "twopoint";
             default: return "";
         }

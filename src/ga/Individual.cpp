@@ -298,9 +298,9 @@ void Individual::Evaluate() {
     fitness = tours[0].GetCost();
     totalTravelDistance = fitness;
 
-    if (!SanityCheckPassed()) {
-        int i = 0;
-    }
+    //if (!SanityCheckPassed()) {
+    //    int i = 0;
+    //}
 }
 
 string Individual::TourToString() {
@@ -329,13 +329,13 @@ string Individual::TourToString() {
 ostream& operator<<(ostream& os, const Individual& individual)
 {
     os << "chromosome: [";
-    //for (int i = 0; i < individual.options->chromLength; i++) {
-    //    os << individual.chromosome[i];
-    //    if (i < individual.options->chromLength - 1) {
-    //        os << ",";
-    //    }
-    //}
-    //os << "]" << endl;
+    for (int i = 0; i < individual.chromosome.size(); i++) {
+        os << individual.chromosome[i];
+        if (i < individual.chromosome.size() - 1) {
+            os << ",";
+        }
+    }
+    os << "]" << endl;
 
 
     //for (int i = 0; i < individual.options->numRobots; i++) {

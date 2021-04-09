@@ -206,28 +206,15 @@ int Population::ProportionalSelector(){
 
 void Population::OnePoint(Individual* p1, Individual* p2, Individual* c1, Individual* c2) {
     int p1Index = rand() % p1->chromosome.size();
-    int p2Index = rand() % p2->chromosome.size();
 
-    int c1Size = p1Index + (p2->chromosome.size() - p2Index);
-    int c2Size = p2Index + (p1->chromosome.size() - p1Index);
-
-    c1->ResizeChromosome(c1Size);
-    c2->ResizeChromosome(c2Size);
-
-    int largerChromeSize = max(p1->chromosome.size(), p2->chromosome.size());
-    for (int i = 0; i < largerChromeSize; i++) {
-        if (i < p1Index) {
-            c1->SetGeneAtPosition(p1->chromosome[i], i);
-        } else if (i < p2->chromosome.size() && i > p2Index) {
-            int tempIndex = (i - p2Index) + p1Index;
-            c1->SetGeneAtPosition(p2->chromosome[i], tempIndex);
+    for (int i = 0; i < p1->chromosome.size(); i++) {
+        if (i > p1Index) {
+            c1->chromosome[i] = p2->chromosome[i];
+            c2->chromosome[i] = p1->chromosome[i];
         }
-
-        if (i < p2Index) {
-            c2->SetGeneAtPosition(p2->chromosome[i], i);
-        } else if (i < p1->chromosome.size() && i > p1Index) {
-            int tempIndex = (i - p1Index) + p2Index;
-            c2->SetGeneAtPosition(p1->chromosome[i], tempIndex);
+        else {
+            c1->chromosome[i] = p1->chromosome[i];
+            c2->chromosome[i] = p2->chromosome[i];
         }
     }
 }
@@ -343,6 +330,7 @@ void Population::UniformMutate(Individual* ind) {
             ind->chromosome[i] = rand() % graph->largestNumEdgesConnectedToAnyVertex;
         }
     }
+
 }
 
 
