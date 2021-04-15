@@ -45,12 +45,12 @@ typedef struct Options : Base {
     bool makeVisuals = false;
     int closedRouteVertex = 0;
 
-    string seedsFile = "../seed-files/3seeds.txt";
+    string seedsFile = "../seed-files/1seeds.txt";
     long int* seeds;
     long int randomSeed = time(NULL);
      
 	int numRuns = 1;
-	int popSize = 200;
+	int popSize = 100;
 	//int chromLength; // this is automatically set by the graph
 	unsigned int maxgens = 2 * popSize;
 
