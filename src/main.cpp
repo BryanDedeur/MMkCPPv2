@@ -21,18 +21,14 @@ int main(int argc, char *argv[]) {
     }
     ga.Report();
 
-    cout << "Checking if best results are valid: " << endl;
+    cout << "Checking if best results are valid: ";
 
-    for (int i = 0; i < ga.best->tours.size(); i++) {
-        cout << "Best tour " << i << ": ";
-        if (ga.best->SanityCheckPassed()) {
-            cout << "Valid! ";
-            cout << "cost: " << ga.best->tours[i].GetCost();
-        }
-        else {
-            cout << "Invalid:" << endl;
-            cout << "cost: " << ga.best->tours[i].GetCost();
-        }
+    if (ga.best->SanityCheckPassed()) {
+        cout << "Valid! " << endl;
+        cout << "cost: " << ga.best->totalTravelDistance;
+    }
+    else {
+        cout << "Invalid because of missing edges not covered by the robots :(" << endl;
     }
 
     return 0;

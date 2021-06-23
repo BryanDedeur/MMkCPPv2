@@ -28,7 +28,7 @@ class Individual {
 	    double fitness;
 	    double totalTravelDistance;
         int seed;
-        int numCircles;
+        int numNonOverlappingCircles;
 
         vector<int> chromosome;
 
@@ -60,9 +60,8 @@ class Individual {
 
         void IntegrateSubTourIntoTour(list<int>& tempTour, Path& subTour, bool lastTour);
 
-        void ConvertChromosomeToSubTours();
+        void ConvertChromosomeToCircles();
         void RecursivelyCombineSubTours(int subTourId, vector<bool>& toursTraveled);
-        void RepairEulerianCombinedTour();
 
         void Evaluate(); 
         string TourToString();
@@ -73,7 +72,7 @@ class Individual {
         friend ostream& operator<<(ostream& os, const Individual& individual);
         vector<Path> tours; // each robot contains its own edge tour
 
-        vector<Path> subTours;
+        vector<Path> circles;
 
 
     private:

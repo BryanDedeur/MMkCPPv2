@@ -54,8 +54,8 @@ void Population::Statistics(){
     minTravelDist = members[0]->totalTravelDistance;
     maxTravelDist = members[0]->totalTravelDistance;
     sumNumCircles = 0;
-    minNumCircles = members[0]->numCircles;
-    maxNumCircles = members[0]->numCircles;
+    minNumCircles = members[0]->circles.size();
+    maxNumCircles = members[0]->circles.size();
 
 	for (int i = 0; i < options->popSize; i++){
 		sumFitness += members[i]->fitness;
@@ -70,11 +70,11 @@ void Population::Statistics(){
         if (maxTravelDist < members[i]->totalTravelDistance)
             maxTravelDist = members[i]->totalTravelDistance;
 
-        sumNumCircles += members[i]->numCircles;
-        if (minNumCircles > members[i]->numCircles)
-            minNumCircles = members[i]->numCircles;
-        if (maxNumCircles < members[i]->numCircles)
-            maxNumCircles = members[i]->numCircles;
+        sumNumCircles += members[i]->circles.size();
+        if (minNumCircles > members[i]->circles.size())
+            minNumCircles = members[i]->circles.size();
+        if (maxNumCircles < members[i]->circles.size())
+            maxNumCircles = members[i]->circles.size();
 	}
 	avgFitness = sumFitness / options->popSize;
     avgTravelDist = sumTravelDist / options->popSize;

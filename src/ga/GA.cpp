@@ -187,7 +187,7 @@ void GA::Report() {
         << graph->numVertices << "\t"
         << graph->numOddEdgeVertices << "\t"
         << graph->sumEdges << "\t"
-        << best->numCircles << "\t"
+        << best->circles.size() << "\t"
         << best->totalTravelDistance << "\t"
         << averageBestPerSeed << "\t"
         << standardDeviationOfBest << "\t"
