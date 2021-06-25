@@ -12,8 +12,6 @@ shell-automation/parallelization/*
 
 build/*
 
-results/*
-
 .idea/*
 
 *.xml
