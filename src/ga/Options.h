@@ -28,8 +28,8 @@ typedef struct Options : Base {
 	string infile;
     //string graphfile = "../problem-instances/bridge-generator2/B200.txt"; // directory must be relative to the executable
     //string graphfile = "../problem-instances/custom-graphs/bryans/pacman.csv"; // directory must be relative to the executable
-    //string graphfile = "../problem-instances/benchmarks/gdb/gdb1.dat";
-    string graphfile = "../problem-instances/stacs-graphs/graph-raw.csv";;
+    string graphfile = "../problem-instances/benchmarks/gdb/gdb1.dat";
+    //string graphfile = "../problem-instances/stacs-graphs/graph-raw.csv";;
 
     string graphName;
 

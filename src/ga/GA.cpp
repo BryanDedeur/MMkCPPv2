@@ -182,7 +182,17 @@ void GA::Report() {
     
     std::stringstream ss;
     // Name, Edges, Vertices, Num Odd Vertices, Sum Edges Total, Travel Distance From Best Individual, Average Best Per Seed, Standard Deviation of Best, Time, Best Seed    
-    ss << options.graphName.c_str() << "\t"
+    ss << "euler-path-decisions-v1" << "\t"
+        << options.numRobots << "\t"
+        << options.popSize << "\t"
+        << options.maxgens << "\t"
+        << options.numRuns << "\t"
+        << options.selector << "\t"
+        << options.crossover << "\t"
+        << options.px << "\t"
+        << options.mutator << "\t"
+        << options.pm << "\t"
+        << options.graphName.c_str() << "\t"
         << graph->numEdges << "\t" 
         << graph->numVertices << "\t"
         << graph->numOddEdgeVertices << "\t"
